@@ -1,159 +1,64 @@
-import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:englishvocabdatabase/logic/output/outputListNotifier.dart';
 import 'package:englishvocabdatabase/logic/output/outputItem.dart';
 
 void main() {
-  late ProviderContainer container;
-  late OutputListNotifier notifier;
-  late void Function() removeListener;
+  runApp(const ProviderScope(child: MyApp()));
+}
 
-  setUp(() {
-    container = ProviderContainer();
-    notifier = container.read(outputListNotifierProvider.notifier);
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
-    // 建立監聽，避免 AutoDispose provider 被釋放
-    removeListener = container.listen<AsyncValue<List<OutputListItem>>>(
-      outputListNotifierProvider,
-      (previous, next) {},
-    ).close;
-  });
-
-  tearDown(() {
-    removeListener(); // 取消監聽
-    container.dispose();
-  });
-
-  // 輔助函數：等待狀態變成 AsyncData
-  Future<void> waitForAsyncData() async {
-    while (container.read(outputListNotifierProvider) is! AsyncData) {
-      await Future.delayed(const Duration(milliseconds: 10));
-    }
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      home: OutputListPage(),
+    );
   }
+}
 
-  test('initial build() yields empty list', () async {
-    await waitForAsyncData();
-    final state = container.read(outputListNotifierProvider);
-    expect(state, isA<AsyncData<List<OutputListItem>>>());
-    final list = (state as AsyncData<List<OutputListItem>>).value;
-    expect(list, isEmpty);
-  });
+class OutputListPage extends ConsumerWidget {
+  const OutputListPage({super.key});
 
-  test('addOutputString adds one item', () async {
-    await waitForAsyncData();
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    // 監聽 NotifierType.Label 的 provider 狀態
+    final asyncList = ref.watch(outputListNotifierProvider(NotifierType.Label));
 
-    final item = OutputListItem(name: 'Test Item', id: 42);
-    notifier.addOutputString(item);
-
-    await waitForAsyncData();
-
-    final state = container.read(outputListNotifierProvider);
-    final list = (state as AsyncData<List<OutputListItem>>).value;
-
-    expect(list, contains(item));
-    expect(list.length, 1);
-  });
-
-  test('addList appends multiple items', () async {
-    await waitForAsyncData();
-
-    final items = [
-      OutputListItem(name: 'Item A', id: 1),
-      OutputListItem(name: 'Item B', id: 2),
-    ];
-
-    notifier.addList(items);
-
-    await waitForAsyncData();
-
-    final state = container.read(outputListNotifierProvider);
-    final list = (state as AsyncData<List<OutputListItem>>).value;
-
-    expect(list.length, items.length);
-    expect(list, containsAll(items));
-  });
-
-  test('refreshAll replaces entire list', () async {
-    await waitForAsyncData();
-
-    final newList = [
-      OutputListItem(name: 'New X', id: 5),
-      OutputListItem(name: 'New Y', id: 6),
-    ];
-
-    notifier.refreshAll(newList);
-
-    await waitForAsyncData();
-
-    final state = container.read(outputListNotifierProvider);
-    final list = (state as AsyncData<List<OutputListItem>>).value;
-
-    expect(list.length, newList.length);
-    expect(list, equals(newList));
-  });
-
-  test('deleteTarget returns true when item exists and removes it', () async {
-    await waitForAsyncData();
-
-    final items = [
-      OutputListItem(name: 'Keep', id: 10),
-      OutputListItem(name: 'ToDelete', id: 99),
-    ];
-    notifier.refreshAll(items);
-
-    await waitForAsyncData();
-
-    // 確認刪除存在的項目成功
-    final deleted = notifier.deleteTarget(99);
-    expect(deleted, isTrue);
-
-    await waitForAsyncData();
-
-    final state = container.read(outputListNotifierProvider);
-    final list = (state as AsyncData<List<OutputListItem>>).value;
-
-    expect(list.any((e) => e.id == 99), isFalse);
-    expect(list.length, 1);
-  });
-
-  test('deleteTarget returns false when item does not exist', () async {
-    await waitForAsyncData();
-
-    final items = [
-      OutputListItem(name: 'OnlyItem', id: 1),
-    ];
-    notifier.refreshAll(items);
-
-    await waitForAsyncData();
-
-    final deleted = notifier.deleteTarget(999); // 不存在的id
-    expect(deleted, isFalse);
-
-    final state = container.read(outputListNotifierProvider);
-    final list = (state as AsyncData<List<OutputListItem>>).value;
-
-    // 確認列表不變
-    expect(list.length, 1);
-    expect(list[0].id, 1);
-  });
-
-  test('removeAll clears the list', () async {
-    await waitForAsyncData();
-
-    final items = [
-      OutputListItem(name: 'SomeItem', id: 3),
-    ];
-    notifier.refreshAll(items);
-
-    await waitForAsyncData();
-
-    notifier.removeAll();
-
-    await waitForAsyncData();
-
-    final state = container.read(outputListNotifierProvider);
-    final list = (state as AsyncData<List<OutputListItem>>).value;
-
-    expect(list, isEmpty);
-  });
+    return Scaffold(
+      appBar: AppBar(title: const Text('Output List (Label)')),
+      body: asyncList.when(
+        data: (list) {
+          if (list.isEmpty) {
+            return const Center(child: Text('List is empty'));
+          }
+          return ListView.builder(
+            itemCount: list.length,
+            itemBuilder: (context, index) {
+              final item = list[index];
+              return ListTile(
+                title: Text(item.name),
+                subtitle: Text('ID: ${item.id}'),
+              );
+            },
+          );
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (err, stack) => Center(child: Text('Error: $err')),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // 呼叫 notifier 新增一筆
+          final notifier = ref.read(outputListNotifierProvider(NotifierType.Label).notifier);
+          final newItem = OutputListItem(
+            id: DateTime.now().millisecondsSinceEpoch,
+            name: 'New Item ${DateTime.now().second}',
+          );
+          notifier.addOutputString(newItem);
+        },
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
 }

@@ -1,23 +1,47 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'outputItem.dart';
+import '../page/pageInformation.dart';
 
 part 'outputListNotifier.g.dart';
 
+enum NotifierType { NoDefinition, Label, Word}
+
 @riverpod
 class OutputListNotifier extends _$OutputListNotifier{
-
   @override
-  Future<List<OutputListItem>> build() async{
-    final data = await _initListData();
-    return data;
+  Future<List<OutputListItem>> build(NotifierType type) async{
+    pageStatus.setNotifierType(type);
+
+    switch(type){
+      case NotifierType.NoDefinition:
+        return _initNoDefinitionList();
+      case NotifierType.Label:
+        return _initLabelList();
+      case NotifierType.Word:
+        return _initWordList();
+    }
+    return [];  //for safe
+  }
+
+  Future<List<OutputListItem>> _initNoDefinitionList() async{
+    return [];
+  }
+
+  Future<List<OutputListItem>> _initLabelList() async{
+    return [];
+  }
+  
+  Future<List<OutputListItem>> _initWordList() async{
+    return [];
   }
 
   //add label or string
   void addOutputString(OutputListItem item){
     // only perform when having data
-  state.whenData((current) {
-    state = AsyncData([...current, item]);
-  });
+    state.whenData((current) {
+      state = AsyncData([...current, item]);
+    });
   }
 
   //add a List<String> to output List
@@ -54,8 +78,3 @@ class OutputListNotifier extends _$OutputListNotifier{
     state = AsyncData([]);
   }
 }
-
-Future<List<OutputListItem>> _initListData() async{
-  await Future.delayed(const Duration(milliseconds: 300));
-  return [];
-} 
