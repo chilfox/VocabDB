@@ -1,53 +1,61 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'outputItem.dart';
 
 part 'outputListNotifier.g.dart';
 
 @riverpod
 class OutputListNotifier extends _$OutputListNotifier{
+
   @override
-  List<String> build(){
-    return [];
+  Future<List<OutputListItem>> build() async{
+    final data = await _initListData();
+    return data;
   }
 
   //add label or string
-  void addOutputString(String name){
-    state = [...state, name];
+  void addOutputString(OutputListItem item){
+    // only perform when having data
+  state.whenData((current) {
+    state = AsyncData([...current, item]);
+  });
   }
 
   //add a List<String> to output List
-  void addList(List<String> list){
-    state = [...state, ...list];
+  void addList(List<OutputListItem> list){
+    state.whenData((current){
+      state = AsyncData([...current, ...list]);
+    });
   }
 
   //change whole output to new one
-  void refreshAll(List<String> newOutput){
-    state = newOutput;
+  void refreshAll(List<OutputListItem> newOutput){
+    state = AsyncData(newOutput);
   }
 
   //delete the specified string in output
-  bool deleteTarget(String name){
-    int index = state.indexOf(name);
-    if(index == -1){
+  bool deleteTarget(int id) {
+    if (state is! AsyncData){
       return false;
     }
-    else{
-      List<String> first = [];
-      if(index > 0){
-        first = state.sublist(0, index);
-      }
-      
-      List<String> second = [];
-      if(index < state.length - 1){
-        second = state.sublist(index + 1);
-      }
-
-      state = [...first, ...second];
-      return true;
+    
+    final current = (state as AsyncData<List<OutputListItem>>).value;
+    final index = current.indexWhere((e) => e.id == id);
+    if (index == -1){
+      return false;
     }
+
+    final newList = [...current]..removeAt(index);
+    state = AsyncData(newList);
+    return true;
   }
 
   //remove all output string
   void removeAll(){
-    state = [];
+    state = AsyncData([]);
   }
 }
+
+Future<List<OutputListItem>> _initListData() async{
+  await Future.delayed(const Duration(milliseconds: 300));
+  return [];
+} 
