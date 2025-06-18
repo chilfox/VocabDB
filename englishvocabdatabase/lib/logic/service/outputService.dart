@@ -46,9 +46,8 @@ class OutputService {
 
     final notifier = _ref.read(outputListNotifierProvider(type).notifier);
     
-    //search in data base
     @visibleForTesting
-    List<Label>? result = await getDataBase1();
+    List<Label>? result = await getDataBase1();   //for search in database
     if(result == null){
       return false;
     }
@@ -68,9 +67,20 @@ class OutputService {
       return false;
     }
     else{
-      insertLabel(name).catchError((e){
+      NotifierType? type = pageStatus.getNotifierType();
+
+      final notifier = _ref.read(outputListNotifierProvider(type).notifier);
+      
+      await insertLabel(name).catchError((e){
         print('insertLabel error: $e');  //for test
       });
+
+      List<Label>? result = await getDataBase1();//for test
+      result ??= [];
+      
+      List<OutputListItem> outputList = 
+        result.map((label) => OutputListItem(id: label.id, name: label.name)).toList();
+      notifier.refreshAll(outputList);
 
       return true;
     }
@@ -83,9 +93,19 @@ class OutputService {
       return false;
     }
     else{
-      deleteLabel(id).catchError((e) {
+      NotifierType? type = pageStatus.getNotifierType();
+
+      final notifier = _ref.read(outputListNotifierProvider(type).notifier);
+      await deleteLabel(id).catchError((e) {
         print('deleteLabel error: $e');   //for test
       });
+
+      List<Label>? result = await getDataBase1();//for test
+      result ??= [];
+      
+      List<OutputListItem> outputList = 
+        result.map((label) => OutputListItem(id: label.id, name: label.name)).toList();
+      notifier.refreshAll(outputList);
 
       return true;
     }
