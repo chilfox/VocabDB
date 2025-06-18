@@ -59,4 +59,35 @@ class OutputService {
       return true;
     }
   }
+
+  Future<bool> add(String name) async{
+    @visibleForTesting
+    bool exist = await hasLabel();
+
+    if(exist){
+      return false;
+    }
+    else{
+      insertLabel(name).catchError((e){
+        print('insertLabel error: $e');  //for test
+      });
+
+      return true;
+    }
+  }
+
+  Future<bool> delete(String name, int id) async{
+    bool exist = await hasLabel();
+
+    if(!exist){
+      return false;
+    }
+    else{
+      deleteLabel(id).catchError((e) {
+        print('deleteLabel error: $e');   //for test
+      });
+
+      return true;
+    }
+  }
 }

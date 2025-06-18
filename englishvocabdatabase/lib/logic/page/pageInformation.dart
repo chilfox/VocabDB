@@ -1,21 +1,19 @@
-import 'package:flutter/widgets.dart';
-
 import '../output/outputListNotifier.dart';
 
 //handle page status and information
 PageInformation pageStatus = PageInformation();
 
 class PageInformation {
-  NotifierType? _type;
+  NotifierType _type;
 
-  PageInformation();
+  PageInformation({NotifierType type = NotifierType.Label}) : _type = type;
 
   void setNotifierType(NotifierType type){
     _type = type;
     return;
   }
 
-  NotifierType? getNotifierType(){
+  NotifierType getNotifierType(){
     return _type;
   }
 

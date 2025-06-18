@@ -1,7 +1,7 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'outputItem.dart';
 import '../page/pageInformation.dart';
+import 'package:meta/meta.dart';
 
 part 'outputListNotifier.g.dart';
 
