@@ -3,29 +3,61 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class Label {
-  final int id;
-  final String name;
-  final int wordnum;
+  late int _id;
+  late String _name;
+  late int _wordnum;
 
-  Label({required this.id, required this.name, required this.wordnum});
+  Label({required int id, required String name, required int wordnum}){
+    _id = id;
+    _name = name;
+    _wordnum = wordnum;
+  }
 
   // Convert labels into a Map. The keys must correspond to the names of the
   // columns in the database.
   Map<String, Object?> toMap() {
-    return {'id': id, 'name': name, 'wordnum': wordnum};
+    return {'id': _id, 'name': _name, 'wordnum': _wordnum};
+  }
+
+  String Getname(){
+    return _name;
+  }
+
+  void Setname(String x){
+    _name = x;
+    return;
+  }
+
+  int Getwordnum(){
+    return _wordnum;
+  }
+
+  void Setwordnum(int x){
+    _wordnum = x;
+    return;
+  }
+
+  int Getid(){
+    return _id;
+  }
+
+  void Setid(int x){
+    _id = x;
+    return;
   }
 
   // Implement toString to make it easier to see information about
-  // each dog when using the print statement.
+  // each label when using the print statement.
   @override
   String toString() {
-    return 'Label{id: $id, name: $name, wordnum: $wordnum}';
+    return 'Label{id: $_id, name: $_name, wordnum: $_wordnum}';
   }
 }
 
-class LabelDB {
-  static Database? database;
 
+class LabelDB {
+  int _id = 1;
+  static Database? database;
   static Future<Database> initDatabase() async {
       final database = await openDatabase(
       // Set the path to the database
@@ -34,7 +66,7 @@ class LabelDB {
       onCreate: (db, version) {
         // Run the CREATE TABLE statement on the database.
         return db.execute(
-          'CREATE TABLE labels(id INTEGER PRIMARY KEY, name TEXT, wordnum INTEGER)',
+          'CREATE TABLE labels(id INTEGER, name TEXT PRIMARY KEY, wordnum INTEGER)',
         );
       },
       version: 1,
@@ -49,21 +81,41 @@ class LabelDB {
     return await initDatabase();
   }
 
-  Future<void> insertLabel(Label label) async {
+  Future<bool> hasLabel(String label) async {
+    final db = await getDBConnect();
+    final List<Map<String, Object?>> result = await db.query(
+      'labels',
+      where: 'name = ?',
+      whereArgs: [label],
+      limit: 1, 
+    );
+    return result.isNotEmpty;
+  }
+
+  Future<bool> addLabel(String label) async {
     // Get a reference to the database.
     final db = await getDBConnect();
     // Insert the Label into the correct table. You might also specify the
     // `conflictAlgorithm` to use in case the same dog is inserted twice.
     //
     // In this case, replace any previous data.
+    if(await hasLabel(label)){
+      return false;
+    }
+
+    var insertinglabel = Label(id: _id, name: label, wordnum: 0);
+
     await db.insert(
       'labels',
-      label.toMap(),
+      insertinglabel.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
+
+    _id = _id + 1;
+    return true;
   }
 
-  Future<List<Label>> getLabel() async {
+  Future<List<Label>?> getAllLabels() async {
     final db = await getDBConnect();
     final List<Map<String, Object?>> labelMaps = await db.query('labels');
 
@@ -74,35 +126,78 @@ class LabelDB {
     ];
   }
 
-  Future<void> updateLabel(Label label) async {
+  Future<List<Label>?> getSomeLabels({required int start, required int end, String? sortColumn}) async{
+    //sortColumn 放 name, wordnum, 或id
+
     final db = await getDBConnect();
-    await db.update(
+
+    String orderBy = 'null';
+    if(sortColumn != null){
+      orderBy = '$sortColumn ASC';
+    }
+
+    final List<Map<String, dynamic>> maps = await db.query(
       'labels',
-      label.toMap(),
-      where: 'id = ?',
-      // Pass the label's id as a whereArg to prevent SQL injection.
-      whereArgs: [label.id],
+      orderBy: orderBy,
     );
+
+    if(maps.isEmpty){
+      return [];
+    }
+
+    final List<Label> result = List.generate(maps.length, (i){
+      return Label(id: maps[i]['id'], name: maps[i]['name'], wordnum: maps[i]['wordnum']);
+    }); 
+
+    if(start >= result.length){
+      return null;
+    }    
+    if(end >= result.length){
+      end = result.length;
+    }
+
+    return result.sublist(start, end);
   }
 
-  Future<void> deleteLabel(int id) async {
+  Future<void> deleteLabel({String? label, int? id}) async {
     final db = await getDBConnect();
-    await db.delete(
-      'labels',
-      where: 'id = ?',
-      // Pass the label's id as a whereArg to prevent SQL injection.
-      whereArgs: [id],
-    );
+    if(label != null){
+      await db.delete(
+        'labels',
+        where: 'name = ?',
+        // Pass the label's id as a whereArg to prevent SQL injection.
+        whereArgs: [label],
+      );
+    }
+    else{
+      await db.delete(
+        'labels',
+        where: 'id = ?',
+        // Pass the label's id as a whereArg to prevent SQL injection.
+        whereArgs: [id],
+      );
+    }
   }
 
-  Future<bool> hasLabel(int id) async {
+
+  Future<List<Label>?> searchLabel(String prefix) async{
     final db = await getDBConnect();
-    final List<Map<String, Object?>> result = await db.query(
-      'labels',
-      where: 'id = ?',
-      whereArgs: [id],
-      limit: 1, 
+
+    final List<Map<String, Object?>> results = await db.query(
+      'words',
+      where: 'name LIKE ?',
+      whereArgs: ['$prefix%'], 
     );
-    return result.isNotEmpty;
+
+    results.sort((a, b){
+      final String namea = a['name'] as String;
+      final String nameb = b['name'] as String;
+      return namea.compareTo(nameb);
+    });
+    return [
+      for (final {'id': id as int, 'name': name as String, 'wordnum': wordnum as int}
+          in results)
+        Label(id: id, name: name, wordnum: wordnum),
+    ];
   }
 }
