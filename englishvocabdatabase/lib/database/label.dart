@@ -41,14 +41,10 @@ class Label {
     return;
   }
 
-  // Convert labels into a Map. The keys must correspond to the names of the
-  // columns in the database.
   Map<String, Object?> toMap() {
     return {'id': _id, 'name': _name, 'wordnum': _wordnum};
   }
 
-  // Implement toString to make it easier to see information about
-  // each label when using the print statement.
   @override
   String toString() {
     return 'Label{id: $_id, name: $_name, wordnum: $_wordnum}';
@@ -61,11 +57,10 @@ class LabelDB {
   static Database? database;
   static Future<Database> initDatabase() async {
       final database = await openDatabase(
-      // Set the path to the database
+
       join(await getDatabasesPath(), 'label_database.db'),
-      // When the database is first created, create a table to store the labels.
+  
       onCreate: (db, version) {
-        // Run the CREATE TABLE statement on the database.
         return db.execute(
           'CREATE TABLE labels(id INTEGER, name TEXT PRIMARY KEY, wordnum INTEGER)',
         );
@@ -94,12 +89,9 @@ class LabelDB {
   }
 
   Future<bool> addLabel(String label) async {
-    // Get a reference to the database.
+
     final db = await getDBConnect();
-    // Insert the Label into the correct table. You might also specify the
-    // `conflictAlgorithm` to use in case the same dog is inserted twice.
-    //
-    // In this case, replace any previous data.
+    
     if(await hasLabel(label)){
       return false;
     }
@@ -166,7 +158,6 @@ class LabelDB {
       await db.delete(
         'labels',
         where: 'name = ?',
-        // Pass the label's id as a whereArg to prevent SQL injection.
         whereArgs: [label],
       );
     }
@@ -174,7 +165,6 @@ class LabelDB {
       await db.delete(
         'labels',
         where: 'id = ?',
-        // Pass the label's id as a whereArg to prevent SQL injection.
         whereArgs: [id],
       );
     }
