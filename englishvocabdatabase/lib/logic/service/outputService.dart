@@ -73,7 +73,7 @@ class OutputService {
       NotifierType? type = pageStatus.getNotifierType();
 
       final notifier = _ref.read(outputListNotifierProvider(type).notifier);
-      await _db.deleteLabel(id).catchError((e) {
+      await _db.deleteLabel(id: id).catchError((e) {
         print('deleteLabel error: $e');   //for test
       });
 
