@@ -3,66 +3,38 @@ import '../output/outputItem.dart';
 import '../output/outputListNotifier.dart';
 import '../page/pageInformation.dart';
 import 'package:meta/meta.dart';
-
-@visibleForTesting
-import './database_temp.dart';
+import '../../database/label.dart';
 
 final outputServiceProvider = Provider((ref) => OutputService(ref));
 
-/* show that how UI should use service
-class OutputPage extends ConsumerWidget {
-  final NotifierType type;
-  const OutputPage({super.key, required this.type});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final listAsync = ref.watch(outputListNotifierProvider(type));
-    final service   = ref.read(outputServiceProvider);
-
-    return Scaffold(
-      appBar: AppBar(title: Text('輸出 (${type.name})')),
-      body: Column(
-        children: [
-          MonitorListView(listAsync: listAsync),
-          TriggerButton(
-            onAdd:    (it) => service.addItem(type, it),
-            onClear:  ()   => service.clearAll(type),
-            onDelete: (id) => service.delete(type, id),
-          ),
-        ],
-      ),
-    );
-  }
-}
-*/
-
-
 class OutputService {
   final Ref _ref;
+  late final _db;
 
-  OutputService(this._ref);
+  OutputService(this._ref){
+    _db = LabelDB();
+  }
 
   Future<bool> search(String prefix) async{
     NotifierType? type = pageStatus.getNotifierType();
 
     final notifier = _ref.read(outputListNotifierProvider(type).notifier);
     
-    @visibleForTesting
-    List<Label>? result = await getDataBase1();   //for search in database
+    //for search in database
+    List<Label>? result = await _db.searchLabel(prefix);   
     if(result == null){
       return false;
     }
     else{
       List<OutputListItem> outputList = 
-        result.map((label) => OutputListItem(id: label.id, name: label.name)).toList();
+        result.map((label) => OutputListItem(id: label.Getid(), name: label.Getname())).toList();
       notifier.refreshAll(outputList);
       return true;
     }
   }
 
   Future<bool> add(String name) async{
-    @visibleForTesting
-    bool exist = await hasLabel();
+    bool exist = await _db.hasLabel(name);
 
     if(exist){
       return false;
@@ -72,15 +44,19 @@ class OutputService {
 
       final notifier = _ref.read(outputListNotifierProvider(type).notifier);
 
-      await insertLabel(name).catchError((e){
+      bool success = await _db.addLabel(name).catchError((e){
         print('insertLabel error: $e');  //for test
       });
 
-      List<Label>? result = await getDataBase2();//for test
+      if(!success){
+        return false;
+      }
+
+      List<Label>? result = await _db.getAllLabels();//for test
       result ??= [];
       
       List<OutputListItem> outputList = 
-        result.map((label) => OutputListItem(id: label.id, name: label.name)).toList();
+        result.map((label) => OutputListItem(id: label.Getid(), name: label.Getname())).toList();
       notifier.refreshAll(outputList);
 
       return true;
@@ -88,7 +64,7 @@ class OutputService {
   }
 
   Future<bool> delete(String name, int id) async{
-    bool exist = await hasLabel();
+    bool exist = await _db.hasLabel(name);
 
     if(!exist){
       return false;
@@ -97,15 +73,15 @@ class OutputService {
       NotifierType? type = pageStatus.getNotifierType();
 
       final notifier = _ref.read(outputListNotifierProvider(type).notifier);
-      await deleteLabel(id).catchError((e) {
+      await _db.deleteLabel(id).catchError((e) {
         print('deleteLabel error: $e');   //for test
       });
 
-      List<Label>? result = await getDataBase3();//for test
+      List<Label>? result = await _db.getAllLabels();//for test
       result ??= [];
       
       List<OutputListItem> outputList = 
-        result.map((label) => OutputListItem(id: label.id, name: label.name)).toList();
+        result.map((label) => OutputListItem(id: label.Getid(), name: label.Getname())).toList();
       notifier.refreshAll(outputList);
 
       return true;

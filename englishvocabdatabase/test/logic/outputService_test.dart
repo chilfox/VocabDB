@@ -93,7 +93,7 @@ class SearchButton extends StatelessWidget {
     );
   }
 }
-
+int cnt = 0;
 // 按鈕2 - 呼叫 service.add('New Item')
 class AddButton extends StatelessWidget {
   final OutputService service;
@@ -103,7 +103,8 @@ class AddButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () async {
-        bool success = await service.add('New Item');
+        bool success = await service.add('$cnt');
+        cnt++;
         if (!success) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Add failed')),
