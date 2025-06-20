@@ -70,12 +70,12 @@ class OutputService {
       NotifierType? type = pageStatus.getNotifierType();
 
       final notifier = _ref.read(outputListNotifierProvider(type).notifier);
-      
+
       await insertLabel(name).catchError((e){
         print('insertLabel error: $e');  //for test
       });
 
-      List<Label>? result = await getDataBase1();//for test
+      List<Label>? result = await getDataBase2();//for test
       result ??= [];
       
       List<OutputListItem> outputList = 
@@ -100,7 +100,7 @@ class OutputService {
         print('deleteLabel error: $e');   //for test
       });
 
-      List<Label>? result = await getDataBase1();//for test
+      List<Label>? result = await getDataBase3();//for test
       result ??= [];
       
       List<OutputListItem> outputList = 

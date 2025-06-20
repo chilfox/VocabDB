@@ -19,46 +19,55 @@ class MyApp extends StatelessWidget {
   }
 }
 
+// 將 Page 改為 ConsumerWidget，並使用 ref.read
 class OutputListPage extends ConsumerWidget {
   const OutputListPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final asyncList = ref.watch(outputListNotifierProvider(NotifierType.Label));
+    // ✅ 正確：用 ref.read 而不是 context.read
     final service = ref.read(outputServiceProvider);
-    final type = NotifierType.Label;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Output List (Label)')),
       body: Column(
         children: [
-          Expanded(
-            child: asyncList.when(
-              data: (list) {
-                if (list.isEmpty) {
-                  return const Center(child: Text('List is empty'));
-                }
-                return ListView.builder(
-                  itemCount: list.length,
-                  itemBuilder: (context, index) {
-                    final item = list[index];
-                    return ListTile(
-                      title: Text(item.name),
-                      subtitle: Text('ID: ${item.id}'),
-                    );
-                  },
-                );
-              },
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (err, stack) => Center(child: Text('Error: $err')),
-            ),
-          ),
-          // 三個按鈕獨立成 Widget
+          const _OutputListView(),  // 把監聽搬到這裡
           SearchButton(service: service),
           AddButton(service: service),
           DeleteButton(service: service),
           const SizedBox(height: 20),
         ],
+      ),
+    );
+  }
+}
+
+class _OutputListView extends ConsumerWidget {
+  const _OutputListView();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final asyncList = ref.watch(outputListNotifierProvider(NotifierType.Label));
+    return Expanded(
+      child: asyncList.when(
+        data: (list) {
+          if (list.isEmpty) {
+            return const Center(child: Text('List is empty'));
+          }
+          return ListView.builder(
+            itemCount: list.length,
+            itemBuilder: (context, index) {
+              final item = list[index];
+              return ListTile(
+                title: Text(item.name),
+                subtitle: Text('ID: ${item.id}'),
+              );
+            },
+          );
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (err, stack) => Center(child: Text('Error: \$err')),
       ),
     );
   }
