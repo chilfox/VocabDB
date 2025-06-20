@@ -1,3 +1,4 @@
+import 'package:englishvocabdatabase/pages/label_list_view.dart';
 import 'package:englishvocabdatabase/pages/search_bar.dart';
 import 'package:englishvocabdatabase/pages/word_list_view.dart';
 import 'package:flutter/material.dart';
@@ -32,47 +33,42 @@ class WordBankPageState extends ConsumerState<WordBankPage> {
 
             const SizedBox(height: 20,),
             
-            // choose view label list or word list
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  alignment: Alignment.centerLeft,
-                  margin: const EdgeInsets.only(left: 5),
-                  child: SegmentedButton<ChooseListView>(
-                    segments: const [
-                      ButtonSegment(
-                        value: ChooseListView.label,
-                        label: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 15.0),
-                          child: Text('Label'),
-                        )
-                      ),
-                      ButtonSegment(
-                        value: ChooseListView.word,
-                        label: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 15.0),
-                          child: Text('Word'),
-                        )
-                      ),
-                    ],
-                
-                    selected: <ChooseListView>{currentView},
-                
-                    onSelectionChanged: (Set<ChooseListView> newSelection) {
-                      ref.read(wordBankViewProvider.notifier).state = newSelection.first;
-                    },
-                    
-                    showSelectedIcon: false,
+            // button to choose whether to display word list or label list
+            Container(
+              alignment: Alignment.centerLeft,
+              margin: const EdgeInsets.only(left: 5),
+              child: SegmentedButton<ChooseListView>(
+                segments: const [
+                  ButtonSegment(
+                    value: ChooseListView.label,
+                    label: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 15.0),
+                      child: Text('Label'),
+                    )
                   ),
-                ),
-
+                  ButtonSegment(
+                    value: ChooseListView.word,
+                    label: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 15.0),
+                      child: Text('Word'),
+                    )
+                  ),
+                ],
+            
+                selected: <ChooseListView>{currentView},
+            
+                onSelectionChanged: (Set<ChooseListView> newSelection) {
+                  ref.read(wordBankViewProvider.notifier).state = newSelection.first;
+                },
                 
-              ],
+                showSelectedIcon: false,
+              ),
             ),
 
+            SizedBox(height: 15,),
+
             // show word list or label list based on currentView
-            const Expanded(child: WordListView()),
+            Expanded(child: (currentView == ChooseListView.label ? LabelListView() : WordListView())),
           ],
         ),
       ),

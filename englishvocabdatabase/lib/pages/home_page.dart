@@ -79,7 +79,7 @@ Widget? _buildFloatingActionButton(ChooseListView view, final int currentPage) {
     case ChooseListView.label:
       return FloatingActionButton.extended(
         onPressed: () {
-          print("Label按鈕被按下了");
+          print("Add Label按鈕被按下了");
         },
         label: const Text('Add Label'),
         icon: const Icon(Icons.add),
@@ -88,7 +88,7 @@ Widget? _buildFloatingActionButton(ChooseListView view, final int currentPage) {
     case ChooseListView.word:
       return FloatingActionButton.extended(
         onPressed: () {
-          print("Word按鈕被按下了");
+          print("Add Word按鈕被按下了");
         },
         label: const Text('Add Word'),
         icon: const Icon(Icons.add),
