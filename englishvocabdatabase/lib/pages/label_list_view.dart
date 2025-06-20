@@ -63,7 +63,7 @@ Widget labelWidget(BuildContext context, OutputListItem item, OutputService serv
               SlidableAction(
                 borderRadius: BorderRadius.circular(roundRectangularBorder),
                 onPressed: (context) async {
-                  bool success = await service.delete('New Item', 0);
+                  bool success = await service.delete(item.name, item.id);
                   if (!context.mounted) return;
                   if (!success) {
                     ScaffoldMessenger.of(context).showSnackBar(
