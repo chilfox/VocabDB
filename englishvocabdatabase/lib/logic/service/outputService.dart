@@ -34,7 +34,7 @@ class OutputService {
   }
 
   Future<bool> add(String name) async{
-    bool exist = await _db.hasLabel(name);
+    bool exist = await _db.hasLabel(label : name);
 
     if(exist){
       return false;
@@ -64,7 +64,7 @@ class OutputService {
   }
 
   Future<bool> delete(String name, int id) async{
-    bool exist = await _db.hasLabel(name);
+    bool exist = await _db.hasLabel(name: name);
 
     if(!exist){
       return false;
