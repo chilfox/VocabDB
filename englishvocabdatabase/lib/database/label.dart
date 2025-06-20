@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:englishvocabdatabase/logic/service/database_temp.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -77,22 +78,35 @@ class LabelDB {
     return await initDatabase();
   }
 
-  Future<bool> hasLabel(String label) async {
+  Future<bool> hasLabel({int? id, String? label}) async {
     final db = await getDBConnect();
-    final List<Map<String, Object?>> result = await db.query(
-      'labels',
-      where: 'name = ?',
-      whereArgs: [label],
-      limit: 1, 
-    );
-    return result.isNotEmpty;
+    assert(id != null || label != null);
+    if(label != null){
+      final List<Map<String, Object?>> result = await db.query(
+        'labels',
+        where: 'name = ?',
+        whereArgs: [label],
+        limit: 1, 
+      );
+      return result.isNotEmpty;
+    }
+    else if(id != null){
+      final List<Map<String, Object?>> result = await db.query(
+        'labels',
+        where: 'id = ?',
+        whereArgs: [id],
+        limit: 1, 
+      );
+      return result.isNotEmpty;
+    }
+    return false;
   }
 
   Future<bool> addLabel(String label) async {
 
     final db = await getDBConnect();
     
-    if(await hasLabel(label)){
+    if(await hasLabel(label: label)){
       return false;
     }
 
@@ -244,9 +258,10 @@ void main() async{
   await db.addLabel("hi4");
 
   await db.addLabel("hi3");
-
-
   
+  if(await db.hasLabel(id: 10)){
+    print("true");
+  }
   print(await db.getAllLabels());
 
   print(await db.getSomeLabels(start: 1, sortColumn: "name"));
