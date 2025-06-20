@@ -203,19 +203,29 @@ class LabelDB {
     ];
   }
 
-  Future<void> updateLabel(String label, int wordnum) async{
-    final db = await getDBConnect();
-
-    final List<Map<String, Object?>> result = await db.query(
+  Future<int> getLabelid(String label) async{
+      final db = await getDBConnect();
+      final List<Map<String, Object?>> result = await db.query(
       'labels',
       where: 'name = ?',
       whereArgs: [label],
       limit: 1, 
-    );
-    if(result.isEmpty){
+      );
+      if(result.isEmpty){
+        return -1;
+      }
+      return result[0]['id'] as int;
+  }
+
+  Future<void> updateLabel(String label, int wordnum) async{
+    final db = await getDBConnect();
+
+    int id = await getLabelid(label);
+    if(id == -1){
       return;
     }
-    var temp = Label(id: result[0]['id'] as int, name: result[0]['name'] as String, wordnum: wordnum);
+
+    var temp = Label(id: id, name: label, wordnum: wordnum);
 
     await db.update(
       'labels',
@@ -228,7 +238,7 @@ class LabelDB {
 
 
 
-/* for testing
+
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   var db = LabelDB();
@@ -244,11 +254,9 @@ void main() async{
   
   print(await db.getAllLabels());
 
-  print(await db.getSomeLabels(start: 2, end: 4, sortColumn: "name"));
+  //print(await db.getSomeLabels(start: 2, end: 4, sortColumn: "name"));
 
-  await db.updateLabel("hi2", 2);
+  await db.updateLabel("hi2", 3);
   print(await db.getAllLabels());
 
-  print(await db.getSomeLabels(start:0, end: 100, sortColumn: "wordnum"));
 }
-*/ 
