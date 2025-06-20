@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
+import 'package:flutter/widgets.dart';
 class Label {
   late int _id;
   late String _name;
@@ -11,12 +12,6 @@ class Label {
     _id = id;
     _name = name;
     _wordnum = wordnum;
-  }
-
-  // Convert labels into a Map. The keys must correspond to the names of the
-  // columns in the database.
-  Map<String, Object?> toMap() {
-    return {'id': _id, 'name': _name, 'wordnum': _wordnum};
   }
 
   String Getname(){
@@ -44,6 +39,12 @@ class Label {
   void Setid(int x){
     _id = x;
     return;
+  }
+
+  // Convert labels into a Map. The keys must correspond to the names of the
+  // columns in the database.
+  Map<String, Object?> toMap() {
+    return {'id': _id, 'name': _name, 'wordnum': _wordnum};
   }
 
   // Implement toString to make it easier to see information about
@@ -111,7 +112,7 @@ class LabelDB {
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
 
-    _id = _id + 1;
+    _id += 1;
     return true;
   }
 
@@ -183,21 +184,71 @@ class LabelDB {
   Future<List<Label>?> searchLabel(String prefix) async{
     final db = await getDBConnect();
 
-    final List<Map<String, Object?>> results = await db.query(
-      'words',
+    List<Map<String, Object?>> results = await db.query(
+      'labels',
       where: 'name LIKE ?',
       whereArgs: ['$prefix%'], 
     );
 
-    results.sort((a, b){
+    List<Map<String, Object?>> changeable = List.from(results);
+    changeable.sort((a, b){
       final String namea = a['name'] as String;
       final String nameb = b['name'] as String;
       return namea.compareTo(nameb);
     });
     return [
       for (final {'id': id as int, 'name': name as String, 'wordnum': wordnum as int}
-          in results)
+          in changeable)
         Label(id: id, name: name, wordnum: wordnum),
     ];
   }
+
+  Future<void> updateLabel(String label, int wordnum) async{
+    final db = await getDBConnect();
+
+    final List<Map<String, Object?>> result = await db.query(
+      'labels',
+      where: 'name = ?',
+      whereArgs: [label],
+      limit: 1, 
+    );
+    if(result.isEmpty){
+      return;
+    }
+    var temp = Label(id: result[0]['id'] as int, name: result[0]['name'] as String, wordnum: wordnum);
+
+    await db.update(
+      'labels',
+      temp.toMap(),
+      where:'name = ?',
+      whereArgs: [label],
+    );
+  }
 }
+
+
+
+/* for testing
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  var db = LabelDB();
+  await db.addLabel("hi");
+
+  await db.addLabel("hi2");
+
+  await db.addLabel("hi4");
+
+  await db.addLabel("hi3");
+
+
+  
+  print(await db.getAllLabels());
+
+  print(await db.getSomeLabels(start: 2, end: 4, sortColumn: "name"));
+
+  await db.updateLabel("hi2", 2);
+  print(await db.getAllLabels());
+
+  print(await db.getSomeLabels(start:0, end: 100, sortColumn: "wordnum"));
+}
+*/ 
