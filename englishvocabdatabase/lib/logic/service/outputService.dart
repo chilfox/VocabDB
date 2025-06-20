@@ -64,7 +64,7 @@ class OutputService {
   }
 
   Future<bool> delete(String name, int id) async{
-    bool exist = await _db.hasLabel(name: name);
+    bool exist = await _db.hasLabel(label: name);
 
     if(!exist){
       return false;

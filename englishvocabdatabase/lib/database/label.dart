@@ -81,7 +81,6 @@ class LabelDB {
     final db = await getDBConnect();
     assert(id != null || label != null);
     if(label != null){
-      print('$label');
       final List<Map<String, Object?>> result = await db.query(
         'labels',
         where: 'name = ?',
