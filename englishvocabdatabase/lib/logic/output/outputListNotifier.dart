@@ -2,6 +2,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'outputItem.dart';
 import '../page/pageInformation.dart';
 import 'package:meta/meta.dart';
+import '../../database/label.dart';
 
 part 'outputListNotifier.g.dart';
 
@@ -29,7 +30,15 @@ class OutputListNotifier extends _$OutputListNotifier{
   }
 
   Future<List<OutputListItem>> _initLabelList() async{
-    return [];
+    final db = LabelDB();
+    List<Label>? result = await db.getAllLabels();//for test
+    result ??= [];
+      
+    List<OutputListItem> outputList = 
+      result.map((label) => OutputListItem(id: label.Getid(), name: label.Getname())).toList();
+
+    return outputList;
+
   }
   
   Future<List<OutputListItem>> _initWordList() async{
