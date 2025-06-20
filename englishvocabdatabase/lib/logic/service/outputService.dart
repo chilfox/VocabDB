@@ -39,6 +39,7 @@ class OutputPage extends ConsumerWidget {
 
 class OutputService {
   final Ref _ref;
+
   OutputService(this._ref);
 
   Future<bool> search(String prefix) async{
