@@ -238,7 +238,7 @@ class LabelDB {
 
 
 
-
+/*
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   var db = LabelDB();
@@ -259,4 +259,4 @@ void main() async{
   await db.updateLabel("hi2", 3);
   print(await db.getAllLabels());
 
-}
+}*/
