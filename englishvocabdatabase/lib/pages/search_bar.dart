@@ -13,18 +13,18 @@ class _MySearchBarState extends ConsumerState<MySearchBar> {
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController _textController = TextEditingController();
+    final TextEditingController textController = TextEditingController();
     final service = ref.read(outputServiceProvider);
 
     return TextField(
-      controller: _textController,
+      controller: textController,
       decoration: InputDecoration(
         hintText: 'Search word or label',
         prefixIcon: const Icon(Icons.search),
         suffixIcon: IconButton( // 添加一個清除按鈕
           icon: const Icon(Icons.clear),
           onPressed: () {
-            _textController.clear(); // 清空 TextField，會觸發 onChanged
+            textController.clear(); // 清空 TextField，會觸發 onChanged
           },
         ),
         border: const OutlineInputBorder(),
@@ -32,6 +32,7 @@ class _MySearchBarState extends ConsumerState<MySearchBar> {
       keyboardType: TextInputType.text,
       onChanged: (text) async {
         bool success = await service.search(text);
+        if (!context.mounted) return;
         if (!success) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Search failed')),
