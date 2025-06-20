@@ -119,11 +119,16 @@ class LabelDB {
     ];
   }
 
-  Future<List<Label>?> getSomeLabels({required int start, required int end, String? sortColumn}) async{
+  Future<List<Label>?> getSomeLabels({required int start, int? end, String? sortColumn}) async{
     //sortColumn 放 name, wordnum, 或id
-
+    //如果沒有end，會把end判斷成結尾
+    //start從0開始，然後是左閉右開，所以start=0, end=1會顯示第一個元素
+    //end最多是list的length
     final db = await getDBConnect();
 
+    if(end != null){
+      assert(start <= end);
+    }
     String orderBy = 'null';
     if(sortColumn != null){
       orderBy = '$sortColumn ASC';
@@ -145,7 +150,7 @@ class LabelDB {
     if(start >= result.length){
       return null;
     }    
-    if(end >= result.length){
+    if(end == null || end >= result.length){
       end = result.length;
     }
 
@@ -161,7 +166,7 @@ class LabelDB {
         whereArgs: [label],
       );
     }
-    else{
+    else if (id != null){
       await db.delete(
         'labels',
         where: 'id = ?',
@@ -244,9 +249,7 @@ void main() async{
   
   print(await db.getAllLabels());
 
-  //print(await db.getSomeLabels(start: 2, end: 4, sortColumn: "name"));
+  print(await db.getSomeLabels(start: 1, sortColumn: "name"));
 
-  await db.updateLabel("hi2", 3);
-  print(await db.getAllLabels());
-
-}*/
+}
+*/
