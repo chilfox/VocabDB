@@ -7,7 +7,7 @@ part of 'outputDetailNotifier.dart';
 // **************************************************************************
 
 String _$outputDetailNotifierHash() =>
-    r'd53f12edac915221707bdafedbb8f63ae13a663d';
+    r'0483bc5464f52528c18c116c9132c037ec5bc725';
 
 /// See also [OutputDetailNotifier].
 @ProviderFor(OutputDetailNotifier)
