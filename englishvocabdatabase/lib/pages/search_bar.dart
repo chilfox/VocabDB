@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:englishvocabdatabase/logic/service/outputService.dart';
 
-class MySearchBar extends StatefulWidget {
+class MySearchBar extends ConsumerStatefulWidget {
   const MySearchBar({super.key});
 
   @override
-  State<MySearchBar> createState() => _MySearchBarState();
+  ConsumerState<MySearchBar> createState() => _MySearchBarState();
 }
 
-class _MySearchBarState extends State<MySearchBar> {
+class _MySearchBarState extends ConsumerState<MySearchBar> {
+
   @override
   Widget build(BuildContext context) {
-<<<<<<< Updated upstream
-    return SearchBar(
-      leading: const Icon(Icons.search),
-      hintText: 'Search word or label',
-=======
     final TextEditingController textController = TextEditingController();
     final service = ref.read(outputServiceProvider);
 
@@ -40,8 +38,7 @@ class _MySearchBarState extends State<MySearchBar> {
             const SnackBar(content: Text('Search failed')),
           );
         }
-      },
->>>>>>> Stashed changes
+      }
     );
   }
 }

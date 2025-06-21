@@ -1,6 +1,7 @@
 import 'package:englishvocabdatabase/pages/classify_page.dart';
 import 'package:englishvocabdatabase/pages/settings_page.dart';
 import 'package:englishvocabdatabase/pages/word_bank_page.dart';
+import 'package:englishvocabdatabase/logic/service/outputService.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -40,6 +41,7 @@ class HomePageState extends ConsumerState<HomePage> {
   @override
   Widget build(BuildContext context) {
     final currentWordBankView = ref.watch(wordBankViewProvider);
+    final service = ref.read(outputServiceProvider);
 
     return Scaffold(
       // title
@@ -53,7 +55,7 @@ class HomePageState extends ConsumerState<HomePage> {
       body: _pages[_currentPage],
 
       // add button
-      floatingActionButton: _buildFloatingActionButton(currentWordBankView, _currentPage),
+      floatingActionButton: _buildFloatingActionButton(currentWordBankView, _currentPage, service, context),
 
       // bottom navigation bar
       bottomNavigationBar: BottomNavigationBar(
@@ -71,7 +73,7 @@ class HomePageState extends ConsumerState<HomePage> {
   }
 }
 
-Widget? _buildFloatingActionButton(ChooseListView view, final int currentPage) {
+Widget? _buildFloatingActionButton(ChooseListView view, final int currentPage, OutputService service, BuildContext context) {
   if(currentPage != 0) {
     return null;
   }
@@ -79,8 +81,14 @@ Widget? _buildFloatingActionButton(ChooseListView view, final int currentPage) {
   switch(view) {
     case ChooseListView.label:
       return FloatingActionButton.extended(
-        onPressed: () {
-          print("Add Label按鈕被按下了");
+        onPressed: () async {
+          bool success = await service.add('New Item');
+          if (!context.mounted) return;
+          if (!success) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Add failed')),
+            );
+          }
         },
         label: const Text('Add Label'),
         icon: const Icon(Icons.add),
