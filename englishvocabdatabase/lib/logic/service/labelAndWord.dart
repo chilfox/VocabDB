@@ -1,3 +1,6 @@
+//handel the method related to the relationship between label and word
+//such as remove word from label and so on
+
 import '../../database/label.dart';
 //import word database
 import '../page/pageInformation.dart';

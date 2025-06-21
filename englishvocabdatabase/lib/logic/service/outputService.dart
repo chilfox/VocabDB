@@ -1,3 +1,7 @@
+//the whole service
+
+import 'package:englishvocabdatabase/logic/service/noDefMethod.dart';
+import 'package:englishvocabdatabase/logic/service/wordMethod.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../output/outputListNotifier.dart';
@@ -11,6 +15,8 @@ import 'noDefinitionService.dart';
 //mixin class
 import 'labelAndWord.dart';
 import 'pageService.dart';
+import 'noDefMethod.dart';
+import 'wordMethod.dart';
 
 final outputServiceProvider = Provider<OutputService>((ref){
   NotifierType type = pageStatus.getNotifierType();
@@ -24,7 +30,8 @@ final outputServiceProvider = Provider<OutputService>((ref){
   }
 });
 
-abstract class OutputService with PageMethod, LabelWordMethod{
+abstract class OutputService with PageMethod, LabelWordMethod, 
+                                  NodefMethod, WordMethod{
   final Ref _ref;
 
   Ref get ref => _ref;

@@ -1,3 +1,5 @@
+//handle the method to set the status of page
+
 import '../page/pageInformation.dart';
 
 mixin PageMethod{

@@ -1,3 +1,19 @@
+/*
+database method
+Future<Database> initDatabase();
+Future<Database> getDBConnect();
+Future<bool> hasNoDef({int? id, String? name});
+Future<bool> addNoDef(String name);
+Future<List<NoDefinition>?> getAllNoDefs();
+
+start從0開始，然後是左閉右開，所以start=0, end=1會顯示第一個元素
+Future<List<NoDefinition>?> getSomeNoDefs({required int start, int? end, String? sortColumn});
+
+Future<void> deleteNoDef({String? name, int? id});
+Future<List<NoDefinition>?> searchNoDef(String prefix);
+Future<int> getNoDefid(String name);
+*/
+
 import 'dart:async';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';

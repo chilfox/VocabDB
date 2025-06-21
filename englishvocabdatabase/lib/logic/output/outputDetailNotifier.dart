@@ -2,7 +2,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../page/pageInformation.dart';
 import 'package:meta/meta.dart';
 //should import word database
-import '../test/database_test.dart';
+import '';
 
 part 'outputDetailNotifier.g.dart';
 
