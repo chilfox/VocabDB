@@ -1,3 +1,4 @@
+import 'package:englishvocabdatabase/pages/classify_page.dart';
 import 'package:englishvocabdatabase/pages/settings_page.dart';
 import 'package:englishvocabdatabase/pages/word_bank_page.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,7 @@ class HomePageState extends ConsumerState<HomePage> {
   // Title for the Page
   static const List<String> _pageTitles = [
     'Word Bank',
-    'Create and Classify',
+    'Temporary List',
     'Import & Export',
     'Settings'
   ];
@@ -25,7 +26,7 @@ class HomePageState extends ConsumerState<HomePage> {
   // Page List
   static const List<Widget> _pages = [
     WordBankPage(),
-    SettingsPage(),
+    ClassifyPage(),
     SettingsPage(),
     SettingsPage(),
   ];
@@ -58,7 +59,7 @@ class HomePageState extends ConsumerState<HomePage> {
       bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.library_books), label: 'Browse'),
-          BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Create'), 
+          BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Temporary'), 
           BottomNavigationBarItem(icon: Icon(Icons.build), label: 'Tools'),
           BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
         ],
