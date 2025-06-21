@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:englishvocabdatabase/logic/output/outputListNotifier.dart';
-import 'package:englishvocabdatabase/logic/output/outputItem.dart';
 import 'package:englishvocabdatabase/logic/service/outputService.dart'; // 你的 service
 
 void main() {
