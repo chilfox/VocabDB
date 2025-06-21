@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AddBar extends ConsumerWidget {
-  const AddBar({Key? key}): super(key: key);
+  const AddBar({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -28,6 +28,7 @@ class AddBar extends ConsumerWidget {
             ),
             keyboardType: TextInputType.text,
             onSubmitted: (text) async {
+              addBarTextController.clear();
               bool success = await service.add(text);
               if(!context.mounted) return;
               if (!success) {

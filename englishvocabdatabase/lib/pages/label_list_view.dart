@@ -67,7 +67,7 @@ Widget labelWidget(BuildContext context, OutputListItem item, OutputService serv
                   if (!context.mounted) return;
                   if (!success) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Delete failed')),
+                      const SnackBar(content: Text('Delete Failed')),
                     );
                   }
                 },

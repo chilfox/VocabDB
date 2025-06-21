@@ -86,7 +86,7 @@ Widget? _buildFloatingActionButton(ChooseListView view, final int currentPage, O
           if (!context.mounted) return;
           if (!success) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Add failed')),
+              const SnackBar(content: Text('Add Failed')),
             );
           }
         },
@@ -96,8 +96,14 @@ Widget? _buildFloatingActionButton(ChooseListView view, final int currentPage, O
     
     case ChooseListView.word:
       return FloatingActionButton.extended(
-        onPressed: () {
-          print("Add Word按鈕被按下了");
+        onPressed: () async {
+          bool success = await service.add('New Item');
+          if (!context.mounted) return;
+          if (!success) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Add Failed')),
+            );
+          }
         },
         label: const Text('Add Word'),
         icon: const Icon(Icons.add),
