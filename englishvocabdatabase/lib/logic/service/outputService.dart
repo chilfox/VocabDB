@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../output/outputListNotifier.dart';
 import '../page/pageInformation.dart';
@@ -6,6 +7,10 @@ import '../page/pageInformation.dart';
 import 'labelService.dart';
 import 'wordService.dart';
 import 'noDefinitionService.dart';
+
+//mixin class
+import 'labelAndWord.dart';
+import 'pageService.dart';
 
 final outputServiceProvider = Provider<OutputService>((ref){
   NotifierType type = pageStatus.getNotifierType();
@@ -19,7 +24,7 @@ final outputServiceProvider = Provider<OutputService>((ref){
   }
 });
 
-abstract class OutputService {
+abstract class OutputService with PageMethod, LabelWordMethod{
   final Ref _ref;
 
   Ref get ref => _ref;
