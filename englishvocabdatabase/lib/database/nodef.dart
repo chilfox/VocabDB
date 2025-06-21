@@ -3,15 +3,14 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'package:flutter/widgets.dart';
-class Label {
-  late int _id;
-  late String _name;
-  late int _wordnum;
+class NoDefinition{
 
-  Label({required int id, required String name, required int wordnum}){
+    late int _id;
+    late String _name;
+
+  NoDefinition({required int id, required String name}){
     _id = id;
     _name = name;
-    _wordnum = wordnum;
   }
 
   String Getname(){
@@ -20,15 +19,6 @@ class Label {
 
   void Setname(String x){
     _name = x;
-    return;
-  }
-
-  int Getwordnum(){
-    return _wordnum;
-  }
-
-  void Setwordnum(int x){
-    _wordnum = x;
     return;
   }
 
@@ -42,27 +32,26 @@ class Label {
   }
 
   Map<String, Object?> toMap() {
-    return {'id': _id, 'name': _name, 'wordnum': _wordnum};
+    return {'id': _id, 'name': _name};
   }
 
   @override
   String toString() {
-    return 'Label{id: $_id, name: $_name, wordnum: $_wordnum}';
+    return 'NoDef{id: $_id, name: $_name}';
   }
 }
 
-
-class LabelDB {
+class NoDefDB {
   int _id = 1;
   static Database? database;
   static Future<Database> initDatabase() async {
       final database = await openDatabase(
 
-      join(await getDatabasesPath(), 'label_database.db'),
+      join(await getDatabasesPath(), 'nodefinition_database.db'),
   
       onCreate: (db, version) {
         return db.execute(
-          'CREATE TABLE labels(id INTEGER, name TEXT PRIMARY KEY, wordnum INTEGER)',
+          'CREATE TABLE nodefs(id INTEGER, name TEXT PRIMARY KEY)',
         );
       },
       version: 1,
@@ -77,21 +66,21 @@ class LabelDB {
     return await initDatabase();
   }
 
-  Future<bool> hasLabel({int? id, String? label}) async {
+  Future<bool> hasNoDef({int? id, String? name}) async {
     final db = await getDBConnect();
-    assert(id != null || label != null);
-    if(label != null){
+    assert(id != null || name != null);
+    if(name != null){
       final List<Map<String, Object?>> result = await db.query(
-        'labels',
+        'nodefs',
         where: 'name = ?',
-        whereArgs: [label],
+        whereArgs: [name],
         limit: 1, 
       );
       return result.isNotEmpty;
     }
     else if(id != null){
       final List<Map<String, Object?>> result = await db.query(
-        'labels',
+        'nodefs',
         where: 'id = ?',
         whereArgs: [id],
         limit: 1, 
@@ -101,19 +90,19 @@ class LabelDB {
     return false;
   }
 
-  Future<bool> addLabel(String label) async {
+  Future<bool> addNoDef(String name) async {
 
     final db = await getDBConnect();
     
-    if(await hasLabel(label: label)){
+    if(await hasNoDef(name: name)){
       return false;
     }
 
-    var insertinglabel = Label(id: _id, name: label, wordnum: 0);
+    var insertingnodef = NoDefinition(id: _id, name: name);
 
     await db.insert(
-      'labels',
-      insertinglabel.toMap(),
+      'nodefs',
+      insertingnodef.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
 
@@ -121,19 +110,19 @@ class LabelDB {
     return true;
   }
 
-  Future<List<Label>?> getAllLabels() async {
+  Future<List<NoDefinition>?> getAllNoDefs() async {
     final db = await getDBConnect();
-    final List<Map<String, Object?>> labelMaps = await db.query('labels');
+    final List<Map<String, Object?>> nodefMaps = await db.query('nodefs');
 
     return [
-      for (final {'id': id as int, 'name': name as String, 'wordnum': wordnum as int}
-          in labelMaps)
-        Label(id: id, name: name, wordnum: wordnum),
+      for (final {'id': id as int, 'name': name as String}
+          in nodefMaps)
+        NoDefinition(id: id, name: name),
     ];
   }
 
-  Future<List<Label>?> getSomeLabels({required int start, int? end, String? sortColumn}) async{
-    //sortColumn 放 name, wordnum, 或id
+  Future<List<NoDefinition>?> getSomeNoDefs({required int start, int? end, String? sortColumn}) async{
+    //sortColumn 放 name, 或id
     //如果沒有end，會把end判斷成結尾
     //start從0開始，然後是左閉右開，所以start=0, end=1會顯示第一個元素
     //end最多是list的length
@@ -148,7 +137,7 @@ class LabelDB {
     }
 
     final List<Map<String, dynamic>> maps = await db.query(
-      'labels',
+      'nodefs',
       orderBy: orderBy,
     );
 
@@ -156,8 +145,8 @@ class LabelDB {
       return [];
     }
 
-    final List<Label> result = List.generate(maps.length, (i){
-      return Label(id: maps[i]['id'], name: maps[i]['name'], wordnum: maps[i]['wordnum']);
+    final List<NoDefinition> result = List.generate(maps.length, (i){
+      return NoDefinition(id: maps[i]['id'], name: maps[i]['name']);
     }); 
 
     if(start >= result.length){
@@ -170,18 +159,18 @@ class LabelDB {
     return result.sublist(start, end);
   }
 
-  Future<void> deleteLabel({String? label, int? id}) async {
+  Future<void> deleteNoDef({String? name, int? id}) async {
     final db = await getDBConnect();
-    if(label != null){
+    if(name != null){
       await db.delete(
-        'labels',
+        'nodefs',
         where: 'name = ?',
-        whereArgs: [label],
+        whereArgs: [name],
       );
     }
     else if (id != null){
       await db.delete(
-        'labels',
+        'nodefs',
         where: 'id = ?',
         whereArgs: [id],
       );
@@ -189,11 +178,11 @@ class LabelDB {
   }
 
 
-  Future<List<Label>?> searchLabel(String prefix) async{
+  Future<List<NoDefinition>?> searchNoDef(String prefix) async {
     final db = await getDBConnect();
 
     List<Map<String, Object?>> results = await db.query(
-      'labels',
+      'nodefs',
       where: 'name LIKE ?',
       whereArgs: ['$prefix%'], 
     );
@@ -205,18 +194,18 @@ class LabelDB {
       return namea.compareTo(nameb);
     });
     return [
-      for (final {'id': id as int, 'name': name as String, 'wordnum': wordnum as int}
+      for (final {'id': id as int, 'name': name as String}
           in changeable)
-        Label(id: id, name: name, wordnum: wordnum),
+        NoDefinition(id: id, name: name),
     ];
   }
 
-  Future<int> getLabelid(String label) async{
+  Future<int> getNoDefid(String name) async {
       final db = await getDBConnect();
       final List<Map<String, Object?>> result = await db.query(
-      'labels',
+      'nodefs',
       where: 'name = ?',
-      whereArgs: [label],
+      whereArgs: [name],
       limit: 1, 
       );
       if(result.isEmpty){
@@ -225,45 +214,26 @@ class LabelDB {
       return result[0]['id'] as int;
   }
 
-  Future<void> updateLabel(String label, int wordnum) async{
-    final db = await getDBConnect();
-
-    int id = await getLabelid(label);
-    if(id == -1){
-      return;
-    }
-
-    var temp = Label(id: id, name: label, wordnum: wordnum);
-
-    await db.update(
-      'labels',
-      temp.toMap(),
-      where:'name = ?',
-      whereArgs: [label],
-    );
-  }
 }
-
-
 
 /*
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
-  var db = LabelDB();
-  await db.addLabel("hi");
+  var db = NoDefDB();
+  await db.addNoDef("hi");
 
-  await db.addLabel("hi2");
+  await db.addNoDef("hi2");
 
-  await db.addLabel("hi4");
+  await db.addNoDef("hi4");
 
-  await db.addLabel("hi3");
+  await db.addNoDef("hi3");
   
-  if(await db.hasLabel(id: 10)){
+  if(await db.hasNoDef(id: 10)){
     print("true");
   }
-  print(await db.getAllLabels());
+  print(await db.getAllNoDefs());
 
-  print(await db.getSomeLabels(start: 1, sortColumn: "name"));
+  print(await db.getSomeNoDefs(start: 1, sortColumn: "name"));
 
 }
 */
