@@ -1,19 +1,28 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../output/outputItem.dart';
 import '../output/outputListNotifier.dart';
 import '../page/pageInformation.dart';
-import '../../database/label.dart';
 
-part 'labelService.dart';
+//extend class
+import 'labelService.dart';
+import 'wordService.dart';
+import 'noDefinitionService.dart';
 
 final outputServiceProvider = Provider<OutputService>((ref){
   NotifierType type = pageStatus.getNotifierType();
-  return LabelService(ref);
+  switch(type){
+    case NotifierType.Label:
+      return LabelService(ref);
+    case NotifierType.Word:
+      return WordService(ref);
+    case NotifierType.NoDefinition:
+      return NoDefinitionService(ref);
+  }
 });
 
 abstract class OutputService {
   final Ref _ref;
-  late final _db;
+
+  Ref get ref => _ref;
 
   OutputService(this._ref);
 

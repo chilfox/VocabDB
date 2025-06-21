@@ -1,3 +1,5 @@
+//wait for word database
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../output/outputItem.dart';
 import '../output/outputListNotifier.dart';
@@ -7,10 +9,10 @@ import '../../database/label.dart';
 //abstract class
 import 'outputService.dart';
 
-class LabelService extends OutputService{
+class WordService extends OutputService{
   late final _db;
 
-  LabelService(Ref ref): super(ref){
+  WordService(Ref ref): super(ref){
     _db = LabelDB();
   }
 
