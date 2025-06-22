@@ -1,13 +1,14 @@
-import 'package:englishvocabdatabase/logic/service/outputService.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../logic/output/outputListNotifier.dart';
 
 class AddBar extends ConsumerWidget {
   const AddBar({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final service = ref.read(outputServiceProvider);
+    final service = ref.read(outputListNotifierProvider(NotifierType.NoDefinition).notifier);
+    
     final TextEditingController addBarTextController = TextEditingController(); 
 
     return Row(

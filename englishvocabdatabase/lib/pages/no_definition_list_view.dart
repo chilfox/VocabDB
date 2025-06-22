@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:englishvocabdatabase/logic/output/outputListNotifier.dart';
 import 'package:englishvocabdatabase/logic/output/outputItem.dart';
-import 'package:englishvocabdatabase/logic/service/outputService.dart';
 
 
 class NoDefinitionLIstView extends ConsumerStatefulWidget {
@@ -17,7 +16,7 @@ class _NoDefinitionLIstViewState extends ConsumerState<NoDefinitionLIstView> {
   @override
   Widget build(BuildContext context) {
     final asyncList = ref.watch(outputListNotifierProvider(NotifierType.NoDefinition));
-    final service = ref.read(outputServiceProvider);
+    final service = ref.read(outputListNotifierProvider(NotifierType.NoDefinition).notifier);
 
     return asyncList.when(
       data: (list) {
@@ -38,7 +37,7 @@ class _NoDefinitionLIstViewState extends ConsumerState<NoDefinitionLIstView> {
   }
 }
 
-Widget noDefinitionWidget(BuildContext context, OutputListItem item, OutputService service) {
+Widget noDefinitionWidget(BuildContext context, OutputListItem item, OutputListNotifier service) {
   return Column(
     children: [
       Container(
@@ -54,7 +53,7 @@ Widget noDefinitionWidget(BuildContext context, OutputListItem item, OutputServi
             children: [
               SlidableAction(
                 onPressed: (context) async {
-                  bool success = await service.delete(item.name, item.id);
+                  bool success = await service.delete(item.id);
                   if(!context.mounted) return;
                   if(!success){
                     ScaffoldMessenger.of(context).showSnackBar(

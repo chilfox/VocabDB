@@ -1,4 +1,3 @@
-import 'package:englishvocabdatabase/logic/service/outputService.dart';
 import 'package:englishvocabdatabase/logic/output/outputListNotifier.dart';
 import 'package:englishvocabdatabase/logic/output/outputItem.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +15,7 @@ class _WordListViewState extends ConsumerState<WordListView> {
   @override
   Widget build(BuildContext context) {
     final asyncList = ref.watch(outputListNotifierProvider(NotifierType.Word));
-    final service = ref.read(outputServiceProvider);
+    final service = ref.read(outputListNotifierProvider(NotifierType.Word).notifier);
 
     return asyncList.when(
       data: (list) {
@@ -37,7 +36,7 @@ class _WordListViewState extends ConsumerState<WordListView> {
   }
 }
 
-Widget vocabularyWordWidget(BuildContext context, OutputListItem item, OutputService service) {
+Widget vocabularyWordWidget(BuildContext context, OutputListItem item, OutputListNotifier service) {
   return Column(
     children: [
       Container(
@@ -53,7 +52,7 @@ Widget vocabularyWordWidget(BuildContext context, OutputListItem item, OutputSer
             children: [
               SlidableAction(
                 onPressed: (context) async {
-                  bool success = await service.delete(item.name, item.id);
+                  bool success = await service.delete(item.id);
                   if (!context.mounted) return;
                   if (!success) {
                     ScaffoldMessenger.of(context).showSnackBar(
