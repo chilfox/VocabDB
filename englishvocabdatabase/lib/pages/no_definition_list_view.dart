@@ -3,30 +3,32 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:englishvocabdatabase/logic/output/outputListNotifier.dart';
 import 'package:englishvocabdatabase/logic/output/outputItem.dart';
+import 'package:englishvocabdatabase/logic/service/outputService.dart';
 
-class LabelListView extends ConsumerStatefulWidget {
-  const LabelListView({super.key});
+
+class NoDefinitionLIstView extends ConsumerStatefulWidget {
+  const NoDefinitionLIstView({super.key});
 
   @override
-  ConsumerState<LabelListView> createState() => _LabelListViewState();
+  ConsumerState<NoDefinitionLIstView> createState() => _NoDefinitionLIstViewState();
 }
 
-class _LabelListViewState extends ConsumerState<LabelListView> {
+class _NoDefinitionLIstViewState extends ConsumerState<NoDefinitionLIstView> {
   @override
   Widget build(BuildContext context) {
-    final asyncList = ref.watch(outputListNotifierProvider(NotifierType.Label));
-    final service = ref.read(outputListNotifierProvider(NotifierType.Label).notifier);
+    final asyncList = ref.watch(outputListNotifierProvider(NotifierType.NoDefinition));
+    final service = ref.read(outputServiceProvider);
 
     return asyncList.when(
       data: (list) {
         if (list.isEmpty){
-          return const Center(child: Text("Label List is Empty"));
+          return const Center(child: Text("Temporary List is Empty"));
         }
         return ListView.builder(
           itemCount: list.length,
           itemBuilder: (context, index) {
             final item = list[index];
-            return labelWidget(context, item, service);
+            return noDefinitionWidget(context, item, service);
           },
         );
       },
@@ -36,20 +38,11 @@ class _LabelListViewState extends ConsumerState<LabelListView> {
   }
 }
 
-Widget labelWidget(BuildContext context, OutputListItem item, OutputListNotifier service) {
-  final ThemeData theme = Theme.of(context);
-  final double height = 54;
-  final double roundRectangularBorder = height/2;
-  
+Widget noDefinitionWidget(BuildContext context, OutputListItem item, OutputService service) {
   return Column(
     children: [
       Container(
-        height: height,
-        padding: EdgeInsets.only(left: 10.0),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(roundRectangularBorder),
-          color: theme.colorScheme.secondary,
-        ),
+        padding: EdgeInsets.symmetric(horizontal: 16),
         child: Slidable(
           // key
           key: ValueKey(item.id),
@@ -60,31 +53,37 @@ Widget labelWidget(BuildContext context, OutputListItem item, OutputListNotifier
             extentRatio: 0.25,
             children: [
               SlidableAction(
-                borderRadius: BorderRadius.circular(roundRectangularBorder),
                 onPressed: (context) async {
-                  bool success = await service.delete(item.id);
-                  if (!context.mounted) return;
-                  if (!success) {
+                  bool success = await service.delete(item.name, item.id);
+                  if(!context.mounted) return;
+                  if(!success){
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Delete Failed')),
                     );
                   }
                 },
-                backgroundColor: theme.colorScheme.error,
+                backgroundColor: Theme.of(context).colorScheme.error,
                 icon: Icons.delete,
               ),
             ],
           ),
           child: ListTile(
-            title: Text(item.name, style: TextStyle(color: theme.primaryColor),),
+            title: Text(item.name),
             onTap: () {
-              print("I'm Tapped");
+              print("Open Word Edit Page");
             },
           ),
         ),
       ),
-      
-      SizedBox(height: 20.0,),
+
+      // Divider
+      const Divider(
+        height: 1.0, // 分隔線的高度 (實際的線條厚度)
+        thickness: 1.0, // 分隔線的厚度 (實際的線條厚度，推薦使用這個)
+        indent: 16.0, // 線條左邊的縮排
+        endIndent: 16.0, // 線條右邊的縮排
+        color: Color.fromARGB(255, 107, 104, 104), // 線條的顏色
+      ),
     ],
   );
 }

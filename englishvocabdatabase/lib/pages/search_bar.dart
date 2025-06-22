@@ -22,10 +22,10 @@ class _MySearchBarState extends ConsumerState<MySearchBar> {
       decoration: InputDecoration(
         hintText: 'Search word or label',
         prefixIcon: const Icon(Icons.search),
-        suffixIcon: IconButton( // 添加一個清除按鈕
+        suffixIcon: IconButton(
           icon: const Icon(Icons.clear),
           onPressed: () {
-            textController.clear(); // 清空 TextField，會觸發 onChanged
+            textController.clear();
           },
         ),
         border: const OutlineInputBorder(),
@@ -44,7 +44,7 @@ class _MySearchBarState extends ConsumerState<MySearchBar> {
             const SnackBar(content: Text('Search failed')),
           );
         }
-      },
+      }
     );
   }
 }
