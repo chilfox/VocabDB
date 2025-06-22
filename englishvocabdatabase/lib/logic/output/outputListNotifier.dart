@@ -1,52 +1,98 @@
+import 'package:englishvocabdatabase/logic/service/nodefListService.dart';
+import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'outputItem.dart';
-import '../page/pageInformation.dart';
 import 'package:meta/meta.dart';
-import '../../database/label.dart';
+
+//service
+import '../service/labelService.dart';
 
 part 'outputListNotifier.g.dart';
 
 enum NotifierType { NoDefinition, Label, Word}
 
+//service
+final _labelListSevice = LabelListService();
+final _nodefListService = NodefListService();
+
 @riverpod
-class OutputListNotifier extends _$OutputListNotifier{
+class OutputListNotifier extends _$OutputListNotifier {
   @override
   Future<List<OutputListItem>> build(NotifierType type) async{
-    pageStatus.setNotifierType(type);
-
     switch(type){
       case NotifierType.NoDefinition:
-        return _initNoDefinitionList();
+        return _nodefListService.initNoDefList();
       case NotifierType.Label:
-        return _initLabelList();
+        return _labelListSevice.initLabelList();
       case NotifierType.Word:
-        return _initWordList();
+        return [];
     }
-    return [];  //for safe
   }
 
-  Future<List<OutputListItem>> _initNoDefinitionList() async{
-    return [];
+  //search label, nodefinition, word
+  Future<bool> search(String prefix) async{
+    late List<OutputListItem> result;
+    switch(type){
+      case NotifierType.NoDefinition:
+        result = await _nodefListService.searchNoDef(prefix);
+      case NotifierType.Label:
+        result = await _labelListSevice.searchLabel(prefix);
+      case NotifierType.Word:
+        result = [];
+    }
+
+    _refreshAll(result);
+    return (result == [] ? false : true);
   }
 
-  Future<List<OutputListItem>> _initLabelList() async{
-    final db = LabelDB();
-    List<Label>? result = await db.getAllLabels();//for test
-    result ??= [];
-      
-    List<OutputListItem> outputList = 
-      result.map((label) => OutputListItem(id: label.Getid(), name: label.Getname())).toList();
+  //add label, nodefinition, word
+  Future<bool> add(String name) async{
+    List<OutputListItem>? result;
+    switch(type){
+      case NotifierType.NoDefinition:
+        result = await _nodefListService.addNoDef(name);
+      case NotifierType.Label:
+        result = await _labelListSevice.addLabel(name);
+      case NotifierType.Word:
+        result = [];
+    }
 
-    return outputList;
-
+    if(result == null){
+      //add fail
+      return false;
+    }
+    else{
+      //add success
+      _refreshAll(result);
+      return true;
+    }
   }
-  
-  Future<List<OutputListItem>> _initWordList() async{
-    return [];
+
+  //delete label, nodefinition, word
+  Future<bool> delete(int id) async{
+    List<OutputListItem>? result;
+    switch(type){
+      case NotifierType.NoDefinition:
+        result = await _nodefListService.deleteNoDef(id);
+      case NotifierType.Label:
+        result = await _labelListSevice.deleteLabel(id);
+      case NotifierType.Word:
+        result = [];
+    }
+
+    if(result == null){
+      //add fail
+      return false;
+    }
+    else{
+      //add success
+      _refreshAll(result);
+      return true;
+    }
   }
 
   //add label or string
-  void addOutputString(OutputListItem item){
+  void _addOutputString(OutputListItem item){
     // only perform when having data
     state.whenData((current) {
       state = AsyncData([...current, item]);
@@ -54,19 +100,19 @@ class OutputListNotifier extends _$OutputListNotifier{
   }
 
   //add a List<String> to output List
-  void addList(List<OutputListItem> list){
+  void _addList(List<OutputListItem> list){
     state.whenData((current){
       state = AsyncData([...current, ...list]);
     });
   }
 
   //change whole output to new one
-  void refreshAll(List<OutputListItem> newOutput){
+  void _refreshAll(List<OutputListItem> newOutput){
     state = AsyncData(newOutput);
   }
 
   //delete the specified string in output
-  bool deleteTarget(int id) {
+  bool _deleteTarget(int id) {
     if (state is! AsyncData){
       return false;
     }
@@ -83,7 +129,7 @@ class OutputListNotifier extends _$OutputListNotifier{
   }
 
   //remove all output string
-  void removeAll(){
+  void _removeAll(){
     state = AsyncData([]);
   }
 }

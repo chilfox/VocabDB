@@ -1,6 +1,6 @@
 import 'package:englishvocabdatabase/pages/settings_page.dart';
 import 'package:englishvocabdatabase/pages/word_bank_page.dart';
-import 'package:englishvocabdatabase/logic/service/outputService.dart';
+import '../logic/output/outputListNotifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -40,7 +40,6 @@ class HomePageState extends ConsumerState<HomePage> {
   @override
   Widget build(BuildContext context) {
     final currentWordBankView = ref.watch(wordBankViewProvider);
-    final service = ref.read(outputServiceProvider);
 
     return Scaffold(
       // title
@@ -54,7 +53,7 @@ class HomePageState extends ConsumerState<HomePage> {
       body: _pages[_currentPage],
 
       // add button
-      floatingActionButton: _buildFloatingActionButton(currentWordBankView, _currentPage, service, context),
+      floatingActionButton: _buildFloatingActionButton(currentWordBankView, _currentPage, ref, context),
 
       // bottom navigation bar
       bottomNavigationBar: BottomNavigationBar(
@@ -72,7 +71,7 @@ class HomePageState extends ConsumerState<HomePage> {
   }
 }
 
-Widget? _buildFloatingActionButton(ChooseListView view, final int currentPage, OutputService service, BuildContext context) {
+Widget? _buildFloatingActionButton(ChooseListView view, final int currentPage, WidgetRef ref, BuildContext context) {
   if(currentPage != 0) {
     return null;
   }
@@ -81,6 +80,7 @@ Widget? _buildFloatingActionButton(ChooseListView view, final int currentPage, O
     case ChooseListView.label:
       return FloatingActionButton.extended(
         onPressed: () async {
+          final service = ref.read(outputListNotifierProvider(NotifierType.Label).notifier);
           bool success = await service.add('New Item');
           if (!context.mounted) return;
           if (!success) {

@@ -1,58 +1,51 @@
 //handle the outputlist of label
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../output/outputItem.dart';
-import '../output/outputListNotifier.dart';
-import '../page/pageInformation.dart';
 import '../../database/label.dart';
 
-//abstract class
-import 'outputService.dart';
+class LabelListService{
+  late final LabelDB _db;
 
-class LabelService extends OutputService{
-  late final _db;
-
-  LabelService(Ref ref): super(ref){
+  LabelListService(){
     _db = LabelDB();
   }
 
-  @override
-  Future<bool> search(String prefix) async{
-    NotifierType? type = pageStatus.getNotifierType();
+  Future<List<OutputListItem>> initLabelList() async{
+    List<Label>? result = await _db.getAllLabels();//for test
+    result ??= [];
+      
+    List<OutputListItem> outputList = 
+      result.map((label) => OutputListItem(id: label.Getid(), name: label.Getname())).toList();
 
-    final notifier = ref.read(outputListNotifierProvider(type).notifier);
-    
+    return outputList;
+  }
+
+  Future<List<OutputListItem>> searchLabel(String prefix) async{
     //for search in database
     List<Label>? result = await _db.searchLabel(prefix);   
     if(result == null){
-      return false;
+      return [];
     }
     else{
       List<OutputListItem> outputList = 
         result.map((label) => OutputListItem(id: label.Getid(), name: label.Getname())).toList();
-      notifier.refreshAll(outputList);
-      return true;
+      return outputList;
     }
   }
-  
-  @override
-  Future<bool> add(String name) async{
+
+  Future<List<OutputListItem>?> addLabel(String name) async{
     bool exist = await _db.hasLabel(label : name);
 
     if(exist){
-      return false;
+      return null;
     }
     else{
-      NotifierType? type = pageStatus.getNotifierType();
-
-      final notifier = ref.read(outputListNotifierProvider(type).notifier);
-
       bool success = await _db.addLabel(name).catchError((e){
         print('insertLabel error: $e');  //for test
       });
 
       if(!success){
-        return false;
+        return null;
       }
 
       List<Label>? result = await _db.getAllLabels();//for test
@@ -60,23 +53,17 @@ class LabelService extends OutputService{
       
       List<OutputListItem> outputList = 
         result.map((label) => OutputListItem(id: label.Getid(), name: label.Getname())).toList();
-      notifier.refreshAll(outputList);
-
-      return true;
+      return outputList;
     }
   }
 
-  @override
-  Future<bool> delete(String name, int id) async{
-    bool exist = await _db.hasLabel(label: name);
+  Future<List<OutputListItem>?> deleteLabel(int id) async{
+    bool exist = await _db.hasLabel(id: id);
 
     if(!exist){
-      return false;
+      return null;
     }
     else{
-      NotifierType? type = pageStatus.getNotifierType();
-
-      final notifier = ref.read(outputListNotifierProvider(type).notifier);
       await _db.deleteLabel(id: id).catchError((e) {
         print('deleteLabel error: $e');   //for test
       });
@@ -86,9 +73,8 @@ class LabelService extends OutputService{
       
       List<OutputListItem> outputList = 
         result.map((label) => OutputListItem(id: label.Getid(), name: label.Getname())).toList();
-      notifier.refreshAll(outputList);
 
-      return true;
+      return outputList;
     }
   }
 }

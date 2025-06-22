@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:englishvocabdatabase/logic/output/outputListNotifier.dart';
 import 'package:englishvocabdatabase/logic/output/outputItem.dart';
-import 'package:englishvocabdatabase/logic/service/outputService.dart';
 
 class LabelListView extends ConsumerStatefulWidget {
   const LabelListView({super.key});
@@ -16,7 +15,7 @@ class _LabelListViewState extends ConsumerState<LabelListView> {
   @override
   Widget build(BuildContext context) {
     final asyncList = ref.watch(outputListNotifierProvider(NotifierType.Label));
-    final service = ref.read(outputServiceProvider);
+    final service = ref.read(outputListNotifierProvider(NotifierType.Label).notifier);
 
     return asyncList.when(
       data: (list) {
@@ -37,7 +36,7 @@ class _LabelListViewState extends ConsumerState<LabelListView> {
   }
 }
 
-Widget labelWidget(BuildContext context, OutputListItem item, OutputService service) {
+Widget labelWidget(BuildContext context, OutputListItem item, OutputListNotifier service) {
   final ThemeData theme = Theme.of(context);
   final double height = 54;
   final double roundRectangularBorder = height/2;
@@ -63,7 +62,7 @@ Widget labelWidget(BuildContext context, OutputListItem item, OutputService serv
               SlidableAction(
                 borderRadius: BorderRadius.circular(roundRectangularBorder),
                 onPressed: (context) async {
-                  bool success = await service.delete(item.name, item.id);
+                  bool success = await service.delete(item.id);
                   if (!context.mounted) return;
                   if (!success) {
                     ScaffoldMessenger.of(context).showSnackBar(
