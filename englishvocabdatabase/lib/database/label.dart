@@ -99,12 +99,12 @@ class LabelDB {
     return false;
   }
 
-  Future<bool> addLabel(String label) async {
+  Future<int> addLabel(String label) async {
 
     final db = await getDBConnect();
     
     if(await hasLabel(label: label)){
-      return false;
+      return -1;
     }
 
     final Map<String, dynamic> insertinglabel = {
@@ -112,13 +112,13 @@ class LabelDB {
       'wordnum': 0, 
     };
 
-    await db.insert(
+    final int newid = await db.insert(
       'labels',
       insertinglabel,
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
 
-    return true;
+    return newid;
   }
 
   Future<List<Label>?> getAllLabels() async {
@@ -250,7 +250,17 @@ class LabelDB {
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   var db = LabelDB();
+<<<<<<< HEAD
+  await db.addLabel("hi");
+
+  await db.addLabel("hi2");
+
+  await db.addLabel("hi4");
+
+  await db.addLabel("hi3");
+=======
   await db.addLabel("hi6");
+>>>>>>> 9f3e8708a9cdd00826d6086514937653d4fa92c5
   
   if(await db.hasLabel(id: 10)){
     print("true");
