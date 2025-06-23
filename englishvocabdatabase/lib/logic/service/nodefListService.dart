@@ -2,6 +2,7 @@
 
 import '../output/outputItem.dart';
 import '../../database/nodef.dart';
+import 'template.dart';
 
 class NodefListService{
   late final NoDefDB _db;
@@ -13,24 +14,14 @@ class NodefListService{
   Future<List<OutputListItem>> initNoDefList() async{
     List<NoDefinition>? result = await _db.getAllNoDefs();//for test
     result ??= [];
-      
-    List<OutputListItem> outputList = 
-      result.map((nodef) => OutputListItem(id: nodef.Getid(), name: nodef.Getname())).toList();
-
-    return outputList;
+    return convertToOutputList(result, (l) => l.Getid(), (l) => l.Getname());
   }
 
   Future<List<OutputListItem>> searchNoDef(String prefix) async{
     //for search in database
     List<NoDefinition>? result = await _db.searchNoDef(prefix);   
-    if(result == null){
-      return [];
-    }
-    else{
-      List<OutputListItem> outputList = 
-        result.map((nodef) => OutputListItem(id: nodef.Getid(), name: nodef.Getname())).toList();
-      return outputList;
-    }
+    result ??= [];
+    return convertToOutputList(result, (l) => l.Getid(), (l) => l.Getname());
   }
 
   Future<List<OutputListItem>?> addNoDef(String name) async{
@@ -44,10 +35,7 @@ class NodefListService{
 
     List<NoDefinition>? result = await _db.getAllNoDefs();//for test
     result ??= [];
-    
-    List<OutputListItem> outputList = 
-      result.map((nodef) => OutputListItem(id: nodef.Getid(), name: nodef.Getname())).toList();
-    return outputList;
+    return convertToOutputList(result, (l) => l.Getid(), (l) => l.Getname());
   }
 
   Future<List<OutputListItem>?> deleteNoDef(int id) async{
@@ -63,11 +51,7 @@ class NodefListService{
 
       List<NoDefinition>? result = await _db.getAllNoDefs();//for test
       result ??= [];
-      
-      List<OutputListItem> outputList = 
-        result.map((nodef) => OutputListItem(id: nodef.Getid(), name: nodef.Getname())).toList();
-
-      return outputList;
+      return convertToOutputList(result, (l) => l.Getid(), (l) => l.Getname());
     }
   }
 }

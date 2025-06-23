@@ -2,6 +2,7 @@
 
 import '../output/outputItem.dart';
 import '../../database/label.dart';
+import 'template.dart';
 
 class LabelListService{
   late final LabelDB _db;
@@ -13,24 +14,15 @@ class LabelListService{
   Future<List<OutputListItem>> initLabelList() async{
     List<Label>? result = await _db.getAllLabels();//for test
     result ??= [];
-      
-    List<OutputListItem> outputList = 
-      result.map((label) => OutputListItem(id: label.Getid(), name: label.Getname())).toList();
 
-    return outputList;
+    return convertToOutputList(result, (l) => l.Getid(), (l) => l.Getname());
   }
 
   Future<List<OutputListItem>> searchLabel(String prefix) async{
     //for search in database
-    List<Label>? result = await _db.searchLabel(prefix);   
-    if(result == null){
-      return [];
-    }
-    else{
-      List<OutputListItem> outputList = 
-        result.map((label) => OutputListItem(id: label.Getid(), name: label.Getname())).toList();
-      return outputList;
-    }
+    List<Label>? result = await _db.searchLabel(prefix);  
+    result ??= [];
+    return convertToOutputList(result, (l) => l.Getid(), (l) => l.Getname()); 
   }
 
   Future<List<OutputListItem>?> addLabel(String name) async{
@@ -51,9 +43,7 @@ class LabelListService{
       List<Label>? result = await _db.getAllLabels();//for test
       result ??= [];
       
-      List<OutputListItem> outputList = 
-        result.map((label) => OutputListItem(id: label.Getid(), name: label.Getname())).toList();
-      return outputList;
+      return convertToOutputList(result, (l) => l.Getid(), (l) => l.Getname());
     }
   }
 
@@ -71,10 +61,7 @@ class LabelListService{
       List<Label>? result = await _db.getAllLabels();//for test
       result ??= [];
       
-      List<OutputListItem> outputList = 
-        result.map((label) => OutputListItem(id: label.Getid(), name: label.Getname())).toList();
-
-      return outputList;
+      return convertToOutputList(result, (l) => l.Getid(), (l) => l.Getname());
     }
   }
 }

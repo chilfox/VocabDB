@@ -57,15 +57,9 @@ class OutputListNotifier extends _$OutputListNotifier {
         result = [];
     }
 
-    if(result == null){
-      //add fail
-      return false;
-    }
-    else{
-      //add success
-      _refreshAll(result);
-      return true;
-    }
+    if (result == null) return false;
+    _refreshAll(result);
+    return true;
   }
 
   //delete label, nodefinition, word
