@@ -1,8 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import '../page/pageInformation.dart';
-import 'package:meta/meta.dart';
-//should import word database
-import '';
+import '../../database/wordModifyInformation.dart';
 
 part 'outputDetailNotifier.g.dart';
 
@@ -41,39 +38,11 @@ class OutputDetailNotifier extends _$OutputDetailNotifier{
   //information
   @override
   Future<Detail> build() async{
-    int wordId = pageStatus.wordId;
-    assert(wordId != -1);
-
-    bool isword = await hasWord(wordId);  //should call word database
-    if(!isword){
-      assert(await hasNoDefinition(wordId));
-      //this is still a string not a word
-      NoDefinition? word = await findNoDefinition(wordId);
-      return Detail(name: word!.name, id: word!.id);
-    }
-    else{
-      //is a word
-      Word? word = await findWord(wordId);
-
-      //change word information into Detail
-      return Detail(name: word!.name, id: word!.id);
-    }
+    return Detail(name: '', id: 0);
   }
 
   void ModifyInformation(WordModifyInformation newData){
-    state = state.whenData((detail) {
-      switch(newData.column){
-        case 'definition':
-          return detail.copyWith(definition: newData.newInformation);
-        case 'parts':
-          return detail.copyWith(parts: newData.newInformation);
-        case 'chinese':
-          return detail.copyWith(chinese: newData.newInformation);
-        case 'setence':
-          return detail.copyWith(sentence: newData.newInformation);
-      }
-      throw Exception('Unreachable code: no detail found for modifyInformation in notifier= ${newData.column}');
-    });
+
   }
 }
 

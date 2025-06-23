@@ -2,14 +2,14 @@
 database method
 Future<Database> initDatabase();
 Future<Database> getDBConnect();
-Future<bool> hasNoDef({int? id, String? name});
+Future<bool> hasNoDef(int id);
 Future<bool> addNoDef(String name);
 Future<List<NoDefinition>?> getAllNoDefs();
 
 start從0開始，然後是左閉右開，所以start=0, end=1會顯示第一個元素
 Future<List<NoDefinition>?> getSomeNoDefs({required int start, int? end, String? sortColumn});
 
-Future<void> deleteNoDef({String? name, int? id});
+Future<void> deleteNoDef(int id);
 Future<List<NoDefinition>?> searchNoDef(String prefix);
 Future<int> getNoDefid(String name);
 */
@@ -19,35 +19,7 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'package:flutter/widgets.dart';
-
-
-class WordModifyInformation{
-    late String _column;
-    late String _newInformation;
-    
-    WordModifyInformation({required String column, required String newInformation}){
-      _column = column;
-      _newInformation = newInformation;
-    }
-
-    String Getcolumn(){
-      return _column;
-    }
-
-    void Setcolumn(String x){
-      _column = x;
-      return;
-    }
-
-    String Getinformation(){
-      return _newInformation;
-    }
-
-    void Setinformation(String x){
-      _newInformation = x;
-      return;
-    }
-}
+import 'wordModifyInformation.dart';
 
 class NoDefinition{
 
@@ -83,6 +55,15 @@ class NoDefinition{
   String toString() {
     return 'NoDefinition{id: $_id, name: $_name, definition: $_definition, parts: $_parts, chinese: $_chinese, sentence: $_sentence}';
   }
+
+  int Getid(){
+    return _id;
+  }
+
+  String Getname(){
+    return _name;
+  }
+
 }
 
 class NoDefDB {
@@ -229,8 +210,8 @@ class NoDefDB {
       List<dynamic> whereArgs = [];
       assert(conditions.isNotEmpty);
       for(var condition in conditions){
-        var key = condition._column;
-        var value = condition._newInformation;
+        var key = condition.column;
+        var value = condition.newInformation;
         clauseParts.add('$key = ?');
         whereArgs.add(value);
       }
@@ -269,8 +250,8 @@ class NoDefDB {
         return;
     }
     var information = await searchNoDefDetails(id);
-    var column = newData._column;
-    var newInformation = newData._newInformation;
+    var column = newData.column;
+    var newInformation = newData.newInformation;
     assert(column != 'id');
     await db.update(
       'nodefs',

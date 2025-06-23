@@ -39,13 +39,13 @@ class NodefListService{
   }
 
   Future<List<OutputListItem>?> deleteNoDef(int id) async{
-    bool exist = await _db.hasNoDef(id: id);
+    bool exist = await _db.hasNoDef(id);
 
     if(!exist){
       return null;
     }
     else{
-      await _db.deleteNoDef(id: id).catchError((e) {
+      await _db.deleteNoDef(id).catchError((e) {
         print('delete Nodef error: $e');   //for test
       });
 
