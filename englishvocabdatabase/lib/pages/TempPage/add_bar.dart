@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../logic/output/outputListNotifier.dart';
+import '../../logic/output/outputListNotifier.dart';
 
 class AddBar extends ConsumerWidget {
   const AddBar({super.key});

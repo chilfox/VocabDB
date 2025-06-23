@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'word_bank_page.dart';
-import '../logic/output/outputListNotifier.dart';
+import '../../logic/output/outputListNotifier.dart';
 
 class MySearchBar extends ConsumerStatefulWidget {
   const MySearchBar({super.key});
@@ -33,9 +33,17 @@ class _MySearchBarState extends ConsumerState<MySearchBar> {
       keyboardType: TextInputType.text,
       onChanged: (text) async {
         // 對應 currentView 去選 notifier type
-        final NotifierType type = (currentView == ChooseListView.label)
-            ? NotifierType.Label
-            : NotifierType.Word;
+        NotifierType? type;
+        if (currentView == ChooseListView.label) {
+          type = NotifierType.Label;
+        }
+        else if (currentView == ChooseListView.word) {
+          type = NotifierType.Word;
+        }
+        else{
+          type = NotifierType.NoDefinition;
+        }
+        
         final service = ref.read(outputListNotifierProvider(type).notifier);
         bool success = await service.search(text);
         if (!context.mounted) return;

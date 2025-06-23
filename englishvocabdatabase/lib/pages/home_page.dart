@@ -1,6 +1,6 @@
-import 'package:englishvocabdatabase/pages/classify_page.dart';
+import 'package:englishvocabdatabase/pages/TempPage/classify_page.dart';
 import 'package:englishvocabdatabase/pages/settings_page.dart';
-import 'package:englishvocabdatabase/pages/word_bank_page.dart';
+import 'package:englishvocabdatabase/pages/BrowsePage/word_bank_page.dart';
 import '../logic/output/outputListNotifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -91,18 +91,6 @@ Widget? _buildFloatingActionButton(ChooseListView view, final int currentPage, W
         label: const Text('Add Label'),
         icon: const Icon(Icons.add),
       );
-        /* () async {
-          final service = ref.read(outputListNotifierProvider(NotifierType.Label).notifier);
-          int success = await service.add('New Item');
-          if (!context.mounted) return;
-          if (success == -1) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Add Failed')),
-            );
-          }
-        },
-              ); */
-    
     case ChooseListView.word:
       return FloatingActionButton.extended(
         onPressed: () async {          
@@ -119,6 +107,8 @@ Widget? _buildFloatingActionButton(ChooseListView view, final int currentPage, W
         label: const Text('Add Word'),
         icon: const Icon(Icons.add),
       );
+    default:
+      return null;
   }
 }
 

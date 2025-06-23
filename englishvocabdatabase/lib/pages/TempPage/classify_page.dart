@@ -1,6 +1,7 @@
-import 'package:englishvocabdatabase/pages/add_bar.dart';
-import 'package:englishvocabdatabase/pages/no_definition_list_view.dart';
-import 'package:englishvocabdatabase/pages/search_bar.dart';
+import 'package:englishvocabdatabase/pages/BrowsePage/word_bank_page.dart';
+import 'package:englishvocabdatabase/pages/TempPage/add_bar.dart';
+import 'package:englishvocabdatabase/pages/TempPage/no_definition_list_view.dart';
+import 'package:englishvocabdatabase/pages/BrowsePage/search_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -12,6 +13,13 @@ class ClassifyPage extends ConsumerStatefulWidget {
 }
 
 class ClassifyPageState extends ConsumerState<ClassifyPage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(wordBankViewProvider.notifier).state = ChooseListView.nodef;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +36,7 @@ class ClassifyPageState extends ConsumerState<ClassifyPage> {
             
             const AddBar(),
 
-            Expanded(child: NoDefinitionLIstView()),
+            Expanded(child: NoDefinitionListView()),
            ],
         ),
       ),

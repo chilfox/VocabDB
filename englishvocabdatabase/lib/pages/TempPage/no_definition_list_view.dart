@@ -5,14 +5,14 @@ import 'package:englishvocabdatabase/logic/output/outputListNotifier.dart';
 import 'package:englishvocabdatabase/logic/output/outputItem.dart';
 
 
-class NoDefinitionLIstView extends ConsumerStatefulWidget {
-  const NoDefinitionLIstView({super.key});
+class NoDefinitionListView extends ConsumerStatefulWidget {
+  const NoDefinitionListView({super.key});
 
   @override
-  ConsumerState<NoDefinitionLIstView> createState() => _NoDefinitionLIstViewState();
+  ConsumerState<NoDefinitionListView> createState() => _NoDefinitionListViewState();
 }
 
-class _NoDefinitionLIstViewState extends ConsumerState<NoDefinitionLIstView> {
+class _NoDefinitionListViewState extends ConsumerState<NoDefinitionListView> {
   @override
   Widget build(BuildContext context) {
     final asyncList = ref.watch(outputListNotifierProvider(NotifierType.NoDefinition));
