@@ -180,7 +180,7 @@ class NoDefDB {
     );
   }
 
-
+  //return list of id with prefix name
   Future<List<NoDefinition>?> searchNoDef(String prefix) async {
     final db = await getDBConnect();
 
@@ -203,6 +203,7 @@ class NoDefDB {
     ];
   }
 
+  //return list of id that satisfies the requirement
   Future<List<int>> getNoDefid(List<WordModifyInformation> conditions) async {
       final db = await getDBConnect();
       List<String> clauseParts = [];
@@ -229,6 +230,7 @@ class NoDefDB {
       ];
   }
 
+  //if not find will return null
   Future<NoDefinition?> searchNoDefDetails(int id) async {
     final db = await getDBConnect();
     final List<Map<String, Object?>> result = await db.query(
