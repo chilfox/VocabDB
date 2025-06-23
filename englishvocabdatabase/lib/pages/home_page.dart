@@ -82,9 +82,9 @@ Widget? _buildFloatingActionButton(ChooseListView view, final int currentPage, W
       return FloatingActionButton.extended(
         onPressed: () async {
           final service = ref.read(outputListNotifierProvider(NotifierType.Label).notifier);
-          bool success = await service.add('New Item');
+          int success = await service.add('New Item');
           if (!context.mounted) return;
-          if (!success) {
+          if (success == -1) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Add Failed')),
             );
@@ -99,9 +99,9 @@ Widget? _buildFloatingActionButton(ChooseListView view, final int currentPage, W
         onPressed: () async {          
           final service = ref.read(outputListNotifierProvider(NotifierType.Word).notifier);
 
-          bool success = await service.add('New Item');
+          int success = await service.add('New Item');
           if (!context.mounted) return;
-          if (!success) {
+          if (success == -1) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Add Failed')),
             );

@@ -30,9 +30,9 @@ class AddBar extends ConsumerWidget {
             keyboardType: TextInputType.text,
             onSubmitted: (text) async {
               addBarTextController.clear();
-              bool success = await service.add(text);
+              int success = await service.add(text);
               if(!context.mounted) return;
-              if (!success) {
+              if (success == -1) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Add Failed')),
                 );
