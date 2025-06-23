@@ -52,7 +52,6 @@ class Label {
 
 
 class LabelDB {
-  int _id = 1;
   static Database? database;
   static Future<Database> initDatabase() async {
       final database = await openDatabase(
@@ -61,7 +60,7 @@ class LabelDB {
   
       onCreate: (db, version) {
         return db.execute(
-          'CREATE TABLE labels(id INTEGER, name TEXT PRIMARY KEY, wordnum INTEGER)',
+          'CREATE TABLE labels(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, wordnum INTEGER)',
         );
       },
       version: 1,
@@ -108,15 +107,17 @@ class LabelDB {
       return false;
     }
 
-    var insertinglabel = Label(id: _id, name: label, wordnum: 0);
+    final Map<String, dynamic> insertinglabel = {
+      'name': label,
+      'wordnum': 0, 
+    };
 
     await db.insert(
       'labels',
-      insertinglabel.toMap(),
+      insertinglabel,
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
 
-    _id += 1;
     return true;
   }
 
@@ -249,13 +250,7 @@ class LabelDB {
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   var db = LabelDB();
-  await db.addLabel("hi");
-
-  await db.addLabel("hi2");
-
-  await db.addLabel("hi4");
-
-  await db.addLabel("hi3");
+  await db.addLabel("hi6");
   
   if(await db.hasLabel(id: 10)){
     print("true");

@@ -19,46 +19,74 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 import 'package:flutter/widgets.dart';
+
+
+class WordModifyInformation{
+    late String _column;
+    late String _newInformation;
+    
+    WordModifyInformation({required String column, required String newInformation}){
+      _column = column;
+      _newInformation = newInformation;
+    }
+
+    String Getcolumn(){
+      return _column;
+    }
+
+    void Setcolumn(String x){
+      _column = x;
+      return;
+    }
+
+    String Getinformation(){
+      return _newInformation;
+    }
+
+    void Setinformation(String x){
+      _newInformation = x;
+      return;
+    }
+}
+
 class NoDefinition{
 
-    late int _id;
-    late String _name;
+  late int _id;
+  late String _name;
+  late String _definition = '';
+  late String _parts = '';   //詞性
+  String? _chinese = '';
+  late String _sentence = '';
 
-  NoDefinition({required int id, required String name}){
+  NoDefinition({required int id, required String name, String? definition, String? parts, String? chinese, String? sentence}){
     _id = id;
     _name = name;
-  }
-
-  String Getname(){
-    return _name;
-  }
-
-  void Setname(String x){
-    _name = x;
-    return;
-  }
-
-  int Getid(){
-    return _id;
-  }
-
-  void Setid(int x){
-    _id = x;
-    return;
+    if(definition != null){
+      _definition = definition;
+    }
+    if(parts != null){
+      _parts = parts;
+    }
+    if(chinese != null){
+      _chinese = chinese;
+    }
+    if(sentence != null){
+      _sentence = sentence;
+    }
   }
 
   Map<String, Object?> toMap() {
-    return {'id': _id, 'name': _name};
+    return {'id': _id, 'name': _name, 'definition': _definition, 'parts': _parts, 'chinese':_chinese, 'sentence':_sentence};
   }
 
   @override
   String toString() {
-    return 'NoDef{id: $_id, name: $_name}';
+    return 'NoDefinition{id: $_id, name: $_name, definition: $_definition, parts: $_parts, chinese: $_chinese, sentence: $_sentence}';
   }
 }
 
 class NoDefDB {
-  int _id = 1;
+  int _id = 0;
   static Database? database;
   static Future<Database> initDatabase() async {
       final database = await openDatabase(
@@ -67,7 +95,7 @@ class NoDefDB {
   
       onCreate: (db, version) {
         return db.execute(
-          'CREATE TABLE nodefs(id INTEGER, name TEXT PRIMARY KEY)',
+          'CREATE TABLE nodefs(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, definition TEXT, parts TEXT, chinese TEXT, sentence TEXT)',
         );
       },
       version: 1,
@@ -82,47 +110,34 @@ class NoDefDB {
     return await initDatabase();
   }
 
-  Future<bool> hasNoDef({int? id, String? name}) async {
+  Future<bool> hasNoDef(int id) async {
     final db = await getDBConnect();
-    assert(id != null || name != null);
-    if(name != null){
-      final List<Map<String, Object?>> result = await db.query(
-        'nodefs',
-        where: 'name = ?',
-        whereArgs: [name],
-        limit: 1, 
-      );
-      return result.isNotEmpty;
-    }
-    else if(id != null){
-      final List<Map<String, Object?>> result = await db.query(
-        'nodefs',
-        where: 'id = ?',
-        whereArgs: [id],
-        limit: 1, 
-      );
-      return result.isNotEmpty;
-    }
-    return false;
+    final List<Map<String, Object?>> result = await db.query(
+      'nodefs',
+      where: 'id = ?',
+      whereArgs: [id],
+      limit: 1, 
+    );
+    return result.isNotEmpty;
   }
 
   Future<bool> addNoDef(String name) async {
 
     final db = await getDBConnect();
     
-    if(await hasNoDef(name: name)){
-      return false;
-    }
-
-    var insertingnodef = NoDefinition(id: _id, name: name);
+    final Map<String, dynamic> insertingnodef = {
+      'name': name,
+      'definition': '',
+      'parts': '',
+      'chinese': '',
+      'sentence': '', 
+    };
 
     await db.insert(
       'nodefs',
-      insertingnodef.toMap(),
+      insertingnodef,
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
-
-    _id += 1;
     return true;
   }
 
@@ -138,7 +153,7 @@ class NoDefDB {
   }
 
   Future<List<NoDefinition>?> getSomeNoDefs({required int start, int? end, String? sortColumn}) async{
-    //sortColumn 放 name, 或id
+    //sortColumn 放 name, id, definition, parts, chinese, sentence
     //如果沒有end，會把end判斷成結尾
     //start從0開始，然後是左閉右開，所以start=0, end=1會顯示第一個元素
     //end最多是list的length
@@ -175,22 +190,13 @@ class NoDefDB {
     return result.sublist(start, end);
   }
 
-  Future<void> deleteNoDef({String? name, int? id}) async {
+  Future<void> deleteNoDef(int id) async {
     final db = await getDBConnect();
-    if(name != null){
-      await db.delete(
-        'nodefs',
-        where: 'name = ?',
-        whereArgs: [name],
-      );
-    }
-    else if (id != null){
-      await db.delete(
-        'nodefs',
-        where: 'id = ?',
-        whereArgs: [id],
-      );
-    }
+    await db.delete(
+      'nodefs',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
   }
 
 
@@ -216,26 +222,73 @@ class NoDefDB {
     ];
   }
 
-  Future<int> getNoDefid(String name) async {
+  Future<List<int>> getNoDefid(List<WordModifyInformation> conditions) async {
       final db = await getDBConnect();
-      final List<Map<String, Object?>> result = await db.query(
-      'nodefs',
-      where: 'name = ?',
-      whereArgs: [name],
-      limit: 1, 
-      );
-      if(result.isEmpty){
-        return -1;
+      List<String> clauseParts = [];
+      String whereClause = '';
+      List<dynamic> whereArgs = [];
+      assert(conditions.isNotEmpty);
+      for(var condition in conditions){
+        var key = condition._column;
+        var value = condition._newInformation;
+        clauseParts.add('$key = ?');
+        whereArgs.add(value);
       }
-      return result[0]['id'] as int;
+      whereClause = clauseParts.join(' AND ');
+
+      final List<Map<String, Object?>> results = await db.query(
+        'nodefs',
+        columns: ['id'], 
+        where: whereClause.isEmpty ? null : whereClause,
+        whereArgs: whereArgs.isEmpty ? null : whereArgs,
+      );
+      return [
+        for (final {'id': id as int} in results)
+        id,
+      ];
   }
 
+  Future<NoDefinition?> searchNoDefDetails(int id) async {
+    final db = await getDBConnect();
+    final List<Map<String, Object?>> result = await db.query(
+        'nodefs',
+        where: 'id = ?',
+        whereArgs: [id],
+        limit: 1, 
+      );
+    if(result.isNotEmpty){
+        var ans = NoDefinition(id: result[0]['id'] as int, name: result[0]['name'] as String, definition: result[0]['definition'] as String, parts: result[0]['parts'] as String, chinese: result[0]['chinese'] as String, sentence: result[0]['sentence'] as String);
+        return ans;
+    }
+    return null;
+  }
+
+  Future<void> updateNoDef(int id, WordModifyInformation newData) async{
+    final db = await getDBConnect();
+    if(!(await hasNoDef(id))){
+        return;
+    }
+    var information = await searchNoDefDetails(id);
+    var column = newData._column;
+    var newInformation = newData._newInformation;
+    assert(column != 'id');
+    await db.update(
+      'nodefs',
+      {
+        column: newInformation,
+      },
+      where:'id = ?',
+      whereArgs: [id],
+    );
+    return;
+  }
 }
 
 /*
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   var db = NoDefDB();
+  /*
   await db.addNoDef("hi");
 
   await db.addNoDef("hi2");
@@ -244,12 +297,36 @@ void main() async{
 
   await db.addNoDef("hi3");
   
-  if(await db.hasNoDef(id: 10)){
+  if(await db.hasNoDef(10)){
     print("true");
   }
-  print(await db.getAllNoDefs());
 
+  NoDefinition? temp = await db.searchNoDefDetails(3);
+  if(temp != null){
+    print(temp.toString());
+  }
   print(await db.getSomeNoDefs(start: 1, sortColumn: "name"));
 
+
+  print(await db.getAllNoDefs());
+  var h3 = WordModifyInformation(column: "name", newInformation: "hi3");
+  var ids = WordModifyInformation(column: "id", newInformation: "12");
+  List<WordModifyInformation> list = [h3, ids];
+  List<int> result = await db.getNoDefid(list);
+  for(var item in result){
+    print(item);
+  }
+  */
+
+  NoDefinition? temp = await db.searchNoDefDetails(3);
+  if(temp != null){
+    print(temp.toString());
+  }
+  var modify = WordModifyInformation(column: 'name', newInformation: 'blablabla');
+  await db.updateNoDef(3, modify);
+  temp = await db.searchNoDefDetails(3);
+  if(temp != null){
+    print(temp.toString());
+  }
 }
 */
