@@ -1,33 +1,49 @@
+import 'package:englishvocabdatabase/logic/output/outputListNotifier.dart';
+import 'package:englishvocabdatabase/logic/output/outputItem.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class WordListView extends StatefulWidget {
+class WordListView extends ConsumerStatefulWidget {
   const WordListView({super.key});
 
   @override
-  State<WordListView> createState() => _WordListViewState();
+  ConsumerState<WordListView> createState() => _WordListViewState();
 }
 
-class _WordListViewState extends State<WordListView> {
+class _WordListViewState extends ConsumerState<WordListView> {
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: 30,
-      itemBuilder: (context, index) {
-        return vocabularyWordWidget(context, index);
+    final asyncList = ref.watch(outputListNotifierProvider(NotifierType.Word));
+    final service = ref.read(outputListNotifierProvider(NotifierType.Word).notifier);
+
+    return asyncList.when(
+      data: (list) {
+        if (list.isEmpty){
+          return const Center(child: Text("Word List is Empty"));
+        }
+        return ListView.builder(
+          itemCount: list.length,
+          itemBuilder: (context, index) {
+            final item = list[index];
+            return vocabularyWordWidget(context, item, service);
+          },
+        );
       },
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (err, stack) => Center(child: Text('Error: $err')),
     );
   }
 }
 
-Widget vocabularyWordWidget(BuildContext context, int index) {
+Widget vocabularyWordWidget(BuildContext context, OutputListItem item, OutputListNotifier service) {
   return Column(
     children: [
       Container(
         padding: EdgeInsets.symmetric(horizontal: 16),
         child: Slidable(
           // key
-          key: ValueKey(index),
+          key: ValueKey(item.id),
         
           // slide animation
           endActionPane: ActionPane(
@@ -35,8 +51,14 @@ Widget vocabularyWordWidget(BuildContext context, int index) {
             extentRatio: 0.25,
             children: [
               SlidableAction(
-                onPressed:(context) {
-                  print("delete word");
+                onPressed: (context) async {
+                  bool success = await service.delete(item.id);
+                  if (!context.mounted) return;
+                  if (!success) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Delete Failed')),
+                    );
+                  }
                 },
                 backgroundColor: Theme.of(context).colorScheme.error,
                 icon: Icons.delete,
@@ -44,8 +66,8 @@ Widget vocabularyWordWidget(BuildContext context, int index) {
             ],
           ),
           child: ListTile(
-            title: Text('Word'),
-            subtitle: Text('Definition'),
+            title: Text(item.name),
+            subtitle: Text(item.name), // need to change to definition
             onTap: () {
               print("I'm Tapped");
             },

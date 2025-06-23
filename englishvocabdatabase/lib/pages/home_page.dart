@@ -1,5 +1,7 @@
+import 'package:englishvocabdatabase/pages/classify_page.dart';
 import 'package:englishvocabdatabase/pages/settings_page.dart';
 import 'package:englishvocabdatabase/pages/word_bank_page.dart';
+import '../logic/output/outputListNotifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -17,7 +19,7 @@ class HomePageState extends ConsumerState<HomePage> {
   // Title for the Page
   static const List<String> _pageTitles = [
     'Word Bank',
-    'Create and Classify',
+    'Temporary List',
     'Import & Export',
     'Settings'
   ];
@@ -25,7 +27,7 @@ class HomePageState extends ConsumerState<HomePage> {
   // Page List
   static const List<Widget> _pages = [
     WordBankPage(),
-    SettingsPage(),
+    ClassifyPage(),
     SettingsPage(),
     SettingsPage(),
   ];
@@ -52,13 +54,13 @@ class HomePageState extends ConsumerState<HomePage> {
       body: _pages[_currentPage],
 
       // add button
-      floatingActionButton: _buildFloatingActionButton(currentWordBankView, _currentPage),
+      floatingActionButton: _buildFloatingActionButton(currentWordBankView, _currentPage, ref, context),
 
       // bottom navigation bar
       bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.library_books), label: 'Browse'),
-          BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Create'), 
+          BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Temporary'), 
           BottomNavigationBarItem(icon: Icon(Icons.build), label: 'Tools'),
           BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
         ],
@@ -70,7 +72,7 @@ class HomePageState extends ConsumerState<HomePage> {
   }
 }
 
-Widget? _buildFloatingActionButton(ChooseListView view, final int currentPage) {
+Widget? _buildFloatingActionButton(ChooseListView view, final int currentPage, WidgetRef ref, BuildContext context) {
   if(currentPage != 0) {
     return null;
   }
@@ -78,8 +80,15 @@ Widget? _buildFloatingActionButton(ChooseListView view, final int currentPage) {
   switch(view) {
     case ChooseListView.label:
       return FloatingActionButton.extended(
-        onPressed: () {
-          print("Add Label按鈕被按下了");
+        onPressed: () async {
+          final service = ref.read(outputListNotifierProvider(NotifierType.Label).notifier);
+          bool success = await service.add('New Item');
+          if (!context.mounted) return;
+          if (!success) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Add Failed')),
+            );
+          }
         },
         label: const Text('Add Label'),
         icon: const Icon(Icons.add),
@@ -87,8 +96,16 @@ Widget? _buildFloatingActionButton(ChooseListView view, final int currentPage) {
     
     case ChooseListView.word:
       return FloatingActionButton.extended(
-        onPressed: () {
-          print("Add Word按鈕被按下了");
+        onPressed: () async {          
+          final service = ref.read(outputListNotifierProvider(NotifierType.Word).notifier);
+
+          bool success = await service.add('New Item');
+          if (!context.mounted) return;
+          if (!success) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Add Failed')),
+            );
+          }
         },
         label: const Text('Add Word'),
         icon: const Icon(Icons.add),

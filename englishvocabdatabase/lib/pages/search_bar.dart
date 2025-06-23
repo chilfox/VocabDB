@@ -1,18 +1,50 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'word_bank_page.dart';
+import '../logic/output/outputListNotifier.dart';
 
-class MySearchBar extends StatefulWidget {
+class MySearchBar extends ConsumerStatefulWidget {
   const MySearchBar({super.key});
 
   @override
-  State<MySearchBar> createState() => _MySearchBarState();
+  ConsumerState<MySearchBar> createState() => _MySearchBarState();
 }
 
-class _MySearchBarState extends State<MySearchBar> {
+class _MySearchBarState extends ConsumerState<MySearchBar> {
+
   @override
   Widget build(BuildContext context) {
-    return SearchBar(
-      leading: const Icon(Icons.search),
-      hintText: 'Search word or label',
+    final TextEditingController textController = TextEditingController();
+    final currentView = ref.watch(wordBankViewProvider);
+    
+    return TextField(
+      controller: textController,
+      decoration: InputDecoration(
+        hintText: 'Search word or label',
+        prefixIcon: const Icon(Icons.search),
+        suffixIcon: IconButton(
+          icon: const Icon(Icons.clear),
+          onPressed: () {
+            textController.clear();
+          },
+        ),
+        border: const OutlineInputBorder(),
+      ),
+      keyboardType: TextInputType.text,
+      onChanged: (text) async {
+        // 對應 currentView 去選 notifier type
+        final NotifierType type = (currentView == ChooseListView.label)
+            ? NotifierType.Label
+            : NotifierType.Word;
+        final service = ref.read(outputListNotifierProvider(type).notifier);
+        bool success = await service.search(text);
+        if (!context.mounted) return;
+        if (!success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Search failed')),
+          );
+        }
+      }
     );
   }
 }
