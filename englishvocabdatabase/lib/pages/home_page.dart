@@ -81,6 +81,17 @@ Widget? _buildFloatingActionButton(ChooseListView view, final int currentPage, W
     case ChooseListView.label:
       return FloatingActionButton.extended(
         onPressed: () async {
+          return showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return addLabelDialog(context, ref);
+            }
+          ); 
+        },
+        label: const Text('Add Label'),
+        icon: const Icon(Icons.add),
+      );
+        /* () async {
           final service = ref.read(outputListNotifierProvider(NotifierType.Label).notifier);
           int success = await service.add('New Item');
           if (!context.mounted) return;
@@ -90,9 +101,7 @@ Widget? _buildFloatingActionButton(ChooseListView view, final int currentPage, W
             );
           }
         },
-        label: const Text('Add Label'),
-        icon: const Icon(Icons.add),
-      );
+              ); */
     
     case ChooseListView.word:
       return FloatingActionButton.extended(
@@ -111,4 +120,41 @@ Widget? _buildFloatingActionButton(ChooseListView view, final int currentPage, W
         icon: const Icon(Icons.add),
       );
   }
+}
+
+AlertDialog addLabelDialog(BuildContext context, WidgetRef ref) {
+  TextEditingController textController = TextEditingController();
+  final service = ref.read(OutputListNotifierProvider(NotifierType.Label).notifier);
+
+  return AlertDialog(
+    title: Text('Create New Label'),
+    content: TextField(
+      controller: textController,
+      decoration: InputDecoration(
+        hintText: 'Type in new label name',
+        border: OutlineInputBorder(),
+      ),
+    ),
+    actions: [
+      // cancel button
+      TextButton(
+        onPressed: () => Navigator.of(context).pop(),
+        child: Text('Cancel'),
+      ),
+      // okay button
+      TextButton(
+        onPressed: () async {
+          Navigator.of(context).pop();
+          int newLabelId = await service.add(textController.text);
+          if (!context.mounted) return;
+          if (newLabelId == -1) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Add Failed')),
+            );
+          }
+        },
+        child: Text('OK'),
+      ),
+    ],
+  );
 }
