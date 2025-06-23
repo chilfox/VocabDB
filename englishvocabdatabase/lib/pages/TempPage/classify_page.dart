@@ -14,14 +14,6 @@ class ClassifyPage extends ConsumerStatefulWidget {
 
 class ClassifyPageState extends ConsumerState<ClassifyPage> {
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(wordBankViewProvider.notifier).state = ChooseListView.nodef;
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
 
     return SafeArea(

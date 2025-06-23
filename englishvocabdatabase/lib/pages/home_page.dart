@@ -32,8 +32,14 @@ class HomePageState extends ConsumerState<HomePage> {
     SettingsPage(),
   ];
 
-  void _onItemTapped(int index) {
+  void _onBottomNavigationBarTapped(int index) {
     setState(() {
+      if (_currentPage != 0 && index == 0) {
+        ref.read(wordBankViewProvider.notifier).state = ChooseListView.label;
+      }
+      else if (index == 1) {
+        ref.read(wordBankViewProvider.notifier).state = ChooseListView.nodef;
+      }
       _currentPage = index;
     });
   }
@@ -65,7 +71,7 @@ class HomePageState extends ConsumerState<HomePage> {
           BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
         ],
         currentIndex: _currentPage,
-        onTap: _onItemTapped,
+        onTap: _onBottomNavigationBarTapped,
         type: BottomNavigationBarType.fixed,
       ),
     );

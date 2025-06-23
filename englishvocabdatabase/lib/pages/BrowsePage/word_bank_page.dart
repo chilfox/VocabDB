@@ -19,14 +19,6 @@ class WordBankPage extends ConsumerStatefulWidget {
 
 class WordBankPageState extends ConsumerState<WordBankPage> {
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(wordBankViewProvider.notifier).state = ChooseListView.label;
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     final currentView = ref.watch(wordBankViewProvider);
 
