@@ -55,7 +55,7 @@ class OutputListNotifier extends _$OutputListNotifier {
       case NotifierType.Label:
         (result, newid) = await _labelListSevice.addLabel(name);
       case NotifierType.Word:
-        result = [];
+        (result, newid) = ([], -1);
     }
 
     if (result == null) return -1;
