@@ -46,20 +46,21 @@ class OutputListNotifier extends _$OutputListNotifier {
   }
 
   //add label, nodefinition, word
-  Future<bool> add(String name) async{
+  Future<int> add(String name) async{
     List<OutputListItem>? result;
+    late int newid;
     switch(type){
       case NotifierType.NoDefinition:
-        result = await _nodefListService.addNoDef(name);
+        (result, newid) = await _nodefListService.addNoDef(name);
       case NotifierType.Label:
-        result = await _labelListSevice.addLabel(name);
+        (result, newid) = await _labelListSevice.addLabel(name);
       case NotifierType.Word:
         result = [];
     }
 
-    if (result == null) return false;
+    if (result == null) return -1;
     _refreshAll(result);
-    return true;
+    return newid;
   }
 
   //delete label, nodefinition, word

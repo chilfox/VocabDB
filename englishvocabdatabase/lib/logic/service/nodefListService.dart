@@ -24,18 +24,18 @@ class NodefListService{
     return convertToOutputList(result, (l) => l.Getid(), (l) => l.Getname());
   }
 
-  Future<List<OutputListItem>?> addNoDef(String name) async{
-    bool success = await _db.addNoDef(name).catchError((e){
+  Future<(List<OutputListItem>?, int)> addNoDef(String name) async{
+    int success = await _db.addNoDef(name).catchError((e){
       print('insertNodef error: $e');  //for test
     });
 
-    if(!success){
-      return null;
+    if(success == -1){
+      return (null, -1);
     }
 
     List<NoDefinition>? result = await _db.getAllNoDefs();//for test
     result ??= [];
-    return convertToOutputList(result, (l) => l.Getid(), (l) => l.Getname());
+    return (convertToOutputList(result, (l) => l.Getid(), (l) => l.Getname()), success);
   }
 
   Future<List<OutputListItem>?> deleteNoDef(int id) async{

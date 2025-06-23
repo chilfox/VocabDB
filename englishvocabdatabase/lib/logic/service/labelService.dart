@@ -25,25 +25,25 @@ class LabelListService{
     return convertToOutputList(result, (l) => l.Getid(), (l) => l.Getname()); 
   }
 
-  Future<List<OutputListItem>?> addLabel(String name) async{
+  Future<(List<OutputListItem>?, int)> addLabel(String name) async{
     bool exist = await _db.hasLabel(label : name);
 
     if(exist){
-      return null;
+      return (null, -1);
     }
     else{
-      bool success = await _db.addLabel(name).catchError((e){
+      int success = await _db.addLabel(name).catchError((e){
         print('insertLabel error: $e');  //for test
       });
 
-      if(!success){
-        return null;
+      if(success == -1){
+        return (null, -1);
       }
 
       List<Label>? result = await _db.getAllLabels();//for test
       result ??= [];
       
-      return convertToOutputList(result, (l) => l.Getid(), (l) => l.Getname());
+      return (convertToOutputList(result, (l) => l.Getid(), (l) => l.Getname()), success);
     }
   }
 
