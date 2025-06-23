@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:englishvocabdatabase/logic/service/database_temp.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -100,12 +99,12 @@ class LabelDB {
     return false;
   }
 
-  Future<bool> addLabel(String label) async {
+  Future<int> addLabel(String label) async {
 
     final db = await getDBConnect();
     
     if(await hasLabel(label: label)){
-      return false;
+      return -1;
     }
 
     final Map<String, dynamic> insertinglabel = {
@@ -113,13 +112,13 @@ class LabelDB {
       'wordnum': 0, 
     };
 
-    await db.insert(
+    final int newid = await db.insert(
       'labels',
       insertinglabel,
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
 
-    return true;
+    return newid;
   }
 
   Future<List<Label>?> getAllLabels() async {

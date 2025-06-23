@@ -102,7 +102,7 @@ class NoDefDB {
     return result.isNotEmpty;
   }
 
-  Future<bool> addNoDef(String name) async {
+  Future<int> addNoDef(String name) async {
 
     final db = await getDBConnect();
     
@@ -114,12 +114,12 @@ class NoDefDB {
       'sentence': '', 
     };
 
-    await db.insert(
+    final int newid = await db.insert(
       'nodefs',
       insertingnodef,
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
-    return true;
+    return newid;
   }
 
   Future<List<NoDefinition>?> getAllNoDefs() async {
