@@ -1,4 +1,3 @@
-import 'package:englishvocabdatabase/pages/BrowsePage/word_bank_page.dart';
 import 'package:englishvocabdatabase/pages/TempPage/add_bar.dart';
 import 'package:englishvocabdatabase/pages/TempPage/no_definition_list_view.dart';
 import 'package:englishvocabdatabase/pages/BrowsePage/search_bar.dart';

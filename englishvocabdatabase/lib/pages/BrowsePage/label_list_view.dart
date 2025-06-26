@@ -1,3 +1,4 @@
+import 'package:englishvocabdatabase/pages/BrowsePage/InLabelWordListPage/in_label_word_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -78,7 +79,10 @@ Widget labelWidget(BuildContext context, OutputListItem item, OutputListNotifier
           child: ListTile(
             title: Text(item.name, style: TextStyle(color: theme.primaryColor),),
             onTap: () {
-              print("I'm Tapped");
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => InLabelWordListPage(label: item)),
+              );
             },
           ),
         ),
