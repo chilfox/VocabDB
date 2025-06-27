@@ -49,7 +49,7 @@ class DB {
   }
 
 // label
-  Future<bool> hasLabel({int? id, String? label}) async {
+  static Future<bool> hasLabel({int? id, String? label}) async {
     final db = await getDBConnect();
     assert(id != null || label != null);
     if(label != null){
@@ -73,7 +73,7 @@ class DB {
     return false;
   }
 
-  Future<int> addLabel(String label) async {
+  static Future<int> addLabel(String label) async {
 
     final db = await getDBConnect();
     
@@ -95,7 +95,7 @@ class DB {
     return newid;
   }
 
-  Future<List<Label>?> getAllLabels() async {
+  static Future<List<Label>?> getAllLabels() async {
     final db = await getDBConnect();
     final List<Map<String, Object?>> labelMaps = await db.query('labels');
 
@@ -106,7 +106,7 @@ class DB {
     ];
   }
 
-  Future<List<Label>?> getSomeLabels({required int start, int? end, String? sortColumn}) async{
+  static Future<List<Label>?> getSomeLabels({required int start, int? end, String? sortColumn}) async{
     //sortColumn 放 name, wordnum, 或id
     //如果沒有end，會把end判斷成結尾
     //start從0開始，然後是左閉右開，所以start=0, end=1會顯示第一個元素
@@ -144,7 +144,7 @@ class DB {
     return result.sublist(start, end);
   }
 
-  Future<void> deleteLabel({String? label, int? id}) async {
+  static Future<void> deleteLabel({String? label, int? id}) async {
     final db = await getDBConnect();
     if(label != null){
       await db.delete(
@@ -163,7 +163,7 @@ class DB {
   }
 
 
-  Future<List<Label>?> searchLabel(String prefix) async{
+  static Future<List<Label>?> searchLabel(String prefix) async{
     final db = await getDBConnect();
 
     List<Map<String, Object?>> results = await db.query(
@@ -185,7 +185,7 @@ class DB {
     ];
   }
 
-  Future<int> getLabelid(String label) async{
+  static Future<int> getLabelid(String label) async{
       final db = await getDBConnect();
       final List<Map<String, Object?>> result = await db.query(
       'labels',
@@ -199,7 +199,7 @@ class DB {
       return result[0]['id'] as int;
   }
 
-  Future<void> updateLabel(String label, int wordnum) async{
+  static Future<void> updateLabel(String label, int wordnum) async{
     final db = await getDBConnect();
 
     int id = await getLabelid(label);
@@ -218,7 +218,7 @@ class DB {
   }
 
 // nodef
-Future<bool> hasNoDef(int id) async {
+static Future<bool> hasNoDef(int id) async {
     final db = await getDBConnect();
     final List<Map<String, Object?>> result = await db.query(
       'nodefs',
@@ -229,7 +229,7 @@ Future<bool> hasNoDef(int id) async {
     return result.isNotEmpty;
   }
 
-  Future<int> addNoDef(String name) async {
+  static Future<int> addNoDef(String name) async {
 
     final db = await getDBConnect();
     
@@ -249,7 +249,7 @@ Future<bool> hasNoDef(int id) async {
     return newid;
   }
 
-  Future<List<NoDefinition>?> getAllNoDefs() async {
+  static Future<List<NoDefinition>?> getAllNoDefs() async {
     final db = await getDBConnect();
     final List<Map<String, Object?>> nodefMaps = await db.query('nodefs');
 
@@ -260,7 +260,7 @@ Future<bool> hasNoDef(int id) async {
     ];
   }
 
-  Future<List<NoDefinition>?> getSomeNoDefs({required int start, int? end, String? sortColumn}) async{
+  static Future<List<NoDefinition>?> getSomeNoDefs({required int start, int? end, String? sortColumn}) async{
     //sortColumn 放 name, id, definition, parts, chinese, sentence
     //如果沒有end，會把end判斷成結尾
     //start從0開始，然後是左閉右開，所以start=0, end=1會顯示第一個元素
@@ -298,7 +298,7 @@ Future<bool> hasNoDef(int id) async {
     return result.sublist(start, end);
   }
 
-  Future<void> deleteNoDef(int id) async {
+  static Future<void> deleteNoDef(int id) async {
     final db = await getDBConnect();
     await db.delete(
       'nodefs',
@@ -308,7 +308,7 @@ Future<bool> hasNoDef(int id) async {
   }
 
   //return list of id with prefix name
-  Future<List<NoDefinition>?> searchNoDef(String prefix) async {
+  static Future<List<NoDefinition>?> searchNoDef(String prefix) async {
     final db = await getDBConnect();
 
     List<Map<String, Object?>> results = await db.query(
@@ -331,7 +331,7 @@ Future<bool> hasNoDef(int id) async {
   }
 
   //return list of id that satisfies the requirement
-  Future<List<int>> getNoDefid(List<WordModifyInformation> conditions) async {
+  static Future<List<int>> getNoDefid(List<WordModifyInformation> conditions) async {
       final db = await getDBConnect();
       List<String> clauseParts = [];
       String whereClause = '';
@@ -358,7 +358,7 @@ Future<bool> hasNoDef(int id) async {
   }
 
   //if not find will return null
-  Future<NoDefinition?> searchNoDefDetails(int id) async {
+  static Future<NoDefinition?> searchNoDefDetails(int id) async {
     final db = await getDBConnect();
     final List<Map<String, Object?>> result = await db.query(
         'nodefs',
@@ -373,7 +373,7 @@ Future<bool> hasNoDef(int id) async {
     return null;
   }
 
-  Future<void> updateNoDef(int id, WordModifyInformation newData) async{
+  static Future<void> updateNoDef(int id, WordModifyInformation newData) async{
     final db = await getDBConnect();
     if(!(await hasNoDef(id))){
         return;
@@ -393,7 +393,7 @@ Future<bool> hasNoDef(int id) async {
   }
 
 // word
-  Future<bool> hasWord(int id) async {
+  static Future<bool> hasWord(int id) async {
     final db = await getDBConnect();
     final List<Map<String, Object?>> result = await db.query(
       'words',
@@ -404,7 +404,7 @@ Future<bool> hasNoDef(int id) async {
     return result.isNotEmpty;
   }
 
-  Future<int> addWord(String name) async {
+  static Future<int> addWord(String name) async {
 
     final db = await getDBConnect();
     
@@ -424,7 +424,7 @@ Future<bool> hasNoDef(int id) async {
     return newid;
   }
 
-  Future<List<Word>?> getAllWords() async {
+  static Future<List<Word>?> getAllWords() async {
     final db = await getDBConnect();
     final List<Map<String, Object?>> wordMaps = await db.query('words');
   
@@ -447,7 +447,7 @@ Future<bool> hasNoDef(int id) async {
     return words;
   }
 
-  Future<void> deleteWord(int id) async {
+  static Future<void> deleteWord(int id) async {
     final db = await getDBConnect();
     await db.delete(
       'words',
@@ -457,7 +457,7 @@ Future<bool> hasNoDef(int id) async {
   }
 
   //return list of id with prefix name
-  Future<List<Word>?> searchWord(String prefix) async {
+  static Future<List<Word>?> searchWord(String prefix) async {
     final db = await getDBConnect();
 
     List<Map<String, Object?>> results = await db.query(
@@ -493,7 +493,7 @@ Future<bool> hasNoDef(int id) async {
   }
 
   //return list of id that satisfies the requirement
-  Future<List<int>> getWordid(List<WordModifyInformation> conditions) async {
+  static Future<List<int>> getWordid(List<WordModifyInformation> conditions) async {
       final db = await getDBConnect();
       List<String> clauseParts = [];
       String whereClause = '';
@@ -520,7 +520,7 @@ Future<bool> hasNoDef(int id) async {
   }
 
   //if not find will return null
-  Future<Word?> searchWordDetails(int id) async {
+  static Future<Word?> searchWordDetails(int id) async {
     final db = await getDBConnect();
     final List<Map<String, Object?>> result = await db.query(
         'words',
@@ -543,7 +543,7 @@ Future<bool> hasNoDef(int id) async {
     return null;
   }
 
-  Future<void> updateWord(int id, WordModifyInformation newData) async{
+  static Future<void> updateWord(int id, WordModifyInformation newData) async{
     final db = await getDBConnect();
     if(!(await hasWord(id))){
         return;
@@ -562,7 +562,7 @@ Future<bool> hasNoDef(int id) async {
     return;
   }
 
-  Future<List<Word>?> getWordDetails({required int start, int? end, WordFilterOption? option}) async{
+  static Future<List<Word>?> getWordDetails({required int start, int? end, WordFilterOption? option}) async{
     final db = await getDBConnect();
 
     if(end != null){
@@ -605,7 +605,7 @@ Future<bool> hasNoDef(int id) async {
   }
 
 //others
-  Future<void> addWordToLabel(int wordId, {String? label, int? labelId}) async{
+  static Future<void> addWordToLabel(int wordId, {String? label, int? labelId}) async{
     final db = await getDBConnect();
     if(!(await hasWord(wordId))){
       return;
@@ -631,7 +631,7 @@ Future<bool> hasNoDef(int id) async {
     );
   }
 
-  Future<void> removeWordFromLabel(int wordId, {String? label, int? labelId}) async{
+  static Future<void> removeWordFromLabel(int wordId, {String? label, int? labelId}) async{
     final db = await getDBConnect();
     if(!(await hasWord(wordId))){
       return;
@@ -657,7 +657,7 @@ Future<bool> hasNoDef(int id) async {
     );
   }
 
-  Future<List<Word>?> getWordsByLabel({String? label, int? labelId}) async{
+  static Future<List<Word>?> getWordsByLabel({String? label, int? labelId}) async{
     final db = await getDBConnect();
 
     if(labelId == null && label == null){
@@ -680,7 +680,7 @@ Future<bool> hasNoDef(int id) async {
     return await getWordDetails(start: 0, option: option);
   }
 
-  Future<void> removeAllWordsFromLabel({String? label, int? labelId}) async{
+  static Future<void> removeAllWordsFromLabel({String? label, int? labelId}) async{
     final db = await getDBConnect();
     List<Word>? all_filtered_words = await getWordsByLabel(label: label, labelId: labelId);
     if(all_filtered_words == null){

@@ -1,70 +1,57 @@
 //handle output list of word
 
+import 'package:englishvocabdatabase/logic/output/outputItem.dart';
+import 'package:englishvocabdatabase/database/db.dart';
 import 'package:englishvocabdatabase/database/label.dart';
-
-import '../output/outputItem.dart';
-//import word database
+import 'package:englishvocabdatabase/database/word.dart';
 import 'template.dart';
 
 
 class WordListService{
-  late final WordDB _db;
-
-  WordListService(){
-    _db = LabelDB();
-  }
-
   Future<List<OutputListItem>> initWordList() async{
-    List<Label>? result = await _db.getAllLabels();//for test
+    List<Word>? result = await DB.getAllWords();//for test
     result ??= [];
 
-    return convertToOutputList(result, (l) => l.Getid(), (l) => l.Getname());
+    return convertToOutputList(result, (l) => l.id, (l) => l.name);
   }
 
   Future<List<OutputListItem>> searchWord(String prefix) async{
     //for search in database
-    List<Label>? result = await _db.searchLabel(prefix);  
+    List<Word>? result = await DB.searchWord(prefix);  
     result ??= [];
-    return convertToOutputList(result, (l) => l.Getid(), (l) => l.Getname()); 
+    return convertToOutputList(result, (l) => l.id, (l) => l.name); 
   }
 
   Future<(List<OutputListItem>?, int)> addWord(String name) async{
-    bool exist = await _db.hasLabel(label : name);
+    int newId = await DB.addWord(name).catchError((e){
+      print('insertWord error: $e');  //for test
+    });
 
-    if(exist){
+    if(newId == -1){
       return (null, -1);
     }
-    else{
-      int success = await _db.addLabel(name).catchError((e){
-        print('insertLabel error: $e');  //for test
-      });
 
-      if(success == -1){
-        return (null, -1);
-      }
-
-      List<Label>? result = await _db.getAllLabels();//for test
-      result ??= [];
-      
-      return (convertToOutputList(result, (l) => l.Getid(), (l) => l.Getname()), success);
-    }
+    List<Word>? result = await DB.getAllWords();//for test
+    result ??= [];
+    
+    return (convertToOutputList(result, (l) => l.id, (l) => l.name), newId);
   }
 
   Future<List<OutputListItem>?> deleteWord(int id) async{
-    bool exist = await _db.hasLabel(id: id);
+    bool exist = await DB.hasWord(id);
 
     if(!exist){
       return null;
     }
     else{
-      await _db.deleteLabel(id: id).catchError((e) {
-        print('deleteLabel error: $e');   //for test
+      await DB.deleteWord(id).catchError((e) {
+        print('deleteWord error: $e');   //for test
       });
 
-      List<Label>? result = await _db.getAllLabels();//for test
+      List<Word>? result = await DB.getAllWords();//for test
       result ??= [];
       
-      return convertToOutputList(result, (l) => l.Getid(), (l) => l.Getname());
+      return convertToOutputList(result, (l) => l.id, (l) => l.name);
     }
   }
 

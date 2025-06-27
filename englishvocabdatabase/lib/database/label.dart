@@ -13,26 +13,18 @@ class Label {
     _wordnum = wordnum;
   }
 
-  String Getname(){
-    return _name;
-  }
+  int get id => _id;
+  String get name => _name;
+  int get wordnum => _wordnum;
 
   void Setname(String x){
     _name = x;
     return;
   }
 
-  int Getwordnum(){
-    return _wordnum;
-  }
-
   void Setwordnum(int x){
     _wordnum = x;
     return;
-  }
-
-  int Getid(){
-    return _id;
   }
 
   void Setid(int x){

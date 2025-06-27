@@ -1,31 +1,26 @@
 //handle the outputlist of nodef
 
-import '../output/outputItem.dart';
-import '../../database/nodef.dart';
+import 'package:englishvocabdatabase/logic/output/outputItem.dart';
+import 'package:englishvocabdatabase/database/db.dart';
+import 'package:englishvocabdatabase/database/nodef.dart';
 import 'template.dart';
 
 class NodefListService{
-  late final NoDefDB _db;
-
-  NodefListService(){
-    _db = NoDefDB();
-  }
-
   Future<List<OutputListItem>> initNoDefList() async{
-    List<NoDefinition>? result = await _db.getAllNoDefs();//for test
+    List<NoDefinition>? result = await DB.getAllNoDefs();//for test
     result ??= [];
-    return convertToOutputList(result, (l) => l.Getid(), (l) => l.Getname());
+    return convertToOutputList(result, (l) => l.id, (l) => l.name);
   }
 
   Future<List<OutputListItem>> searchNoDef(String prefix) async{
     //for search in database
-    List<NoDefinition>? result = await _db.searchNoDef(prefix);   
+    List<NoDefinition>? result = await DB.searchNoDef(prefix);   
     result ??= [];
-    return convertToOutputList(result, (l) => l.Getid(), (l) => l.Getname());
+    return convertToOutputList(result, (l) => l.id, (l) => l.name);
   }
 
   Future<(List<OutputListItem>?, int)> addNoDef(String name) async{
-    int success = await _db.addNoDef(name).catchError((e){
+    int success = await DB.addNoDef(name).catchError((e){
       print('insertNodef error: $e');  //for test
     });
 
@@ -33,25 +28,25 @@ class NodefListService{
       return (null, -1);
     }
 
-    List<NoDefinition>? result = await _db.getAllNoDefs();//for test
+    List<NoDefinition>? result = await DB.getAllNoDefs();//for test
     result ??= [];
-    return (convertToOutputList(result, (l) => l.Getid(), (l) => l.Getname()), success);
+    return (convertToOutputList(result, (l) => l.id, (l) => l.name), success);
   }
 
   Future<List<OutputListItem>?> deleteNoDef(int id) async{
-    bool exist = await _db.hasNoDef(id);
+    bool exist = await DB.hasNoDef(id);
 
     if(!exist){
       return null;
     }
     else{
-      await _db.deleteNoDef(id).catchError((e) {
+      await DB.deleteNoDef(id).catchError((e) {
         print('delete Nodef error: $e');   //for test
       });
 
-      List<NoDefinition>? result = await _db.getAllNoDefs();//for test
+      List<NoDefinition>? result = await DB.getAllNoDefs();//for test
       result ??= [];
-      return convertToOutputList(result, (l) => l.Getid(), (l) => l.Getname());
+      return convertToOutputList(result, (l) => l.id, (l) => l.name);
     }
   }
 }

@@ -56,12 +56,6 @@ class NoDefinition{
     return 'NoDefinition{id: $_id, name: $_name, definition: $_definition, parts: $_parts, chinese: $_chinese, sentence: $_sentence}';
   }
 
-  int Getid(){
-    return _id;
-  }
-
-  String Getname(){
-    return _name;
-  }
-
+  int get id => _id;
+  String get name => _name;
 }
