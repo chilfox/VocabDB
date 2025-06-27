@@ -19,6 +19,7 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$OutputListItem {
   String get name => throw _privateConstructorUsedError;
   int get id => throw _privateConstructorUsedError;
+  String? get chinese => throw _privateConstructorUsedError;
 
   /// Create a copy of OutputListItem
   /// with the given fields replaced by the non-null parameter values.
@@ -34,7 +35,7 @@ abstract class $OutputListItemCopyWith<$Res> {
     $Res Function(OutputListItem) then,
   ) = _$OutputListItemCopyWithImpl<$Res, OutputListItem>;
   @useResult
-  $Res call({String name, int id});
+  $Res call({String name, int id, String? chinese});
 }
 
 /// @nodoc
@@ -51,7 +52,11 @@ class _$OutputListItemCopyWithImpl<$Res, $Val extends OutputListItem>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? name = null, Object? id = null}) {
+  $Res call({
+    Object? name = null,
+    Object? id = null,
+    Object? chinese = freezed,
+  }) {
     return _then(
       _value.copyWith(
             name: null == name
@@ -62,6 +67,10 @@ class _$OutputListItemCopyWithImpl<$Res, $Val extends OutputListItem>
                 ? _value.id
                 : id // ignore: cast_nullable_to_non_nullable
                       as int,
+            chinese: freezed == chinese
+                ? _value.chinese
+                : chinese // ignore: cast_nullable_to_non_nullable
+                      as String?,
           )
           as $Val,
     );
@@ -77,7 +86,7 @@ abstract class _$$OutputListItemImplCopyWith<$Res>
   ) = __$$OutputListItemImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String name, int id});
+  $Res call({String name, int id, String? chinese});
 }
 
 /// @nodoc
@@ -93,7 +102,11 @@ class __$$OutputListItemImplCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? name = null, Object? id = null}) {
+  $Res call({
+    Object? name = null,
+    Object? id = null,
+    Object? chinese = freezed,
+  }) {
     return _then(
       _$OutputListItemImpl(
         name: null == name
@@ -104,6 +117,10 @@ class __$$OutputListItemImplCopyWithImpl<$Res>
             ? _value.id
             : id // ignore: cast_nullable_to_non_nullable
                   as int,
+        chinese: freezed == chinese
+            ? _value.chinese
+            : chinese // ignore: cast_nullable_to_non_nullable
+                  as String?,
       ),
     );
   }
@@ -112,16 +129,18 @@ class __$$OutputListItemImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$OutputListItemImpl implements _OutputListItem {
-  _$OutputListItemImpl({required this.name, required this.id});
+  _$OutputListItemImpl({required this.name, required this.id, this.chinese});
 
   @override
   final String name;
   @override
   final int id;
+  @override
+  final String? chinese;
 
   @override
   String toString() {
-    return 'OutputListItem(name: $name, id: $id)';
+    return 'OutputListItem(name: $name, id: $id, chinese: $chinese)';
   }
 
   @override
@@ -130,11 +149,12 @@ class _$OutputListItemImpl implements _OutputListItem {
         (other.runtimeType == runtimeType &&
             other is _$OutputListItemImpl &&
             (identical(other.name, name) || other.name == name) &&
-            (identical(other.id, id) || other.id == id));
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.chinese, chinese) || other.chinese == chinese));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, name, id);
+  int get hashCode => Object.hash(runtimeType, name, id, chinese);
 
   /// Create a copy of OutputListItem
   /// with the given fields replaced by the non-null parameter values.
@@ -149,13 +169,18 @@ class _$OutputListItemImpl implements _OutputListItem {
 }
 
 abstract class _OutputListItem implements OutputListItem {
-  factory _OutputListItem({required final String name, required final int id}) =
-      _$OutputListItemImpl;
+  factory _OutputListItem({
+    required final String name,
+    required final int id,
+    final String? chinese,
+  }) = _$OutputListItemImpl;
 
   @override
   String get name;
   @override
   int get id;
+  @override
+  String? get chinese;
 
   /// Create a copy of OutputListItem
   /// with the given fields replaced by the non-null parameter values.

@@ -6,6 +6,7 @@ part 'outputItem.freezed.dart';
 class OutputListItem with _$OutputListItem{
   factory OutputListItem({
     required String name,
-    required int id
+    required int id,
+    String? chinese
   }) = _OutputListItem;
 }

@@ -6,20 +6,20 @@ import 'package:englishvocabdatabase/database/nodef.dart';
 import 'template.dart';
 
 class NodefListService{
-  Future<List<OutputListItem>> initNoDefList() async{
+  static Future<List<OutputListItem>> initNoDefList() async{
     List<NoDefinition>? result = await DB.getAllNoDefs();//for test
     result ??= [];
-    return convertToOutputList(result, (l) => l.id, (l) => l.name);
+    return convertToOutputList(input: result, getId: (l) => l.id, getName: (l) => l.name);
   }
 
-  Future<List<OutputListItem>> searchNoDef(String prefix) async{
+  static Future<List<OutputListItem>> searchNoDef(String prefix) async{
     //for search in database
     List<NoDefinition>? result = await DB.searchNoDef(prefix);   
     result ??= [];
-    return convertToOutputList(result, (l) => l.id, (l) => l.name);
+    return convertToOutputList(input: result, getId: (l) => l.id, getName: (l) => l.name);
   }
 
-  Future<(List<OutputListItem>?, int)> addNoDef(String name) async{
+  static Future<(List<OutputListItem>?, int)> addNoDef(String name) async{
     int success = await DB.addNoDef(name).catchError((e){
       print('insertNodef error: $e');  //for test
     });
@@ -30,10 +30,10 @@ class NodefListService{
 
     List<NoDefinition>? result = await DB.getAllNoDefs();//for test
     result ??= [];
-    return (convertToOutputList(result, (l) => l.id, (l) => l.name), success);
+    return (convertToOutputList(input: result, getId: (l) => l.id, getName: (l) => l.name), success);
   }
 
-  Future<List<OutputListItem>?> deleteNoDef(int id) async{
+  static Future<List<OutputListItem>?> deleteNoDef(int id) async{
     bool exist = await DB.hasNoDef(id);
 
     if(!exist){
@@ -46,7 +46,7 @@ class NodefListService{
 
       List<NoDefinition>? result = await DB.getAllNoDefs();//for test
       result ??= [];
-      return convertToOutputList(result, (l) => l.id, (l) => l.name);
+      return convertToOutputList(input: result, getId: (l) => l.id, getName: (l) => l.name);
     }
   }
 }

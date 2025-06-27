@@ -47,6 +47,11 @@ class Word{
 
   int get id => _id;
   String get name => _name;
+  String? get chinese => _chinese;
+  String? get definition => _definition;
+  String get parts => _parts;
+  String get sentence => _sentence;
+
   List<String>? get labels => _labels;
   void set_labels(List<String>? list){
     _labels = list;

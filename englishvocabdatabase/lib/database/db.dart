@@ -162,7 +162,6 @@ class DB {
     }
   }
 
-
   static Future<List<Label>?> searchLabel(String prefix) async{
     final db = await getDBConnect();
 
@@ -199,6 +198,21 @@ class DB {
       return result[0]['id'] as int;
   }
 
+  //modify by cwh
+  static Future<String?> getLabelname(int id) async {
+    final db = await getDBConnect();
+    final List<Map<String, Object?>> result = await db.query(
+      'labels',
+      where: 'id = ?',
+      whereArgs: [id],
+      limit: 1,
+    );
+    if (result.isEmpty) {
+      return null;
+    }
+    return result[0]['name'] as String;
+  }
+
   static Future<void> updateLabel(String label, int wordnum) async{
     final db = await getDBConnect();
 
@@ -218,7 +232,7 @@ class DB {
   }
 
 // nodef
-static Future<bool> hasNoDef(int id) async {
+  static Future<bool> hasNoDef(int id) async {
     final db = await getDBConnect();
     final List<Map<String, Object?>> result = await db.query(
       'nodefs',

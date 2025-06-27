@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'outputItem.dart';
 import 'package:meta/meta.dart';
@@ -12,22 +11,17 @@ part 'outputListNotifier.g.dart';
 
 enum NotifierType { NoDefinition, Label, Word}
 
-//service
-final _labelListSevice = LabelListService();
-final _nodefListService = NodefListService();
-final _wordListService = WordListService();
-
 @riverpod
 class OutputListNotifier extends _$OutputListNotifier {
   @override
   Future<List<OutputListItem>> build(NotifierType type) async{
     switch(type){
       case NotifierType.NoDefinition:
-        return _nodefListService.initNoDefList();
+        return NodefListService.initNoDefList();
       case NotifierType.Label:
-        return _labelListSevice.initLabelList();
+        return LabelListService.initLabelList();
       case NotifierType.Word:
-        return [];
+        return WordListService.initWordList();
     }
   }
 
@@ -36,11 +30,11 @@ class OutputListNotifier extends _$OutputListNotifier {
     late List<OutputListItem> result;
     switch(type){
       case NotifierType.NoDefinition:
-        result = await _nodefListService.searchNoDef(prefix);
+        result = await NodefListService.searchNoDef(prefix);
       case NotifierType.Label:
-        result = await _labelListSevice.searchLabel(prefix);
+        result = await LabelListService.searchLabel(prefix);
       case NotifierType.Word:
-        result = [];
+        result = await WordListService.searchWord(prefix);
     }
 
     _refreshAll(result);
@@ -53,11 +47,11 @@ class OutputListNotifier extends _$OutputListNotifier {
     late int newid;
     switch(type){
       case NotifierType.NoDefinition:
-        (result, newid) = await _nodefListService.addNoDef(name);
+        (result, newid) = await NodefListService.addNoDef(name);
       case NotifierType.Label:
-        (result, newid) = await _labelListSevice.addLabel(name);
+        (result, newid) = await LabelListService.addLabel(name);
       case NotifierType.Word:
-        (result, newid) = ([], -1);
+        (result, newid) = await WordListService.addWord(name);
     }
 
     if (result == null) return -1;
@@ -70,11 +64,11 @@ class OutputListNotifier extends _$OutputListNotifier {
     List<OutputListItem>? result;
     switch(type){
       case NotifierType.NoDefinition:
-        result = await _nodefListService.deleteNoDef(id);
+        result = await NodefListService.deleteNoDef(id);
       case NotifierType.Label:
-        result = await _labelListSevice.deleteLabel(id);
+        result = await LabelListService.deleteLabel(id);
       case NotifierType.Word:
-        result = [];
+        result = await WordListService.deleteWord(id);
     }
 
     if(result == null){
@@ -90,34 +84,29 @@ class OutputListNotifier extends _$OutputListNotifier {
 
   //the method for word related to label
   Future<bool> searchInLabel(String prefix, int labelId) async{
-    List<OutputListItem> result = await _wordListService.searchWordToLabel(prefix, labelId, true);
+    List<OutputListItem> result = await WordListService.searchWordToLabel(prefix, labelId, true);
 
     _refreshAll(result);
     return (result == [] ? false : true);
   }
   
   Future<bool> searchNotInLabel(String prefix, int labelId) async{
-    List<OutputListItem> result = await _wordListService.searchWordToLabel(prefix, labelId, false);
+    List<OutputListItem> result = await WordListService.searchWordToLabel(prefix, labelId, false);
 
     _refreshAll(result);
     return (result == [] ? false : true);
   }
   
   Future<bool> addWordToLabel(int wordId, int labelId) async{
-    bool success = await _wordListService.addWordToLabel(wordId, labelId);
+    await WordListService.addWordToLabel(wordId, labelId);
 
-    if(success){
-      //list should only have word not in label
-      _deleteTarget(wordId);
-      return true;
-    }
-    else{
-      return false;
-    }
+    //list should only have word not in label
+    _deleteTarget(wordId);
+    return true;
   }
   
   Future<bool> removeWordFromLabel(int wordId, int labelId) async{
-    bool success = await _wordListService.removeWord(wordId: wordId, labelId: labelId);
+    bool success = await WordListService.removeWord(wordId: wordId, labelId: labelId);
 
     if(success){
       //list should only have words in label
@@ -130,7 +119,7 @@ class OutputListNotifier extends _$OutputListNotifier {
   }
   
   Future<bool> removeAllWord(int labelId) async{
-    bool success = await _wordListService.removeWord(labelId: labelId);
+    bool success = await WordListService.removeWord(labelId: labelId);
     _refreshAll([]);
     return success;
   }

@@ -6,21 +6,21 @@ import 'package:englishvocabdatabase/database/label.dart';
 import 'template.dart';
 
 class LabelListService{
-  Future<List<OutputListItem>> initLabelList() async{
+  static Future<List<OutputListItem>> initLabelList() async{
     List<Label>? result = await DB.getAllLabels();//for test
     result ??= [];
 
-    return convertToOutputList(result, (l) => l.id, (l) => l.name);
+    return convertToOutputList(input: result, getId: (l) => l.id, getName: (l) => l.name);
   }
 
-  Future<List<OutputListItem>> searchLabel(String prefix) async{
+  static Future<List<OutputListItem>> searchLabel(String prefix) async{
     //for search in database
     List<Label>? result = await DB.searchLabel(prefix);  
     result ??= [];
-    return convertToOutputList(result, (l) => l.id, (l) => l.name); 
+    return convertToOutputList(input: result, getId: (l) => l.id, getName: (l) => l.name);
   }
 
-  Future<(List<OutputListItem>?, int)> addLabel(String name) async{
+  static Future<(List<OutputListItem>?, int)> addLabel(String name) async{
     bool exist = await DB.hasLabel(label : name);
 
     if(exist){
@@ -38,11 +38,11 @@ class LabelListService{
       List<Label>? result = await DB.getAllLabels();//for test
       result ??= [];
       
-      return (convertToOutputList(result, (l) => l.id, (l) => l.name), success);
+      return (convertToOutputList(input: result, getId: (l) => l.id, getName: (l) => l.name), success);
     }
   }
 
-  Future<List<OutputListItem>?> deleteLabel(int id) async{
+  static Future<List<OutputListItem>?> deleteLabel(int id) async{
     bool exist = await DB.hasLabel(id: id);
 
     if(!exist){
@@ -56,7 +56,7 @@ class LabelListService{
       List<Label>? result = await DB.getAllLabels();//for test
       result ??= [];
       
-      return convertToOutputList(result, (l) => l.id, (l) => l.name);
+      return convertToOutputList(input: result, getId: (l) => l.id, getName: (l) => l.name);
     }
   }
 }
