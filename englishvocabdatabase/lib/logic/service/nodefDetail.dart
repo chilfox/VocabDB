@@ -20,7 +20,7 @@ class NodefDetailService{
     if(detail.chinese != null){
       //move to word
       DB.deleteNoDef(id);
-      int wordId = await DB.addWord(name: detail.name, chinese: detail.chinese, definition: detail.definition, parts: detail.parts, detail.sentence);
+      int wordId = await DB.addWord(detail.name, chinese: detail.chinese, definition: detail.definition, parts: detail.parts, sentence: detail.sentence);
 
       return;
     }
