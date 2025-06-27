@@ -1,26 +1,37 @@
+import 'package:englishvocabdatabase/logic/output/outputItem.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'word_bank_page.dart';
-import '../logic/output/outputListNotifier.dart';
+import '../../../logic/output/outputListNotifier.dart';
 
-class MySearchBar extends ConsumerStatefulWidget {
-  const MySearchBar({super.key});
+class InLabelSearchBar extends ConsumerStatefulWidget {
+  final OutputListItem label;
+
+  const InLabelSearchBar({super.key, required this.label});
 
   @override
-  ConsumerState<MySearchBar> createState() => _MySearchBarState();
+  ConsumerState<InLabelSearchBar> createState() => _InLabelSearchBarState();
 }
 
-class _MySearchBarState extends ConsumerState<MySearchBar> {
+class _InLabelSearchBarState extends ConsumerState<InLabelSearchBar> {
+  AsyncValue<List<OutputListItem>>? service;
+
+  @override
+  void initState(){
+    super.initState();
+    service = ref.read(outputListNotifierProvider(NotifierType.Word));
+    /*
+    service.searchInLabel('', widget.label.id);
+    */
+  }
 
   @override
   Widget build(BuildContext context) {
     final TextEditingController textController = TextEditingController();
-    final currentView = ref.watch(wordBankViewProvider);
     
     return TextField(
       controller: textController,
       decoration: InputDecoration(
-        hintText: 'Search word or label',
+        hintText: 'Search Word in the Label',
         prefixIcon: const Icon(Icons.search),
         suffixIcon: IconButton(
           icon: const Icon(Icons.clear),
@@ -31,13 +42,9 @@ class _MySearchBarState extends ConsumerState<MySearchBar> {
         border: const OutlineInputBorder(),
       ),
       keyboardType: TextInputType.text,
-      onChanged: (text) async {
-        // 對應 currentView 去選 notifier type
-        final NotifierType type = (currentView == ChooseListView.label)
-            ? NotifierType.Label
-            : NotifierType.Word;
-        final service = ref.read(outputListNotifierProvider(type).notifier);
-        bool success = await service.search(text);
+      /*
+      onChanged: (text) async {       
+        bool success = await service.searchInLabel(text, widget.label.id);
         if (!context.mounted) return;
         if (!success) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -45,6 +52,7 @@ class _MySearchBarState extends ConsumerState<MySearchBar> {
           );
         }
       }
+      */
     );
   }
 }

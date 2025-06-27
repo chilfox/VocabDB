@@ -1,13 +1,13 @@
-import 'package:englishvocabdatabase/pages/label_list_view.dart';
-import 'package:englishvocabdatabase/pages/search_bar.dart';
-import 'package:englishvocabdatabase/pages/word_list_view.dart';
+import 'package:englishvocabdatabase/pages/BrowsePage/label_list_view.dart';
+import 'package:englishvocabdatabase/pages/BrowsePage/search_bar.dart';
+import 'package:englishvocabdatabase/pages/BrowsePage/word_list_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-enum ChooseListView { word, label }
+enum ChooseListView { word, label, nodef }
 
 final wordBankViewProvider = StateProvider<ChooseListView>((ref) {
-  return ChooseListView.word;
+  return ChooseListView.label;
 });
 
 class WordBankPage extends ConsumerStatefulWidget {
@@ -18,7 +18,6 @@ class WordBankPage extends ConsumerStatefulWidget {
 }
 
 class WordBankPageState extends ConsumerState<WordBankPage> {
-
   @override
   Widget build(BuildContext context) {
     final currentView = ref.watch(wordBankViewProvider);

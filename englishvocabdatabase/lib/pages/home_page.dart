@@ -1,6 +1,6 @@
-import 'package:englishvocabdatabase/pages/classify_page.dart';
+import 'package:englishvocabdatabase/pages/TempPage/classify_page.dart';
 import 'package:englishvocabdatabase/pages/settings_page.dart';
-import 'package:englishvocabdatabase/pages/word_bank_page.dart';
+import 'package:englishvocabdatabase/pages/BrowsePage/word_bank_page.dart';
 import '../logic/output/outputListNotifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -32,8 +32,14 @@ class HomePageState extends ConsumerState<HomePage> {
     SettingsPage(),
   ];
 
-  void _onItemTapped(int index) {
+  void _onBottomNavigationBarTapped(int index) {
     setState(() {
+      if (_currentPage != 0 && index == 0) {
+        ref.read(wordBankViewProvider.notifier).state = ChooseListView.label;
+      }
+      else if (index == 1) {
+        ref.read(wordBankViewProvider.notifier).state = ChooseListView.nodef;
+      }
       _currentPage = index;
     });
   }
@@ -65,7 +71,7 @@ class HomePageState extends ConsumerState<HomePage> {
           BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
         ],
         currentIndex: _currentPage,
-        onTap: _onItemTapped,
+        onTap: _onBottomNavigationBarTapped,
         type: BottomNavigationBarType.fixed,
       ),
     );
@@ -81,19 +87,16 @@ Widget? _buildFloatingActionButton(ChooseListView view, final int currentPage, W
     case ChooseListView.label:
       return FloatingActionButton.extended(
         onPressed: () async {
-          final service = ref.read(outputListNotifierProvider(NotifierType.Label).notifier);
-          int success = await service.add('New Item');
-          if (!context.mounted) return;
-          if (success == -1) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Add Failed')),
-            );
-          }
+          return showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return addLabelDialog(context, ref);
+            }
+          ); 
         },
         label: const Text('Add Label'),
         icon: const Icon(Icons.add),
       );
-    
     case ChooseListView.word:
       return FloatingActionButton.extended(
         onPressed: () async {          
@@ -110,5 +113,44 @@ Widget? _buildFloatingActionButton(ChooseListView view, final int currentPage, W
         label: const Text('Add Word'),
         icon: const Icon(Icons.add),
       );
+    default:
+      return null;
   }
+}
+
+AlertDialog addLabelDialog(BuildContext context, WidgetRef ref) {
+  TextEditingController textController = TextEditingController();
+  final service = ref.read(OutputListNotifierProvider(NotifierType.Label).notifier);
+
+  return AlertDialog(
+    title: Text('Create New Label'),
+    content: TextField(
+      controller: textController,
+      decoration: InputDecoration(
+        hintText: 'Type in new label name',
+        border: OutlineInputBorder(),
+      ),
+    ),
+    actions: [
+      // cancel button
+      TextButton(
+        onPressed: () => Navigator.of(context).pop(),
+        child: Text('Cancel'),
+      ),
+      // okay button
+      TextButton(
+        onPressed: () async {
+          Navigator.of(context).pop();
+          int newLabelId = await service.add(textController.text);
+          if (!context.mounted) return;
+          if (newLabelId == -1) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Add Failed')),
+            );
+          }
+        },
+        child: Text('OK'),
+      ),
+    ],
+  );
 }

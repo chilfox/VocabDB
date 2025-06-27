@@ -1,32 +1,33 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:englishvocabdatabase/logic/output/outputListNotifier.dart';
 import 'package:englishvocabdatabase/logic/output/outputItem.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class WordListView extends ConsumerStatefulWidget {
-  const WordListView({super.key});
+
+class NoDefinitionListView extends ConsumerStatefulWidget {
+  const NoDefinitionListView({super.key});
 
   @override
-  ConsumerState<WordListView> createState() => _WordListViewState();
+  ConsumerState<NoDefinitionListView> createState() => _NoDefinitionListViewState();
 }
 
-class _WordListViewState extends ConsumerState<WordListView> {
+class _NoDefinitionListViewState extends ConsumerState<NoDefinitionListView> {
   @override
   Widget build(BuildContext context) {
-    final asyncList = ref.watch(outputListNotifierProvider(NotifierType.Word));
-    final service = ref.read(outputListNotifierProvider(NotifierType.Word).notifier);
+    final asyncList = ref.watch(outputListNotifierProvider(NotifierType.NoDefinition));
+    final service = ref.read(outputListNotifierProvider(NotifierType.NoDefinition).notifier);
 
     return asyncList.when(
       data: (list) {
         if (list.isEmpty){
-          return const Center(child: Text("Word List is Empty"));
+          return const Center(child: Text("Temporary List is Empty"));
         }
         return ListView.builder(
           itemCount: list.length,
           itemBuilder: (context, index) {
             final item = list[index];
-            return vocabularyWordWidget(context, item, service);
+            return noDefinitionWidget(context, item, service);
           },
         );
       },
@@ -36,7 +37,7 @@ class _WordListViewState extends ConsumerState<WordListView> {
   }
 }
 
-Widget vocabularyWordWidget(BuildContext context, OutputListItem item, OutputListNotifier service) {
+Widget noDefinitionWidget(BuildContext context, OutputListItem item, OutputListNotifier service) {
   return Column(
     children: [
       Container(
@@ -53,8 +54,8 @@ Widget vocabularyWordWidget(BuildContext context, OutputListItem item, OutputLis
               SlidableAction(
                 onPressed: (context) async {
                   bool success = await service.delete(item.id);
-                  if (!context.mounted) return;
-                  if (!success) {
+                  if(!context.mounted) return;
+                  if(!success){
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Delete Failed')),
                     );
@@ -67,9 +68,8 @@ Widget vocabularyWordWidget(BuildContext context, OutputListItem item, OutputLis
           ),
           child: ListTile(
             title: Text(item.name),
-            subtitle: Text(item.name), // need to change to definition
             onTap: () {
-              print("I'm Tapped");
+              print("Open Word Edit Page");
             },
           ),
         ),
