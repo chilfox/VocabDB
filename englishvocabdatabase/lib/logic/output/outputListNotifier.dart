@@ -1,11 +1,12 @@
-import 'package:englishvocabdatabase/logic/service/nodefListService.dart';
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'outputItem.dart';
 import 'package:meta/meta.dart';
 
 //service
-import '../service/labelService.dart';
+import 'package:englishvocabdatabase/logic/service/labelService.dart';
+import 'package:englishvocabdatabase/logic/service/nodefListService.dart';
+import 'package:englishvocabdatabase/logic/service/wordService.dart';
 
 part 'outputListNotifier.g.dart';
 
@@ -14,6 +15,7 @@ enum NotifierType { NoDefinition, Label, Word}
 //service
 final _labelListSevice = LabelListService();
 final _nodefListService = NodefListService();
+final _wordListService = WordListService();
 
 @riverpod
 class OutputListNotifier extends _$OutputListNotifier {
@@ -86,6 +88,53 @@ class OutputListNotifier extends _$OutputListNotifier {
     }
   }
 
+  //the method for word related to label
+  Future<bool> searchInLabel(String prefix, int labelId) async{
+    List<OutputListItem> result = await _wordListService.searchWordToLabel(prefix, labelId, true);
+
+    _refreshAll(result);
+    return (result == [] ? false : true);
+  }
+  
+  Future<bool> searchNotInLabel(String prefix, int labelId) async{
+    List<OutputListItem> result = await _wordListService.searchWordToLabel(prefix, labelId, false);
+
+    _refreshAll(result);
+    return (result == [] ? false : true);
+  }
+  
+  Future<bool> addWordToLabel(int wordId, int labelId) async{
+    bool success = await _wordListService.addWordToLabel(wordId, labelId);
+
+    if(success){
+      //list should only have word not in label
+      _deleteTarget(wordId);
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+  
+  Future<bool> removeWordFromLabel(int wordId, int labelId) async{
+    bool success = await _wordListService.removeWord(wordId: wordId, labelId: labelId);
+
+    if(success){
+      //list should only have words in label
+      _deleteTarget(wordId);
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+  
+  Future<bool> removeAllWord(int labelId) async{
+    bool success = await _wordListService.removeWord(labelId: labelId);
+    _refreshAll([]);
+    return success;
+  }
+
   //add label or string
   void _addOutputString(OutputListItem item){
     // only perform when having data
@@ -121,10 +170,5 @@ class OutputListNotifier extends _$OutputListNotifier {
     final newList = [...current]..removeAt(index);
     state = AsyncData(newList);
     return true;
-  }
-
-  //remove all output string
-  void _removeAll(){
-    state = AsyncData([]);
   }
 }
