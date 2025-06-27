@@ -12,7 +12,7 @@ class Word{
   late String _name;
   late String _definition = '';
   late String _parts = '';   //詞性
-  String? _chinese = '';
+  String _chinese = '';
   late String _sentence = '';
   List<String>? _labels = null;
 

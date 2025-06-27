@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-import 'package:flutter/widgets.dart';
 import 'wordModifyInformation.dart';
 import 'wordFilterOption.dart';
 import 'nodef.dart';
@@ -418,16 +417,16 @@ class DB {
     return result.isNotEmpty;
   }
 
-  static Future<int> addWord(String name) async {
+  static Future<int> addWord(String name, {String? definition, String? parts, String? chinese, String? sentence}) async {
 
     final db = await getDBConnect();
     
     final Map<String, dynamic> insertingword = {
       'name': name,
-      'definition': '',
-      'parts': '',
-      'chinese': '',
-      'sentence': '', 
+      'definition': (definition == null)? '': definition,
+      'parts': (parts == null)? '': parts,
+      'chinese': (chinese == null)? '': chinese,
+      'sentence': (sentence == null)? '': sentence,
     };
 
     final int newid = await db.insert(
