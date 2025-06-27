@@ -23,32 +23,30 @@ class InLabelWordListPage extends ConsumerWidget {
       ),
 
       body: SafeArea(
-        child: Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                // Search bar
-                InLabelSearchBar(label: label,),
-                
-                asyncList.when(
-                  data: (list) {
-                    if (list.isEmpty){
-                      return Expanded(child: const Center(child: Text("Word List is Empty")));
-                    }
-                    return ListView.builder(
-                      itemCount: list.length,
-                      itemBuilder: (context, index) {
-                        final item = list[index];
-                        return VocabularyWordWidget(item: item, service: service);
-                      },
-                    );
-                  },
-                  loading: () => const Center(child: CircularProgressIndicator()),
-                  error: (err, stack) => Center(child: Text('Error: $err')),
-                ),
-              ],
-            ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              // Search bar
+              InLabelSearchBar(label: label,),
+              
+              asyncList.when(
+                data: (list) {
+                  if (list.isEmpty){
+                    return Expanded(child: const Center(child: Text("Word List is Empty")));
+                  }
+                  return ListView.builder(
+                    itemCount: list.length,
+                    itemBuilder: (context, index) {
+                      final item = list[index];
+                      return VocabularyWordWidget(item: item, service: service);
+                    },
+                  );
+                },
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (err, stack) => Center(child: Text('Error: $err')),
+              ),
+            ],
           ),
         ),
       ),
