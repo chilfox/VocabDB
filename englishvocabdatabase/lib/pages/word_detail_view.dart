@@ -24,7 +24,6 @@ class _WordDetailView extends ConsumerState<WordDetailView> {
   bool _isEditing = false;
   
   // Text editing controllers
-  late TextEditingController _nameController;
   late TextEditingController _chineseController;
   late TextEditingController _definitionController;
   late TextEditingController _partsController;
@@ -36,7 +35,6 @@ class _WordDetailView extends ConsumerState<WordDetailView> {
     _isEditing = widget.startWithEditView;
     
     // Initialize controllers
-    _nameController = TextEditingController();
     _chineseController = TextEditingController();
     _definitionController = TextEditingController();
     _partsController = TextEditingController();
@@ -46,7 +44,6 @@ class _WordDetailView extends ConsumerState<WordDetailView> {
   @override
   void dispose() {
     // Dispose controllers
-    _nameController.dispose();
     _chineseController.dispose();
     _definitionController.dispose();
     _partsController.dispose();
@@ -64,7 +61,7 @@ class _WordDetailView extends ConsumerState<WordDetailView> {
     // Create updated word object
     final updatedWord = Detail(
       id: word.id,
-      name: _nameController.text,
+      name: word.name,
       chinese: _chineseController.text,
       definition: _definitionController.text,
       parts: _partsController.text,
@@ -109,7 +106,6 @@ class _WordDetailView extends ConsumerState<WordDetailView> {
       data: (word){
         // Update controllers when data is loaded
         if (!_isEditing) {
-          _nameController.text = word.name;
           _chineseController.text = word.chinese ?? '';
           _definitionController.text = word.definition ?? '';
           _partsController.text = word.parts ?? '';
@@ -172,36 +168,32 @@ class _WordDetailView extends ConsumerState<WordDetailView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.baseline,
-                      textBaseline: TextBaseline.alphabetic,
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         // English word
                         Expanded(
-                          child: _isEditing
-                              ? TextField(
-                                  controller: _nameController,
-                                  style: const TextStyle(
-                                    fontSize: 32,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                  decoration: const InputDecoration(
-                                    border: UnderlineInputBorder(),
-                                    labelText: 'English Word',
-                                    labelStyle: TextStyle(color: Colors.white70),
-                                  ),
-                                )
-                              : Text(
-                                  word.name,
-                                  style: const TextStyle(
-                                    fontSize: 32,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                ),
+                          flex: 3,
+                          child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                            child: Align(
+                              alignment: Alignment.bottomLeft,
+                              child: Text(
+                                      word.name,
+                                      style: const TextStyle(
+                                        fontSize: 32,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.fade,
+                                    ),
+                            ),
+                          ),
                         ),
+                        SizedBox(width: 8,),
                         // Chinese translation
                         Expanded(
+                          flex: 2,
                           child: Center(
                             child: _isEditing
                                 ? TextField(
@@ -218,14 +210,23 @@ class _WordDetailView extends ConsumerState<WordDetailView> {
                                       labelStyle: TextStyle(color: Colors.white70),
                                     ),
                                   )
-                                : Text(
-                                    word.chinese ?? '',
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
+                                : SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Container(
+                                    alignment: Alignment.bottomCenter,
+                                    margin: EdgeInsets.only(bottom: 4),
+                                    child: Text(
+                                        word.chinese ?? '',
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.fade,
+                                      ),
                                   ),
+                                ),
                           ),
                         ),
                       ],
@@ -267,13 +268,16 @@ class _WordDetailView extends ConsumerState<WordDetailView> {
                                     labelStyle: TextStyle(color: Colors.white70),
                                   ),
                                 )
-                              : Text(
-                                  word.parts ?? '',
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
+                              : Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                    word.parts ?? '',
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
-                                ),
+                              ),
                         ),
                       ],
                     ),
