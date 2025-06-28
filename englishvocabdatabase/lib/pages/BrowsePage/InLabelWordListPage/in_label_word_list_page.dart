@@ -1,6 +1,7 @@
 import 'package:englishvocabdatabase/logic/output/outputItem.dart';
 import 'package:englishvocabdatabase/pages/BrowsePage/InLabelWordListPage/in_label_search_bar.dart';
 import 'package:englishvocabdatabase/pages/BrowsePage/vocabulary_word_widget.dart';
+import 'package:englishvocabdatabase/pages/word_detail_view.dart';
 import '../../../logic/output/outputListNotifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -52,16 +53,11 @@ class InLabelWordListPage extends ConsumerWidget {
       ),
 
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () async {          
-          final service = ref.read(outputListNotifierProvider(NotifierType.Word).notifier);
-
-          int success = await service.add('New Item');
-          if (!context.mounted) return;
-          if (success == -1) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Add Failed')),
-            );
-          }
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => WordDetailView(label: label, wordId: -1, startWithEditView: true,)),
+          );
         },
         label: const Text('Add Word'),
         icon: const Icon(Icons.add),

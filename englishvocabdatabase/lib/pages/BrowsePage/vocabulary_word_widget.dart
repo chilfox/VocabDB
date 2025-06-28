@@ -1,5 +1,6 @@
 import 'package:englishvocabdatabase/logic/output/outputListNotifier.dart';
 import 'package:englishvocabdatabase/logic/output/outputItem.dart';
+import 'package:englishvocabdatabase/pages/word_detail_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
@@ -43,7 +44,10 @@ class VocabularyWordWidget extends StatelessWidget {
               title: Text(item.name),
               subtitle: Text(item.name), // need to change to definition
               onTap: () {
-                print("I'm Tapped");
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => WordDetailView(label: null, wordId: item.id, startWithEditView: false)),
+                );
               },
             ),
           ),

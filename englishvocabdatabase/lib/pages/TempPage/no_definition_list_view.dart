@@ -1,3 +1,4 @@
+import 'package:englishvocabdatabase/pages/word_detail_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -69,7 +70,11 @@ Widget noDefinitionWidget(BuildContext context, OutputListItem item, OutputListN
           child: ListTile(
             title: Text(item.name),
             onTap: () {
-              print("Open Word Edit Page");
+              // open word edit page
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => WordDetailView(label: null, wordId: item.id, startWithEditView: true,)),
+              );
             },
           ),
         ),

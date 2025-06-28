@@ -13,15 +13,13 @@ class InLabelSearchBar extends ConsumerStatefulWidget {
 }
 
 class _InLabelSearchBarState extends ConsumerState<InLabelSearchBar> {
-  AsyncValue<List<OutputListItem>>? service;
+  OutputListNotifier? service;
 
   @override
   void initState(){
     super.initState();
-    service = ref.read(outputListNotifierProvider(NotifierType.Word));
-    /*
-    service.searchInLabel('', widget.label.id);
-    */
+    service = ref.read(outputListNotifierProvider(NotifierType.Word).notifier);
+    service?.searchInLabel('', widget.label.id);
   }
 
   @override
@@ -42,17 +40,15 @@ class _InLabelSearchBarState extends ConsumerState<InLabelSearchBar> {
         border: const OutlineInputBorder(),
       ),
       keyboardType: TextInputType.text,
-      /*
       onChanged: (text) async {       
-        bool success = await service.searchInLabel(text, widget.label.id);
+        bool? success = await service?.searchInLabel(text, widget.label.id);
         if (!context.mounted) return;
-        if (!success) {
+        if (success != null && !success) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Search failed')),
           );
         }
       }
-      */
     );
   }
 }
