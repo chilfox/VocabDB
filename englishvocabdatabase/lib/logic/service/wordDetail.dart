@@ -1,3 +1,4 @@
+import 'package:englishvocabdatabase/database/label.dart';
 import 'package:englishvocabdatabase/database/word.dart';
 import 'package:englishvocabdatabase/database/db.dart';
 import 'package:englishvocabdatabase/logic/output/outputDetailItem.dart';
@@ -36,6 +37,25 @@ class WordDetailService{
 
     List<String>? labels = (await DB.searchWordDetails(wordId))?.labels;
     return _convertLabelItem(labels);
+  }
+
+  //return the label the word does not belong to
+  static Future<List<LabelItem>> labelToAdd(int wordId) async{
+    List<Label>? allLabel = await DB.getAllLabels();
+    if(allLabel == null){
+      return [];
+    }
+
+    //get the label that this word does not belong to
+    List<String>? labelOfThisWord = (await DB.searchWordDetails(wordId))!.labels;
+    labelOfThisWord ??= [];
+
+    List<String> result = allLabel
+    .where((label) => !labelOfThisWord!.contains(label.name))
+    .map((label) => label.name)
+    .toList();
+
+    return _convertLabelItem(result);
   }
 
   static Future<List<LabelItem>> _convertLabelItem(List<String>? labels) async{
