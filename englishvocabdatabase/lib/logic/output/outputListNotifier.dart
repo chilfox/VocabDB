@@ -59,7 +59,7 @@ class OutputListNotifier extends _$OutputListNotifier {
       case NotifierType.Label:
         (result, newid) = await LabelListService.addLabel(name);
       case NotifierType.Word:
-        (result, newid) = await WordListService.addWord(name);
+        (result, newid) = await NodefListService.addNoDef(name);
     }
 
     if (result == null) return -1;
