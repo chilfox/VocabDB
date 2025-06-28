@@ -7,7 +7,7 @@ part of 'outputListNotifier.dart';
 // **************************************************************************
 
 String _$outputListNotifierHash() =>
-    r'd86c2f0eca7cd2d6ae1a26dc3113299bfffe7e33';
+    r'b43cc998c0ec412ffc637bbbe086e66a2dc690a5';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -33,8 +33,14 @@ class _SystemHash {
 abstract class _$OutputListNotifier
     extends BuildlessAutoDisposeAsyncNotifier<List<OutputListItem>> {
   late final NotifierType type;
+  late final bool? inlabel;
+  late final int? labelId;
 
-  FutureOr<List<OutputListItem>> build(NotifierType type);
+  FutureOr<List<OutputListItem>> build(
+    NotifierType type, {
+    bool? inlabel,
+    int? labelId,
+  });
 }
 
 /// See also [OutputListNotifier].
@@ -48,15 +54,23 @@ class OutputListNotifierFamily
   const OutputListNotifierFamily();
 
   /// See also [OutputListNotifier].
-  OutputListNotifierProvider call(NotifierType type) {
-    return OutputListNotifierProvider(type);
+  OutputListNotifierProvider call(
+    NotifierType type, {
+    bool? inlabel,
+    int? labelId,
+  }) {
+    return OutputListNotifierProvider(type, inlabel: inlabel, labelId: labelId);
   }
 
   @override
   OutputListNotifierProvider getProviderOverride(
     covariant OutputListNotifierProvider provider,
   ) {
-    return call(provider.type);
+    return call(
+      provider.type,
+      inlabel: provider.inlabel,
+      labelId: provider.labelId,
+    );
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -82,9 +96,12 @@ class OutputListNotifierProvider
           List<OutputListItem>
         > {
   /// See also [OutputListNotifier].
-  OutputListNotifierProvider(NotifierType type)
+  OutputListNotifierProvider(NotifierType type, {bool? inlabel, int? labelId})
     : this._internal(
-        () => OutputListNotifier()..type = type,
+        () => OutputListNotifier()
+          ..type = type
+          ..inlabel = inlabel
+          ..labelId = labelId,
         from: outputListNotifierProvider,
         name: r'outputListNotifierProvider',
         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -94,6 +111,8 @@ class OutputListNotifierProvider
         allTransitiveDependencies:
             OutputListNotifierFamily._allTransitiveDependencies,
         type: type,
+        inlabel: inlabel,
+        labelId: labelId,
       );
 
   OutputListNotifierProvider._internal(
@@ -104,15 +123,19 @@ class OutputListNotifierProvider
     required super.debugGetCreateSourceHash,
     required super.from,
     required this.type,
+    required this.inlabel,
+    required this.labelId,
   }) : super.internal();
 
   final NotifierType type;
+  final bool? inlabel;
+  final int? labelId;
 
   @override
   FutureOr<List<OutputListItem>> runNotifierBuild(
     covariant OutputListNotifier notifier,
   ) {
-    return notifier.build(type);
+    return notifier.build(type, inlabel: inlabel, labelId: labelId);
   }
 
   @override
@@ -120,13 +143,18 @@ class OutputListNotifierProvider
     return ProviderOverride(
       origin: this,
       override: OutputListNotifierProvider._internal(
-        () => create()..type = type,
+        () => create()
+          ..type = type
+          ..inlabel = inlabel
+          ..labelId = labelId,
         from: from,
         name: null,
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
         type: type,
+        inlabel: inlabel,
+        labelId: labelId,
       ),
     );
   }
@@ -142,13 +170,18 @@ class OutputListNotifierProvider
 
   @override
   bool operator ==(Object other) {
-    return other is OutputListNotifierProvider && other.type == type;
+    return other is OutputListNotifierProvider &&
+        other.type == type &&
+        other.inlabel == inlabel &&
+        other.labelId == labelId;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, type.hashCode);
+    hash = _SystemHash.combine(hash, inlabel.hashCode);
+    hash = _SystemHash.combine(hash, labelId.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -160,6 +193,12 @@ mixin OutputListNotifierRef
     on AutoDisposeAsyncNotifierProviderRef<List<OutputListItem>> {
   /// The parameter `type` of this provider.
   NotifierType get type;
+
+  /// The parameter `inlabel` of this provider.
+  bool? get inlabel;
+
+  /// The parameter `labelId` of this provider.
+  int? get labelId;
 }
 
 class _OutputListNotifierProviderElement
@@ -173,6 +212,10 @@ class _OutputListNotifierProviderElement
 
   @override
   NotifierType get type => (origin as OutputListNotifierProvider).type;
+  @override
+  bool? get inlabel => (origin as OutputListNotifierProvider).inlabel;
+  @override
+  int? get labelId => (origin as OutputListNotifierProvider).labelId;
 }
 
 // ignore_for_file: type=lint

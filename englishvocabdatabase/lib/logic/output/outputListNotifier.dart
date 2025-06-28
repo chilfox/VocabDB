@@ -14,14 +14,22 @@ enum NotifierType { NoDefinition, Label, Word}
 @riverpod
 class OutputListNotifier extends _$OutputListNotifier {
   @override
-  Future<List<OutputListItem>> build(NotifierType type) async{
+  Future<List<OutputListItem>> build(NotifierType type, {bool? inlabel, int? labelId}) async{
     switch(type){
       case NotifierType.NoDefinition:
         return NodefListService.initNoDefList();
       case NotifierType.Label:
         return LabelListService.initLabelList();
       case NotifierType.Word:
-        return WordListService.initWordList();
+        if(inlabel == null){
+          return WordListService.initWordList();
+        }
+        else if(inlabel){
+          return WordListService.searchWordToLabel('', labelId!, true);
+        }
+        else{
+          return WordListService.searchWordToLabel('', labelId!, false);
+        }
     }
   }
 
