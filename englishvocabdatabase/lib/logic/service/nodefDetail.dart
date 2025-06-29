@@ -17,7 +17,7 @@ class NodefDetailService{
   }
 
   static Future<void> storeNodefDetail(Detail detail, int id) async{
-    if(detail.chinese != null){
+    if(detail.chinese != null || detail.definition != null){
       //move to word
       DB.deleteNoDef(id);
       int wordId = await DB.addWord(detail.name, chinese: detail.chinese, definition: detail.definition, parts: detail.parts, sentence: detail.sentence);

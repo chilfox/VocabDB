@@ -32,6 +32,10 @@ class OutputDetailNotifier extends _$OutputDetailNotifier{
     _detailHelper(column, newInformation);
     return true;
   }
+
+  Future<List<LabelItem>> getAddLabel() async{
+    return WordDetailService.labelToAdd(id);
+  }
   
   Future<bool> addWordToLabel(int wordId, int labelId) async{
     if(type == DetailType.NodefDetail){
