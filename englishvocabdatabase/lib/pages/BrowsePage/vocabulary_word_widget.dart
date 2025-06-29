@@ -46,7 +46,7 @@ class VocabularyWordWidget extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => WordDetailView(label: null, wordId: item.id, startWithEditView: false)),
+                  MaterialPageRoute(builder: (context) => WordDetailView(label: null, wordId: item.id, startWithEditView: false, nodef: false,)),
                 );
               },
             ),

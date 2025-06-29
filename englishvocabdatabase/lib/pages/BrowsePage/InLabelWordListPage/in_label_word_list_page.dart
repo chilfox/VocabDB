@@ -56,7 +56,7 @@ class InLabelWordListPage extends ConsumerWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => WordDetailView(label: label, wordId: -1, startWithEditView: true,)),
+            MaterialPageRoute(builder: (context) => WordDetailView(label: label, wordId: -1, startWithEditView: true, nodef: false,)),
           );
         },
         label: const Text('Add Word'),

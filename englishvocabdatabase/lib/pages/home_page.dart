@@ -1,7 +1,6 @@
 import 'package:englishvocabdatabase/pages/TempPage/classify_page.dart';
 import 'package:englishvocabdatabase/pages/settings_page.dart';
 import 'package:englishvocabdatabase/pages/BrowsePage/word_bank_page.dart';
-import 'package:englishvocabdatabase/pages/test.dart';
 import 'package:englishvocabdatabase/pages/word_detail_view.dart';
 import '../logic/output/outputListNotifier.dart';
 import 'package:flutter/material.dart';
@@ -156,7 +155,7 @@ AlertDialog addLabelDialog(BuildContext context, WidgetRef ref) {
 
 AlertDialog addWordDialog(BuildContext context, WidgetRef ref) {
   TextEditingController textController = TextEditingController();
-  final service = ref.read(OutputListNotifierProvider(NotifierType.Word).notifier);
+  final service = ref.read(OutputListNotifierProvider(NotifierType.NoDefinition).notifier);
 
   return AlertDialog(
     title: Text('Add New Word'),
@@ -208,7 +207,8 @@ AlertDialog addWordDialog(BuildContext context, WidgetRef ref) {
                   builder: (context) => WordDetailView(
                     label: null, 
                     wordId: newWordId, 
-                    startWithEditView: true
+                    startWithEditView: true,
+                    nodef: true,
                   )
                 )
               );

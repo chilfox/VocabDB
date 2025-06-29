@@ -1,6 +1,7 @@
 import 'package:englishvocabdatabase/logic/output/outputDetailItem.dart';
 import 'package:englishvocabdatabase/logic/output/outputDetailNotifier.dart';
 import 'package:englishvocabdatabase/logic/output/outputItem.dart';
+import 'package:englishvocabdatabase/logic/output/outputListNotifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -8,12 +9,14 @@ class WordDetailView extends ConsumerStatefulWidget {
   final OutputListItem? label;
   final int wordId;
   final bool startWithEditView;
+  final bool nodef; // 新增參數
 
   const WordDetailView({
     super.key,
     required this.label,
     required this.wordId,
     required this.startWithEditView,
+    required this.nodef, // 新增必要參數
   });
 
   @override
@@ -73,16 +76,16 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
     return Detail(
       id: word.id,
       name: word.name,
-      chinese: _chineseController.text,
-      definition: _definitionController.text,
-      parts: _partsController.text,
-      sentence: _sentenceController.text,
+      chinese: _chineseController.text.isEmpty ? null : _chineseController.text,
+      definition: _definitionController.text.isEmpty ? null : _definitionController.text,
+      parts: _partsController.text.isEmpty ? null : _partsController.text,
+      sentence: _sentenceController.text.isEmpty ? null : _sentenceController.text,
       labels: word.labels,
     );
   }
 
   void _updateWordInService(Detail updatedWord, OutputDetailNotifier service) {
-    updateWord(updatedWord, service);
+    updateWord(updatedWord, service, widget.nodef); // 傳入 nodef 參數
   }
 
   void _exitEditMode() {
@@ -103,17 +106,26 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
   }
 
   AsyncValue<Detail> _getWordData() {
-    final detailType = widget.wordId == -1 
+    final detailType = widget.nodef // 使用 nodef 參數判斷
         ? DetailType.NodefDetail 
         : DetailType.WordDetail;
     return ref.watch(outputDetailNotifierProvider(detailType, widget.wordId));
   }
 
   OutputDetailNotifier _getService() {
-    final detailType = widget.wordId == -1 
+    final detailType = widget.nodef // 使用 nodef 參數判斷
         ? DetailType.NodefDetail 
         : DetailType.WordDetail;
     return ref.watch(outputDetailNotifierProvider(detailType, widget.wordId).notifier);
+  }
+
+  // Helper method to check if this is a NoDefinition word (only has id and name)
+  bool _isNoDefinitionWord(Detail word) {
+    return widget.nodef && 
+           (word.definition == null || word.definition!.isEmpty) &&
+           (word.chinese == null || word.chinese!.isEmpty) &&
+           (word.parts == null || word.parts!.isEmpty) &&
+           (word.sentence == null || word.sentence!.isEmpty);
   }
 
   @override
@@ -187,24 +199,76 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
     }
   }
 
-  Widget _buildBody(BuildContext context, Detail word, OutputDetailNotifier service) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildMainWordCard(word),
-          const SizedBox(height: 16),
-          _buildExamplesCard(word),
-          const SizedBox(height: 16),
-          _buildLabelsCard(word, service),
-          const SizedBox(height: 20),
-        ],
+ Widget _buildBody(BuildContext context, Detail word, OutputDetailNotifier service) {
+  final bool isNoDefWord = _isNoDefinitionWord(word);
+  
+  return ListView(
+    padding: const EdgeInsets.all(16.0),
+    children: [
+      _buildMainWordCard(word, isNoDefWord),
+      const SizedBox(height: 16),
+      if (!isNoDefWord || _isEditing) ...[
+        _buildExamplesCard(word),
+        const SizedBox(height: 16),
+      ],
+      if (!isNoDefWord || _isEditing) ...[
+        _buildLabelsCard(word, service),
+        const SizedBox(height: 16),
+      ],
+      if (isNoDefWord && !_isEditing) _buildNoDefinitionPrompt(),
+      const SizedBox(height: 20),
+    ],
+  );
+}
+
+  Widget _buildNoDefinitionPrompt() {
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          children: [
+            const Icon(
+              Icons.edit_note,
+              size: 48,
+              color: Colors.grey,
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'This word has no definition yet',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+                color: Colors.white70,
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Tap the edit button to add definition, translation, and more details',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.white54,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton.icon(
+              onPressed: _toggleEditMode,
+              icon: const Icon(Icons.add),
+              label: const Text('Add Definition'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildMainWordCard(Detail word) {
+  Widget _buildMainWordCard(Detail word, bool isNoDefWord) {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -213,24 +277,26 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildWordHeader(word),
-            const SizedBox(height: 8),
-            _buildPartOfSpeechRow(word),
-            const SizedBox(height: 16),
-            _buildDefinitionSection(word),
+            _buildWordHeader(word, isNoDefWord),
+            if (!isNoDefWord || _isEditing) ...[
+              const SizedBox(height: 8),
+              _buildPartOfSpeechRow(word),
+              const SizedBox(height: 16),
+              _buildDefinitionSection(word),
+            ],
           ],
         ),
       ),
     );
   }
 
-  Widget _buildWordHeader(Detail word) {
+  Widget _buildWordHeader(Detail word, bool isNoDefWord) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         _buildEnglishWordSection(word),
         const SizedBox(width: 8),
-        _buildChineseTranslationSection(word),
+        if (!isNoDefWord || _isEditing) _buildChineseTranslationSection(word),
       ],
     );
   }
@@ -281,6 +347,8 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
         border: UnderlineInputBorder(),
         labelText: 'Chinese',
         labelStyle: TextStyle(color: Colors.white70),
+        hintText: 'Add translation',
+        hintStyle: TextStyle(color: Colors.white54),
       ),
     );
   }
@@ -344,6 +412,8 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
           border: UnderlineInputBorder(),
           labelText: 'Part of Speech',
           labelStyle: TextStyle(color: Colors.white70),
+          hintText: 'e.g., noun, verb, adjective',
+          hintStyle: TextStyle(color: Colors.white54),
         ),
       );
     } else {
@@ -374,6 +444,8 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
           border: OutlineInputBorder(),
           labelText: 'Definition',
           labelStyle: TextStyle(color: Colors.white70),
+          hintText: 'Enter word definition',
+          hintStyle: TextStyle(color: Colors.white54),
         ),
       );
     } else {
@@ -443,6 +515,8 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
         decoration: const InputDecoration(
           border: OutlineInputBorder(),
           labelText: 'Example Sentence',
+          hintText: 'Enter an example sentence',
+          hintStyle: TextStyle(color: Colors.white54),
         ),
       );
     } else {
@@ -504,7 +578,17 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
   }
 
   Widget _buildLabelsWrap(Detail word, OutputDetailNotifier service) {
-  if(word.labels == null) return Spacer();
+    if(word.labels == null || word.labels!.isEmpty) {
+      return _isEditing 
+        ? const Text(
+            'No labels yet. Add some to organize your words!',
+            style: TextStyle(
+              color: Colors.white54,
+              fontSize: 14,
+            ),
+          )
+        : const SizedBox.shrink();
+    }
     return Wrap(
       spacing: 8.0,
       runSpacing: 8.0,
@@ -563,18 +647,28 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
     OutputDetailNotifier service, 
     int wordId,
   ) {
-    final TextEditingController labelController = TextEditingController();
+    final TextEditingController labelController = TextEditingController(); 
+    final asyncList = service.
     
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Add New Label'),
-        content: TextField(
-          controller: labelController,
-          decoration: const InputDecoration(
-            hintText: 'Enter label name',
-            border: OutlineInputBorder(),
-          ),
+        title: const Text('Manage Labels'),
+        content: asyncList.when(
+          data: (list) {
+            if (list.isEmpty){
+              return const Center(child: Text("Label List is Empty"));
+            }
+            return ListView.builder(
+              itemCount: list.length,
+              itemBuilder: (context, index) {
+                final item = list[index];
+                return labelCheckboxWidget(context, item, ref.read(outputListNotifierProvider(NotifierType.Label).notifier));
+              },
+            )
+          },
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (err, stack) => Center(child: Text('Error: $err')),
         ),
         actions: [
           TextButton(
@@ -583,7 +677,7 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
           ),
           TextButton(
             onPressed: () => _addLabel(labelController, service, wordId),
-            child: const Text('Add'),
+            child: const Text('OK'),
           ),
         ],
       ),
@@ -603,11 +697,22 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
   }
 }
 
-void updateWord(Detail updateWord, OutputDetailNotifier service) {
+void updateWord(Detail updateWord, OutputDetailNotifier service, bool isNodef) {
+  // Check if any fields have content to determine if we should convert NoDefinition to Word
+  bool hasContent = (updateWord.definition?.isNotEmpty ?? false) ||
+                   (updateWord.chinese?.isNotEmpty ?? false) ||
+                   (updateWord.parts?.isNotEmpty ?? false) ||
+                   (updateWord.sentence?.isNotEmpty ?? false);
+
   service.modifyDetail('name', updateWord.name);
-  service.modifyDetail('definition', updateWord.definition ?? '');
-  service.modifyDetail('parts', updateWord.parts ?? '');
-  service.modifyDetail('chinese', updateWord.chinese ?? '');
-  service.modifyDetail('sentence', updateWord.sentence ?? '');
+  
+  // Only update fields if they have content or if it's already a Word type
+  if (hasContent || !isNodef) {
+    service.modifyDetail('definition', updateWord.definition ?? '');
+    service.modifyDetail('parts', updateWord.parts ?? '');
+    service.modifyDetail('chinese', updateWord.chinese ?? '');
+    service.modifyDetail('sentence', updateWord.sentence ?? '');
+  }
+  
   service.storeDetail();
 }
