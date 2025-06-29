@@ -1,6 +1,8 @@
 import 'package:englishvocabdatabase/pages/TempPage/classify_page.dart';
 import 'package:englishvocabdatabase/pages/settings_page.dart';
 import 'package:englishvocabdatabase/pages/BrowsePage/word_bank_page.dart';
+import 'package:englishvocabdatabase/pages/test.dart';
+import 'package:englishvocabdatabase/pages/word_detail_view.dart';
 import '../logic/output/outputListNotifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -100,15 +102,12 @@ Widget? _buildFloatingActionButton(ChooseListView view, final int currentPage, W
     case ChooseListView.word:
       return FloatingActionButton.extended(
         onPressed: () async {          
-          final service = ref.read(outputListNotifierProvider(NotifierType.Word).notifier);
-
-          int success = await service.add('New Item');
-          if (!context.mounted) return;
-          if (success == -1) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Add Failed')),
-            );
-          }
+          return showDialog(
+            context: context,
+            builder: (BuildContext context){
+              return addWordDialog(context, ref);
+            }
+          );
         },
         label: const Text('Add Word'),
         icon: const Icon(Icons.add),
@@ -146,6 +145,79 @@ AlertDialog addLabelDialog(BuildContext context, WidgetRef ref) {
           if (newLabelId == -1) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Add Failed')),
+            );
+          }
+        },
+        child: Text('OK'),
+      ),
+    ],
+  );
+}
+
+AlertDialog addWordDialog(BuildContext context, WidgetRef ref) {
+  TextEditingController textController = TextEditingController();
+  final service = ref.read(OutputListNotifierProvider(NotifierType.Word).notifier);
+
+  return AlertDialog(
+    title: Text('Add New Word'),
+    content: TextField(
+      controller: textController,
+      decoration: InputDecoration(
+        hintText: 'Type in new word',
+        border: OutlineInputBorder(),
+      ),
+    ),
+    actions: [
+      // cancel button
+      TextButton(
+        onPressed: () => Navigator.of(context).pop(),
+        child: Text('Cancel'),
+      ),
+      // okay button
+      TextButton(
+        onPressed: () async {
+          String newWord = textController.text.trim();
+          
+          // Validate input
+          if (newWord.isEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Please enter a word')),
+            );
+            return;
+          }
+          
+          // Close dialog first
+          Navigator.of(context).pop();
+          
+          try {
+            // Add the word
+            int newWordId = await service.add(newWord);
+            
+            // Check if context is still valid
+            if (!context.mounted) return;
+            
+            if (newWordId == -1) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Add Failed')),
+              );
+            } else {
+              // Navigate to WordDetailView
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => WordDetailView(
+                    label: null, 
+                    wordId: newWordId, 
+                    startWithEditView: true
+                  )
+                )
+              );
+            }
+          } catch (error) {
+            // Handle any errors that might occur
+            if (!context.mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Error: ${error.toString()}')),
             );
           }
         },
