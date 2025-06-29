@@ -1,7 +1,6 @@
 import 'package:englishvocabdatabase/logic/output/outputDetailItem.dart';
 import 'package:englishvocabdatabase/logic/output/outputDetailNotifier.dart';
 import 'package:englishvocabdatabase/logic/output/outputItem.dart';
-import 'package:englishvocabdatabase/logic/output/outputListNotifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -540,7 +539,7 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildLabelsHeader(service, word.id),
+            _buildLabelsHeader(service, word),
             const SizedBox(height: 16),
             _buildLabelsWrap(word, service),
           ],
@@ -549,7 +548,8 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
     );
   }
 
-  Widget _buildLabelsHeader(OutputDetailNotifier service, int wordId) {
+  Widget _buildLabelsHeader(OutputDetailNotifier service, Detail word) {
+
     return Row(
       children: [
         Container(
@@ -570,7 +570,7 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
           const Spacer(),
           IconButton(
             icon: const Icon(Icons.add, color: Colors.blue),
-            onPressed: () => _showAddLabelDialog(context, service, wordId),
+            onPressed: () => _showAddLabelDialog(context, service, word.labels, word.id),
           ),
         ],
       ],
@@ -642,33 +642,68 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
     });
   }
 
+  Map<int, bool> _selectedLabels = {};
+
+  Widget labelWidget(BuildContext context, LabelItem item, OutputDetailNotifier service) {
+    return StatefulBuilder(
+      builder: (context, setState) {
+        // 檢查這個標籤是否已經在當前單詞中
+        bool isInWord = _getWordData().value?.labels?.any((label) => label.id == item.id) ?? false;
+        
+        // 如果還沒有初始化這個標籤的選擇狀態，就用當前狀態初始化
+        if (!_selectedLabels.containsKey(item.id)) {
+          _selectedLabels[item.id] = isInWord;
+        }
+        
+        return CheckboxListTile(
+          title: Text(
+            item.name,
+            style: const TextStyle(color: Colors.white),
+          ),
+          value: _selectedLabels[item.id] ?? false,
+          onChanged: (bool? value) {
+            setState(() {
+              _selectedLabels[item.id] = value ?? false;
+            });
+          },
+          checkColor: Colors.white,
+          activeColor: Colors.blue,
+          controlAffinity: ListTileControlAffinity.leading,
+        );
+      },
+    );
+  }
+
+  // 修改 _showAddLabelDialog 函數
   void _showAddLabelDialog(
-    BuildContext context, 
-    OutputDetailNotifier service, 
-    int wordId,
-  ) {
-    final TextEditingController labelController = TextEditingController(); 
-    final asyncList = service.
+      BuildContext context, 
+      OutputDetailNotifier service, 
+      List<LabelItem>? inWordLabelList,
+      int wordId
+    ) async {
+    final List<LabelItem> labelList = await service.getAddLabel();
     
+    // 重置選擇狀態，根據當前單詞的標籤初始化
+    _selectedLabels.clear();
+    for (var label in labelList) {
+      _selectedLabels[label.id] = inWordLabelList?.any((inLabel) => inLabel.id == label.id) ?? false;
+    }
+    
+    if (!context.mounted) return;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Manage Labels'),
-        content: asyncList.when(
-          data: (list) {
-            if (list.isEmpty){
-              return const Center(child: Text("Label List is Empty"));
-            }
-            return ListView.builder(
-              itemCount: list.length,
-              itemBuilder: (context, index) {
-                final item = list[index];
-                return labelCheckboxWidget(context, item, ref.read(outputListNotifierProvider(NotifierType.Label).notifier));
-              },
-            )
-          },
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (err, stack) => Center(child: Text('Error: $err')),
+        content: SizedBox(
+          width: double.maxFinite,
+          height: 300,
+          child: ListView.builder(
+            itemCount: labelList.length,
+            itemBuilder: (context, index) {
+              final item = labelList[index];
+              return labelWidget(context, item, service);
+            },
+          ),
         ),
         actions: [
           TextButton(
@@ -676,7 +711,7 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () => _addLabel(labelController, service, wordId),
+            onPressed: () => _processLabelChanges(service, wordId, inWordLabelList),
             child: const Text('OK'),
           ),
         ],
@@ -684,17 +719,31 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
     );
   }
 
-  void _addLabel(
-    TextEditingController labelController, 
+  // 新增函數：處理標籤變更
+  void _processLabelChanges(
     OutputDetailNotifier service, 
-    int wordId,
+    int wordId, 
+    List<LabelItem>? originalLabels,
   ) {
-    if (labelController.text.isNotEmpty) {
-      const int labelId = 1;
-      service.addWordToLabel(wordId, labelId);
-      Navigator.pop(context);
-    }
+    // 獲取原始標籤狀態
+    Set<int> originalLabelIds = originalLabels?.map((label) => label.id).toSet() ?? {};
+    
+    // 處理每個標籤的變更
+    _selectedLabels.forEach((labelId, isSelected) {
+      bool wasSelected = originalLabelIds.contains(labelId);
+      
+      if (isSelected && !wasSelected) {
+        // 需要添加這個標籤
+        service.addWordToLabel(wordId, labelId);
+      } else if (!isSelected && wasSelected) {
+        // 需要移除這個標籤
+        service.removeWordFromLabel(wordId, labelId);
+      }
+    });
+    
+    Navigator.pop(context);
   }
+
 }
 
 void updateWord(Detail updateWord, OutputDetailNotifier service, bool isNodef) {
