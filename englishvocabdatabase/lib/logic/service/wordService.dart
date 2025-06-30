@@ -64,10 +64,12 @@ class WordListService{
       return [];
     }
 
-    WordFilterOption limit = WordFilterOption(limitLabel: labelname, include: inlabel);
+    WordFilterOption option = WordFilterOption(limitLabel: labelname, include: inlabel);
+    //find the word in this label
+    List<Word>? wordInLabel = await DB.getWordDetails(start: 0, option: option);
+    wordInLabel ??= [];
 
-    List<Word>? result = await DB.getWordDetails(option: limit, start: 0);
-    result ??= [];
+    List<Word> result = wordInLabel.where((w) => w.name.startsWith(prefix)).toList();
 
     return convertToOutputList(input: result, getId: (l) => l.id, getName: (l) => l.name, getChinese: (l) => l.chinese);
   }
