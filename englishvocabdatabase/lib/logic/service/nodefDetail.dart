@@ -2,6 +2,7 @@ import 'package:englishvocabdatabase/database/nodef.dart';
 import 'package:englishvocabdatabase/database/db.dart';
 import 'package:englishvocabdatabase/logic/output/outputDetailItem.dart';
 import 'package:englishvocabdatabase/database/wordModifyInformation.dart';
+import 'package:flutter/foundation.dart';
 
 class NodefDetailService{
   static Future<Detail> initNodefDetail(int id) async{
@@ -17,8 +18,10 @@ class NodefDetailService{
   }
 
   static Future<void> storeNodefDetail(Detail detail, int id) async{
-    if(detail.chinese != null || detail.definition != null){
+    if((detail.chinese != null && detail.chinese != '') 
+      || (detail.definition != null && detail.definition != '')){
       //move to word
+      debugPrint('move nodef to word');
       DB.deleteNoDef(id);
       int wordId = await DB.addWord(detail.name, chinese: detail.chinese, definition: detail.definition, parts: detail.parts, sentence: detail.sentence);
 

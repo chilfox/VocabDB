@@ -3,6 +3,7 @@ import 'package:englishvocabdatabase/database/label.dart';
 import 'package:englishvocabdatabase/logic/service/wordDetail.dart';
 import 'package:englishvocabdatabase/logic/service/nodefDetail.dart';
 import 'package:englishvocabdatabase/logic/output/outputDetailItem.dart';
+import 'package:flutter/foundation.dart';
 
 part 'outputDetailNotifier.g.dart';
 
@@ -16,6 +17,7 @@ class OutputDetailNotifier extends _$OutputDetailNotifier{
   //information
   @override
   Future<Detail> build(DetailType type, int id) async{
+    debugPrint('build output detail notifier $type, $id');
     if(type == DetailType.WordDetail){
       return WordDetailService.initWordDetail(id);
     }
