@@ -6,19 +6,23 @@ import '../../../logic/output/outputListNotifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class InLabelWordListPage extends ConsumerWidget {
+class InLabelWordListPage extends ConsumerStatefulWidget {
   final OutputListItem label;
-  
+
   const InLabelWordListPage({super.key, required this.label});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final asyncList = ref.watch(outputListNotifierProvider(NotifierType.Word, inlabel: true, labelId: label.id));
-    final service = ref.read(outputListNotifierProvider(NotifierType.Word, inlabel: true, labelId: label.id).notifier);
+  ConsumerState<InLabelWordListPage> createState() => _InLabelWordListPage();
+}
+class _InLabelWordListPage extends ConsumerState<InLabelWordListPage> {
+  @override
+  Widget build(BuildContext context) {
+    final asyncList = ref.watch(outputListNotifierProvider(NotifierType.Word, inlabel: true, labelId: widget.label.id));
+    final service = ref.read(outputListNotifierProvider(NotifierType.Word, inlabel: true, labelId: widget.label.id).notifier);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(label.name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40)),
+        title: Text(widget.label.name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40)),
         centerTitle: false,
         elevation: 0,
       ),
@@ -29,19 +33,21 @@ class InLabelWordListPage extends ConsumerWidget {
           child: Column(
             children: [
               // Search bar
-              InLabelSearchBar(label: label,),
+              InLabelSearchBar(label: widget.label,),
               
               asyncList.when(
                 data: (list) {
                   if (list.isEmpty){
                     return Expanded(child: const Center(child: Text("Word List is Empty")));
                   }
-                  return ListView.builder(
-                    itemCount: list.length,
-                    itemBuilder: (context, index) {
-                      final item = list[index];
-                      return VocabularyWordWidget(item: item, service: service);
-                    },
+                  return Expanded(
+                    child: ListView.builder(
+                      itemCount: list.length,
+                      itemBuilder: (context, index) {
+                        final item = list[index];
+                        return VocabularyWordWidget(item: item, service: service);
+                      },
+                    ),
                   );
                 },
                 loading: () => const Center(child: CircularProgressIndicator()),
@@ -56,7 +62,7 @@ class InLabelWordListPage extends ConsumerWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => WordDetailView(label: label, wordId: -1, startWithEditView: true, nodef: false,)),
+            MaterialPageRoute(builder: (context) => WordDetailView(label: widget.label, wordId: -1, startWithEditView: true, nodef: false,)),
           );
         },
         label: const Text('Add Word'),

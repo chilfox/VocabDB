@@ -14,16 +14,15 @@ class InLabelSearchBar extends ConsumerStatefulWidget {
 
 class _InLabelSearchBarState extends ConsumerState<InLabelSearchBar> {
   OutputListNotifier? service;
+  final TextEditingController textController = TextEditingController();
 
   @override
   void initState(){
     super.initState();
-    service = ref.read(outputListNotifierProvider(NotifierType.Word, inlabel: true, labelId: widget.label.id).notifier);
   }
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController textController = TextEditingController();
     
     return TextField(
       controller: textController,
@@ -40,9 +39,10 @@ class _InLabelSearchBarState extends ConsumerState<InLabelSearchBar> {
       ),
       keyboardType: TextInputType.text,
       onChanged: (text) async {       
-        bool? success = await service?.searchInLabel(text, widget.label.id);
+        final service = ref.read(outputListNotifierProvider(NotifierType.Word, inlabel: true, labelId: widget.label.id).notifier);
+        bool? success = await service.searchInLabel(text, widget.label.id);
         if (!context.mounted) return;
-        if (success != null && !success) {
+        if (!success) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Search failed')),
           );
