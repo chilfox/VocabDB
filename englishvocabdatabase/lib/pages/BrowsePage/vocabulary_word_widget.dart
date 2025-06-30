@@ -42,7 +42,7 @@ class VocabularyWordWidget extends StatelessWidget {
             ),
             child: ListTile(
               title: Text(item.name),
-              subtitle: Text(item.name), // need to change to definition
+              subtitle: Text(item.chinese ?? ''),
               onTap: () {
                 Navigator.push(
                   context,
