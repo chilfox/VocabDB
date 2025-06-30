@@ -1,6 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'outputItem.dart';
 import 'package:meta/meta.dart';
+import 'package:flutter/foundation.dart';
 
 //service
 import 'package:englishvocabdatabase/logic/service/labelService.dart';
@@ -91,8 +92,12 @@ class OutputListNotifier extends _$OutputListNotifier {
   }
 
   //the method for word related to label
-  Future<bool> searchInLabel(String prefix, int labelId) async{
-    List<OutputListItem> result = await WordListService.searchWordToLabel(prefix, labelId, true);
+  Future<bool> searchInLabel(String prefix) async{
+    if(labelId == null){
+      return false;
+    }
+    debugPrint('inlabel search $labelId $prefix');
+    List<OutputListItem> result = await WordListService.searchWordToLabel(prefix, labelId!, true);
 
     _refreshAll(result);
     return (result == [] ? false : true);

@@ -40,7 +40,7 @@ class _InLabelSearchBarState extends ConsumerState<InLabelSearchBar> {
       keyboardType: TextInputType.text,
       onChanged: (text) async {       
         final service = ref.read(outputListNotifierProvider(NotifierType.Word, inlabel: true, labelId: widget.label.id).notifier);
-        bool? success = await service.searchInLabel(text, widget.label.id);
+        bool? success = await service.searchInLabel(text);
         if (!context.mounted) return;
         if (!success) {
           ScaffoldMessenger.of(context).showSnackBar(
