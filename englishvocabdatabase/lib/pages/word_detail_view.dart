@@ -24,6 +24,7 @@ class WordDetailView extends ConsumerStatefulWidget {
 
 class _WordDetailViewState extends ConsumerState<WordDetailView> {
   bool _isEditing = false;
+  late bool _isNoDef; // Dynamic state for isNoDef
   
   // Text editing controllers
   late final TextEditingController _chineseController;
@@ -35,6 +36,7 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
   void initState() {
     super.initState();
     _isEditing = widget.startWithEditView;
+    _isNoDef = widget.nodef; // Initialize with widget.nodef
     _initializeControllers();
   }
 
@@ -64,11 +66,36 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
     });
   }
 
-  void _saveChanges(Detail word, OutputDetailNotifier service) {
+  void _saveChanges(Detail word, OutputDetailNotifier service) async {
     final updatedWord = _createUpdatedWord(word);
-    _updateWordInService(updatedWord, service);
-    _exitEditMode();
-    _showSuccessMessage();
+    
+    // Check if content was added - this will determine if NoDef should become Word
+    bool hasContent = _hasWordContent(updatedWord);
+    bool wasNoDef = _isNoDef;
+    
+    try {
+      await _updateWordInService(updatedWord, service);
+      
+      // Only update _isNoDef after storeDetail is successfully called
+      if (hasContent && wasNoDef) {
+        setState(() {
+          _isNoDef = false; // Change state globally AFTER successful storeDetail
+        });
+      }
+      
+      _exitEditMode();
+      _showSuccessMessage();
+    } catch (error) {
+      // Handle error if storeDetail fails
+      _showErrorMessage('Failed to save changes: $error');
+    }
+  }
+
+  bool _hasWordContent(Detail word) {
+    return (word.definition?.isNotEmpty ?? false) ||
+           (word.chinese?.isNotEmpty ?? false);// ||
+           //(word.parts?.isNotEmpty ?? false) ||
+           //(word.sentence?.isNotEmpty ?? false);
   }
 
   Detail _createUpdatedWord(Detail word) {
@@ -83,8 +110,8 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
     );
   }
 
-  void _updateWordInService(Detail updatedWord, OutputDetailNotifier service) {
-    updateWord(updatedWord, service, widget.nodef); // 傳入 nodef 參數
+  Future<void> _updateWordInService(Detail updatedWord, OutputDetailNotifier service) async {
+    await updateWord(updatedWord, service, _isNoDef); // Use dynamic _isNoDef
   }
 
   void _exitEditMode() {
@@ -100,19 +127,28 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
     );
   }
 
+  void _showErrorMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+
   void _cancelEdit() {
     _toggleEditMode();
   }
 
   AsyncValue<Detail> _getWordData() {
-    final detailType = widget.nodef // 使用 nodef 參數判斷
+    final detailType = _isNoDef // Use dynamic _isNoDef
         ? DetailType.NodefDetail 
         : DetailType.WordDetail;
     return ref.watch(outputDetailNotifierProvider(detailType, widget.wordId));
   }
 
   OutputDetailNotifier _getService() {
-    final detailType = widget.nodef // 使用 nodef 參數判斷
+    final detailType = _isNoDef // Use dynamic _isNoDef
         ? DetailType.NodefDetail 
         : DetailType.WordDetail;
     return ref.watch(outputDetailNotifierProvider(detailType, widget.wordId).notifier);
@@ -120,11 +156,7 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
 
   // Helper method to check if this is a NoDefinition word (only has id and name)
   bool _isNoDefinitionWord(Detail word) {
-    return widget.nodef && 
-           (word.definition == null || word.definition!.isEmpty) &&
-           (word.chinese == null || word.chinese!.isEmpty) &&
-           (word.parts == null || word.parts!.isEmpty) &&
-           (word.sentence == null || word.sentence!.isEmpty);
+    return _isNoDef; // Use dynamic _isNoDef
   }
 
   @override
@@ -211,7 +243,7 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
         const SizedBox(height: 16),
       ],
       if (!isNoDefWord || _isEditing) ...[
-        _buildLabelsCard(word, service),
+        _buildLabelsCard(word, service, isNoDefWord),
         const SizedBox(height: 16),
       ],
       if (isNoDefWord && !_isEditing) _buildNoDefinitionPrompt(),
@@ -530,7 +562,7 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
     }
   }
 
-  Widget _buildLabelsCard(Detail word, OutputDetailNotifier service) {
+  Widget _buildLabelsCard(Detail word, OutputDetailNotifier service, bool isNoDefWord) {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -539,7 +571,7 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildLabelsHeader(service, word),
+            _buildLabelsHeader(service, word, isNoDefWord),
             const SizedBox(height: 16),
             _buildLabelsWrap(word, service),
           ],
@@ -548,8 +580,7 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
     );
   }
 
-  Widget _buildLabelsHeader(OutputDetailNotifier service, Detail word) {
-
+  Widget _buildLabelsHeader(OutputDetailNotifier service, Detail word, bool isNoDefWord) {
     return Row(
       children: [
         Container(
@@ -569,21 +600,39 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
         if (_isEditing) ...[
           const Spacer(),
           IconButton(
-            icon: const Icon(Icons.add, color: Colors.blue),
-            onPressed: () => _showAddLabelDialog(context, service, word.labels, word.id),
+            icon: Icon(
+              Icons.add, 
+              color: isNoDefWord ? Colors.grey : Colors.blue, // Visual indication
+            ),
+            onPressed: isNoDefWord 
+              ? () => _showNoDefWarning() // Show warning if isNoDef is true
+              : () => _showAddLabelDialog(context, service, word.labels, word.id),
           ),
         ],
       ],
     );
   }
 
+  // New method to show warning when trying to add labels to NoDefinition word
+  void _showNoDefWarning() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Please add some word information (definition, translation, etc.) before adding labels.'),
+        backgroundColor: Colors.orange,
+        duration: Duration(seconds: 3),
+      ),
+    );
+  }
+
   Widget _buildLabelsWrap(Detail word, OutputDetailNotifier service) {
     if(word.labels == null || word.labels!.isEmpty) {
       return _isEditing 
-        ? const Text(
-            'No labels yet. Add some to organize your words!',
+        ? Text(
+            _isNoDef 
+              ? 'Add word information first to enable labels.'
+              : 'No labels yet. Add some to organize your words!',
             style: TextStyle(
-              color: Colors.white54,
+              color: _isNoDef ? Colors.orange.shade300 : Colors.white54,
               fontSize: 14,
             ),
           )
@@ -637,125 +686,143 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
   }
 
   void _removeLabel(OutputDetailNotifier service, int wordId, int labelId) {
-    setState(() {
-      service.removeWordFromLabel(wordId, labelId);
-    });
-  }
+   service.removeWordFromLabel(wordId, labelId);
+  } 
 
-  Map<int, bool> _selectedLabels = {};
-
-  Widget labelWidget(BuildContext context, LabelItem item, OutputDetailNotifier service) {
-    return StatefulBuilder(
-      builder: (context, setState) {
-        // 檢查這個標籤是否已經在當前單詞中
-        bool isInWord = _getWordData().value?.labels?.any((label) => label.id == item.id) ?? false;
-        
-        // 如果還沒有初始化這個標籤的選擇狀態，就用當前狀態初始化
-        if (!_selectedLabels.containsKey(item.id)) {
-          _selectedLabels[item.id] = isInWord;
-        }
-        
-        return CheckboxListTile(
-          title: Text(
-            item.name,
-            style: const TextStyle(color: Colors.white),
-          ),
-          value: _selectedLabels[item.id] ?? false,
-          onChanged: (bool? value) {
-            setState(() {
-              _selectedLabels[item.id] = value ?? false;
-            });
-          },
-          checkColor: Colors.white,
-          activeColor: Colors.blue,
-          controlAffinity: ListTileControlAffinity.leading,
-        );
-      },
-    );
-  }
-
-  // 修改 _showAddLabelDialog 函數
   void _showAddLabelDialog(
-      BuildContext context, 
-      OutputDetailNotifier service, 
-      List<LabelItem>? inWordLabelList,
-      int wordId
-    ) async {
+    BuildContext context, 
+    OutputDetailNotifier service, 
+    List<LabelItem>? inWordLabelList,
+    int wordId
+  ) async {
+  try {
     final List<LabelItem> labelList = await service.getAddLabel();
     
-    // 重置選擇狀態，根據當前單詞的標籤初始化
-    _selectedLabels.clear();
+    if (!context.mounted) return;
+    
+    // Create local state for this dialog session
+    final Map<int, bool> selectedLabels = {};
+    
+    // Initialize with current word's labels
     for (var label in labelList) {
-      _selectedLabels[label.id] = inWordLabelList?.any((inLabel) => inLabel.id == label.id) ?? false;
+      selectedLabels[label.id] = inWordLabelList?.any((inLabel) => inLabel.id == label.id) ?? false;
     }
     
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: const Text('Manage Labels'),
+          content: SizedBox(
+            width: double.maxFinite,
+            height: 300,
+            child: ListView.builder(
+              itemCount: labelList.length,
+              itemBuilder: (context, index) {
+                final item = labelList[index];
+                return labelWidget(
+                  context, 
+                  item, 
+                  service, 
+                  selectedLabels, 
+                  setDialogState
+                );
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => _processLabelChanges(service, wordId, inWordLabelList, selectedLabels),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      ),
+    );
+  } catch (error) {
     if (!context.mounted) return;
+    
+    // Show error dialog
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Manage Labels'),
-        content: SizedBox(
-          width: double.maxFinite,
-          height: 300,
-          child: ListView.builder(
-            itemCount: labelList.length,
-            itemBuilder: (context, index) {
-              final item = labelList[index];
-              return labelWidget(context, item, service);
-            },
-          ),
-        ),
+        title: const Text('Error'),
+        content: Text('Failed to load labels: $error'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => _processLabelChanges(service, wordId, inWordLabelList),
             child: const Text('OK'),
           ),
         ],
       ),
     );
   }
+}
+
+// 6. Updated labelWidget to work with local state
+Widget labelWidget(
+  BuildContext context, 
+  LabelItem item, 
+  OutputDetailNotifier service,
+  Map<int, bool> selectedLabels,
+  StateSetter setDialogState,
+) {
+  return CheckboxListTile(
+    title: Text(
+      item.name,
+      style: const TextStyle(color: Colors.white),
+    ),
+    value: selectedLabels[item.id] ?? false,
+    onChanged: (bool? value) {
+      setDialogState(() {
+        selectedLabels[item.id] = value ?? false;
+      });
+    },
+    checkColor: Colors.white,
+    activeColor: Colors.blue,
+    controlAffinity: ListTileControlAffinity.leading,
+  );
+}
 
   // 新增函數：處理標籤變更
   void _processLabelChanges(
-    OutputDetailNotifier service, 
-    int wordId, 
-    List<LabelItem>? originalLabels,
+  OutputDetailNotifier service, 
+  int wordId, 
+  List<LabelItem>? originalLabels,
+  Map<int, bool> selectedLabels, // Add this parameter
   ) {
-    // 獲取原始標籤狀態
-    Set<int> originalLabelIds = originalLabels?.map((label) => label.id).toSet() ?? {};
+  // Get original label state
+  Set<int> originalLabelIds = originalLabels?.map((label) => label.id).toSet() ?? {};
+  
+  // Process each label change
+  selectedLabels.forEach((labelId, isSelected) {
+    bool wasSelected = originalLabelIds.contains(labelId);
     
-    // 處理每個標籤的變更
-    _selectedLabels.forEach((labelId, isSelected) {
-      bool wasSelected = originalLabelIds.contains(labelId);
-      
-      if (isSelected && !wasSelected) {
-        // 需要添加這個標籤
-        service.addWordToLabel(wordId, labelId);
-      } else if (!isSelected && wasSelected) {
-        // 需要移除這個標籤
-        service.removeWordFromLabel(wordId, labelId);
-      }
-    });
-    
-    Navigator.pop(context);
-  }
-
+    if (isSelected && !wasSelected) {
+      // Need to add this label
+      service.addWordToLabel(wordId, labelId);
+    } else if (!isSelected && wasSelected) {
+      // Need to remove this label
+      service.removeWordFromLabel(wordId, labelId);
+    }
+  });
+  
+  Navigator.pop(context);
 }
 
-void updateWord(Detail updateWord, OutputDetailNotifier service, bool isNodef) {
+// Fixed updateWord function - now returns Future to handle async operation
+Future<void> updateWord(Detail updateWord, OutputDetailNotifier service, bool isNodef) async {
   // Check if any fields have content to determine if we should convert NoDefinition to Word
   bool hasContent = (updateWord.definition?.isNotEmpty ?? false) ||
-                   (updateWord.chinese?.isNotEmpty ?? false) ||
-                   (updateWord.parts?.isNotEmpty ?? false) ||
-                   (updateWord.sentence?.isNotEmpty ?? false);
-
-  service.modifyDetail('name', updateWord.name);
+                   (updateWord.chinese?.isNotEmpty ?? false); // ||
+                   //(updateWord.parts?.isNotEmpty ?? false) ||
+                   //(updateWord.sentence?.isNotEmpty ?? false);
   
-  // Only update fields if they have content or if it's already a Word type
+  // Only update fields if they have content or if it's already a Word type (not NoDefinition)
   if (hasContent || !isNodef) {
     service.modifyDetail('definition', updateWord.definition ?? '');
     service.modifyDetail('parts', updateWord.parts ?? '');
@@ -763,5 +830,9 @@ void updateWord(Detail updateWord, OutputDetailNotifier service, bool isNodef) {
     service.modifyDetail('sentence', updateWord.sentence ?? '');
   }
   
-  service.storeDetail();
+  // This is where the database type change happens (NoDef -> Word)
+  // Make sure this completes before returning
+  await service.storeDetail();
+}
+
 }
