@@ -18,8 +18,7 @@ class _InLabelSearchBarState extends ConsumerState<InLabelSearchBar> {
   @override
   void initState(){
     super.initState();
-    service = ref.read(outputListNotifierProvider(NotifierType.Word).notifier);
-    service?.searchInLabel('', widget.label.id);
+    service = ref.read(outputListNotifierProvider(NotifierType.Word, inlabel: true, labelId: widget.label.id).notifier);
   }
 
   @override

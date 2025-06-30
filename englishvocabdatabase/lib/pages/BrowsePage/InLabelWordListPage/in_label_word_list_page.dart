@@ -13,8 +13,8 @@ class InLabelWordListPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final asyncList = ref.watch(outputListNotifierProvider(NotifierType.Word));
-    final service = ref.read(outputListNotifierProvider(NotifierType.Word).notifier);
+    final asyncList = ref.watch(outputListNotifierProvider(NotifierType.Word, inlabel: true, labelId: label.id));
+    final service = ref.read(outputListNotifierProvider(NotifierType.Word, inlabel: true, labelId: label.id).notifier);
 
     return Scaffold(
       appBar: AppBar(
