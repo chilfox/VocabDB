@@ -27,12 +27,7 @@ class DB {
           'CREATE TABLE words(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, definition TEXT, parts TEXT, chinese TEXT, sentence TEXT)',
         );
         await db.execute(
-          'CREATE TABLE label_lists('
-          'id INTEGER,'
-          'label TEXT,'
-          'PRIMARY KEY (id, label),' 
-          'FOREIGN KEY (id) REFERENCES words(id) ON DELETE CASCADE'
-          ')',
+          'CREATE TABLE label_lists(id INTEGER, label TEXT, PRIMARY KEY (id, label), FOREIGN KEY (id) REFERENCES words(id) ON DELETE CASCADE)',
         );
       },
       version: 1,
@@ -454,7 +449,10 @@ class DB {
         where: 'id = ?',          
         whereArgs: [word.id],
       );
-      List<String> lists = labelmap.map((map) => map['label_lists'] as String).toList();
+      List<String>? lists;
+      if(labelmap.isNotEmpty){
+        lists = labelmap.map((map) => map['label'] as String).toList();
+      }
       word.set_labels(lists);
     }
     return words;
@@ -499,7 +497,7 @@ class DB {
         where: 'id = ?',          
         whereArgs: [word.id],
       );
-      List<String> lists = labelmap.map((map) => map['label_lists'] as String).toList();
+      List<String> lists = labelmap.map((map) => map['label'] as String).toList();
       word.set_labels(lists);
     }
     return words;
@@ -549,7 +547,10 @@ class DB {
           where: 'id = ?',          
           whereArgs: [ans.id],
         );
-        List<String> lists = labelmap.map((map) => map['label_lists'] as String).toList();
+        List<String>? lists = null;
+        if(labelmap.isNotEmpty){
+          lists = labelmap.map((map) => map['label'] as String).toList();
+        } 
         ans.set_labels(lists);
         return ans;
     }
