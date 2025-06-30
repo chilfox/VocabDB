@@ -18,8 +18,8 @@ class NodefDetailService{
   }
 
   static Future<void> storeNodefDetail(Detail detail, int id) async{
-    if((detail.chinese != null && detail.chinese != '') 
-      || (detail.definition != null && detail.definition != '')){
+    if(!_isEmpty(detail.chinese) || !_isEmpty(detail.definition)
+        || !_isEmpty(detail.sentence) || !_isEmpty(detail.parts)){
       //move to word
       debugPrint('move nodef to word');
       DB.deleteNoDef(id);
@@ -33,6 +33,10 @@ class NodefDetailService{
       _storeColumn('sentence', detail.sentence, id);
       return;
     }
+  }
+
+  static bool _isEmpty(String? a){
+    return (a == null || a == '');
   }
 
   static Future<void> _storeColumn(String col, String? information, int id) async{
