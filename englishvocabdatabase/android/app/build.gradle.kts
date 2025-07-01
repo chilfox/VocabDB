@@ -8,7 +8,8 @@ plugins {
 android {
     namespace = "com.example.englishvocabdatabase"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    //change version
+    ndkVersion = "27.0.12077973"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
