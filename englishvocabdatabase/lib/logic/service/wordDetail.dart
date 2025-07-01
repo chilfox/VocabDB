@@ -72,6 +72,14 @@ class WordDetailService{
   }
 
   static Future<void> storeWordDetail(Detail detail, int id) async{
+    //avoid word becomes empty
+    if((detail.chinese == null || detail.chinese == '') &&
+        (detail.definition == null || detail.definition == '') &&
+        (detail.parts == null || detail.parts == '') &&
+        (detail.sentence == null || detail.sentence == '')){
+      return;
+    }
+
     _storeColumn('chinese', detail.chinese, id);
     _storeColumn('definition', detail.definition, id);
     _storeColumn('parts', detail.parts, id);
