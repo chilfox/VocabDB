@@ -8,19 +8,14 @@ import 'package:englishvocabdatabase/share/observer.dart';
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
 
-  //handle share text when open the app
-  await ShareHandler.instance.init();
-  ShareHandler.instance.processPending((text){
-    //process the shared text
-    debugPrint('處理分享文字: $text');
-    ShareProcessor.processText(text);
-  });
+  // final dataList = await ShareHandler.instance.getAllStoredData();
+  // debugPrint('get $dataList');
 
-  runApp(const ProviderScope(child: MyApp()));
-  
   //前台處理分享字串
   final share_observer = ShareObserver();
   share_observer.init();
+
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends ConsumerWidget {

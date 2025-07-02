@@ -1,51 +1,24 @@
-import 'package:receive_sharing_intent_plus/receive_sharing_intent_plus.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+import 'dart:convert';
 
 class ShareHandler {
   ShareHandler._privateConstructor();
   static final ShareHandler instance = ShareHandler._privateConstructor();
 
-  // 初始化:initial, 監聽 stream
-  Future<void> init() async {
-    await _handleInitial();
-    _listenStream();
+  static const _channel = MethodChannel('com.example.englishvocabdatabase/floating_prefs');
+
+  /// 從 native 取得所有存的資料
+  Future<List<Map<String, String?>>> getAllStoredData() async {
+    final String? jsonString = await _channel.invokeMethod('getAllInputs');
+    if (jsonString == null || jsonString.isEmpty) return [];
+
+    final List<dynamic> jsonList = jsonDecode(jsonString);
+    return jsonList.map((item) => Map<String, String?>.from(item)).toList();
   }
 
-  // 啟動時呼叫：處理所有未處理過的文字
-  Future<void> processPending(Function(String) onProcess) async {
-    final prefs = await SharedPreferences.getInstance();
-    final list = prefs.getStringList('pending_shared') ?? [];
-    for (var text in list) {
-      onProcess(text);       // 交給傳入函數
-    }
-    await prefs.remove('pending_shared');
-  }
 
-  // 取 initialText
-  Future<void> _handleInitial() async {
-    final initial = await ReceiveSharingIntentPlus.getInitialText();
-    if (initial != null && initial.isNotEmpty) {
-      await _save(initial);
-    }
-  }
-
-  // 持續監聽 share stream
-  void _listenStream() {
-    ReceiveSharingIntentPlus.getTextStream().listen((text) async {
-      await _save(text);
-    }, onError: (err) {
-      debugPrint('分享接收錯誤: $err');
-    });
-  }
-
-  // 存到 SharedPreferences
-  Future<void> _save(String text) async {
-    final prefs = await SharedPreferences.getInstance();
-    final list = prefs.getStringList('pending_shared') ?? [];
-    list.add(text);
-    await prefs.setStringList('pending_shared', list);
-    debugPrint('暫存分享文字: $list');
-    debugPrint('\n end');
+  /// 清除 native 存的資料
+  Future<void> clearAllStoredData() async {
+    await _channel.invokeMethod('clearInputs');
   }
 }

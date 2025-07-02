@@ -33,19 +33,18 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="text/plain" />
             </intent-filter>
-
-             <!-- 在選單上出現 -->
-            <intent-filter>
-                <action android:name="android.intent.action.PROCESS_TEXT" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="text/plain" />
-            </intent-filter>
         </activity>
 
         <!-- use embedding version 2 -->
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        
+        <!-- 浮動視窗處理service-->
+        <service
+            android:name=".FloatingWindowService"
+            android:exported="true" />
+
 
     </application>
 

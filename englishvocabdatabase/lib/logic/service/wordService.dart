@@ -24,8 +24,8 @@ class WordListService{
     return convertToOutputList(input: result, getId: (l) => l.id, getName: (l) => l.name, getChinese: (l) => l.chinese); 
   }
 
-  static Future<(List<OutputListItem>?, int)> addWord(String name) async{
-    int newId = await DB.addWord(name).catchError((e){
+  static Future<(List<OutputListItem>?, int)> addWord(String name, {String? definition, String? chinese}) async{
+    int newId = await DB.addWord(name, definition: definition, chinese: chinese).catchError((e){
       print('insertWord error: $e');  //for test
     });
 
