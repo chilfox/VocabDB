@@ -11,6 +11,7 @@ import android.widget.*
 import org.json.JSONArray
 import org.json.JSONObject
 import android.net.Uri
+import android.view.inputmethod.InputMethodManager
 import android.util.Log
 
 class FloatingWindowService : Service() {
@@ -60,8 +61,11 @@ class FloatingWindowService : Service() {
 
     private fun initFloatingView() {
         val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        floatingView = inflater.inflate(R.layout.floating_view, null)
+        val contextThemeWrapper = ContextThemeWrapper(this, R.style.AppTheme)  // 你自己定義的 MaterialComponents 主題
+        val themedInflater = inflater.cloneInContext(contextThemeWrapper)
+        floatingView = themedInflater.inflate(R.layout.floating_view, null)
     }
+
 
     private fun setupViews(sharedText: String) {
         val mainLayout = floatingView!!.findViewById<LinearLayout>(R.id.main_layout)
@@ -78,7 +82,28 @@ class FloatingWindowService : Service() {
         val regex = Regex("[A-Za-z](?:[A-Za-z-]*[A-Za-z])?")
         val match = regex.find(sharedText)
 
-        if (match != null) {
+        // 確保EditText可聚焦
+        inputDefinition.isFocusable = true
+        inputDefinition.isFocusableInTouchMode = true
+        inputChinese.isFocusable = true
+        inputChinese.isFocusableInTouchMode = true
+
+        // 強制在點擊時叫出鍵盤
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputDefinition.setOnTouchListener { v, event ->
+            if (event.action == MotionEvent.ACTION_UP) {
+                Log.d("FloatingWindowService", "inputDefinition 被點擊，準備延遲呼叫鍵盤")
+                v.postDelayed({
+                    Log.d("FloatingWindowService", "開始呼叫鍵盤")
+                    v.requestFocus()
+                    val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    imm.showSoftInput(inputDefinition, InputMethodManager.SHOW_IMPLICIT)
+                }, 100)  // 延遲100毫秒
+            }
+            false
+        }
+
+        if (match != null && match.value != "https") {
             // 顯示正常輸入區
             mainLayout.visibility = View.VISIBLE
             errorLayout.visibility = View.GONE
@@ -117,17 +142,28 @@ class FloatingWindowService : Service() {
     }
 
     private fun addFloatingViewToWindow() {
+        val type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+        } 
+        else {
+            WindowManager.LayoutParams.TYPE_PHONE
+        }
+
+        val flags = WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
+            WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
+            WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
+
         val layoutParams = WindowManager.LayoutParams(
             WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.WRAP_CONTENT,
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-            else
-                WindowManager.LayoutParams.TYPE_PHONE,
-            WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM,
+            type,
+            flags,
             PixelFormat.TRANSLUCENT
         )
+
         layoutParams.gravity = Gravity.CENTER
+        layoutParams.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN or
+                             WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE
 
         windowManager?.addView(floatingView, layoutParams)
     }

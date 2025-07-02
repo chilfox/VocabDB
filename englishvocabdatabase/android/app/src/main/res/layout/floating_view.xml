@@ -1,91 +1,167 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:padding="12dp"
-    android:background="#AA000000">
+    android:padding="16dp"
+    android:backgroundTint="#AA000000"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="8dp">
 
-    <!-- 正常輸入區 -->
     <LinearLayout
-        android:id="@+id/main_layout"
-        android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/text_share"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Shared Text"
-            android:textColor="#FFFFFF"
-            android:paddingBottom="8dp"
-            android:maxWidth="250dp" />
-
-        <EditText
-            android:id="@+id/definition"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:hint="definition"
-            android:textColor="#FFFFFF"
-            android:background="@android:drawable/edit_text"
-            android:padding="4dp"
-            android:layout_marginBottom="8dp" />
-
-        <EditText
-            android:id="@+id/chinese"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
-            android:hint="chinese"
-            android:textColor="#FFFFFF"
-            android:background="@android:drawable/edit_text"
-            android:padding="4dp"
-            android:layout_marginBottom="8dp" />
-
+        <!-- 正常輸入區 -->
         <LinearLayout
+            android:id="@+id/main_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_horizontal">
+            android:orientation="vertical"
+            android:padding="24dp"
+            android:background="@android:color/white">
 
-            <Button
-                android:id="@+id/save_button"
+            <TextView
+                android:id="@+id/text_share"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="儲存"
-                android:layout_marginEnd="16dp" />
+                android:text="Shared Text"
+                android:textColor="@android:color/black"
+                android:textSize="20sp"
+                android:paddingBottom="8dp"
+                android:maxWidth="250dp" />
 
-            <Button
-                android:id="@+id/close_button"
-                android:layout_width="wrap_content"
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:text="關閉" />
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                app:boxBackgroundMode="outline"
+                app:boxStrokeColor="#888888"
+                app:boxStrokeWidth="1dp"
+                app:boxStrokeWidthFocused="1dp"
+                app:helperText="英文定義"
+                app:helperTextTextColor="#888888">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/definition"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Definition"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:textColorHint="#000000"
+                    android:textColor="@android:color/black" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                app:boxBackgroundMode="outline"
+                app:boxStrokeColor="#888888"
+                app:boxStrokeWidth="1dp"
+                app:boxStrokeWidthFocused="1dp"
+                app:helperText="中文翻譯"
+                app:helperTextTextColor="#888888">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/chinese"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Chinese"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:textColorHint="#000000"
+                    android:inputType="text"
+                    android:textColor="@android:color/black" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/save_button"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="儲存"
+                    android:textSize="16sp"
+                    android:textColor="#525B40"
+                    android:insetLeft="0dp"
+                    android:insetRight="0dp"
+                    android:padding="0dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/close_button"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="關閉"
+                    android:textSize="16sp"
+                    android:textColor="#525B40"
+                    android:insetLeft="0dp"
+                    android:insetRight="0dp"
+                    android:padding="0dp"/>
+            </LinearLayout>
+
         </LinearLayout>
-    </LinearLayout>
 
-    <!-- 錯誤訊息區 -->
-    <LinearLayout
-        android:id="@+id/error_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:orientation="vertical"
-        android:gravity="center_horizontal">
-
-        <TextView
-            android:id="@+id/error_text"
+        <!-- 錯誤訊息區 -->
+        <LinearLayout
+            android:id="@+id/error_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="無法解析"
-            android:textColor="#FF0000"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:paddingBottom="16dp" />
+            android:orientation="vertical"
+            android:padding="24dp"
+            android:background="@android:color/white">
 
-        <Button
-            android:id="@+id/error_close_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="關閉" />
+            <!-- 標題 -->
+            <TextView
+                android:id="@+id/error_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="無法解析"
+                android:textAppearance="?attr/textAppearanceHeadlineMedium"   
+                android:textColor="@android:color/black"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif"
+                android:paddingBottom="12dp" />
+
+            <!-- 內文說明 -->
+            <TextView
+                android:id="@+id/error_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="選取的字詞必須由英文字母組成，中間可有「-」連接。"
+                android:textAppearance="?attr/textAppearanceBodyLarge"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:fontFamily="sans-serif"
+                android:paddingBottom="20dp" />
+
+            <!-- 取消按鈕 -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/error_close_button"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="取消"
+                android:textSize="16sp"
+                android:textColor="#525B40"
+                android:layout_gravity="center_horizontal"
+                android:insetLeft="0dp"
+                android:insetRight="0dp"
+                android:padding="0dp" />
+        </LinearLayout>
+
     </LinearLayout>
 
-</FrameLayout>
+</com.google.android.material.card.MaterialCardView>

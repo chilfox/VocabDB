@@ -7,10 +7,7 @@ import 'package:englishvocabdatabase/share/observer.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
-
-  // final dataList = await ShareHandler.instance.getAllStoredData();
-  // debugPrint('get $dataList');
-
+  
   //前台處理分享字串
   final share_observer = ShareObserver();
   share_observer.init();
