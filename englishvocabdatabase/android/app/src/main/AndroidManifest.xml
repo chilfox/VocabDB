@@ -35,6 +35,11 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".OverlayPermissionActivity"
+            android:theme="@style/AppTheme.Transparent"
+            android:exported="true" />
+            
         <!-- use embedding version 2 -->
         <meta-data
             android:name="flutterEmbedding"

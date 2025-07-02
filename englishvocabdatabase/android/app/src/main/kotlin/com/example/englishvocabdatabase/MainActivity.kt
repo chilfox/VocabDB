@@ -5,6 +5,7 @@ import android.os.Bundle
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
+import android.util.Log
 
 class MainActivity : FlutterActivity() {
 
@@ -44,12 +45,15 @@ class MainActivity : FlutterActivity() {
     private fun handleIntent(intent: Intent) {
         if (Intent.ACTION_SEND == intent.action && intent.type == "text/plain") {
             val receivedText = intent.getStringExtra(Intent.EXTRA_TEXT) ?: "未收到文字"
-            val serviceIntent = Intent(this, FloatingWindowService::class.java)
-            serviceIntent.putExtra("text", receivedText)
-            startService(serviceIntent)
 
-            // 讓 Activity 立即結束，不會切到前景
-            moveTaskToBack(true)
+            Log.d("MainActivity", "handleIntent: receivedText = $receivedText")
+            // 啟動權限檢查 Activity
+            val permissionIntent = Intent(this, OverlayPermissionActivity::class.java)
+            permissionIntent.putExtra("shared_text", receivedText)
+            permissionIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(permissionIntent)
+
+            Log.d("MainActivity", "handleIntent: end")
         }
     }
 }
