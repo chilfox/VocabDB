@@ -69,7 +69,10 @@ class WordListService{
     List<Word>? result = await DB.getWordDetails(option: limit, start: 0);
     result ??= [];
 
-    return convertToOutputList(input: result, getId: (l) => l.id, getName: (l) => l.name, getChinese: (l) => l.chinese);
+    List<Word> filteredList = result.where((word) => word.name.startsWith(prefix)).toList();
+
+    debugPrint('result is $filteredList');
+    return convertToOutputList(input: filteredList, getId: (l) => l.id, getName: (l) => l.name, getChinese: (l) => l.chinese);
   }
 
   //return the new label of this word
