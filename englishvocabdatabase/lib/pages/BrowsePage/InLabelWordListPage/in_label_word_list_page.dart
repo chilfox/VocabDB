@@ -1,7 +1,7 @@
 import 'package:englishvocabdatabase/logic/output/outputItem.dart';
+import 'package:englishvocabdatabase/pages/BrowsePage/InLabelWordListPage/in_label_add_word_page.dart';
 import 'package:englishvocabdatabase/pages/BrowsePage/InLabelWordListPage/in_label_search_bar.dart';
 import 'package:englishvocabdatabase/pages/BrowsePage/vocabulary_word_widget.dart';
-import 'package:englishvocabdatabase/pages/word_detail_view.dart';
 import '../../../logic/output/outputListNotifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -62,7 +62,7 @@ class _InLabelWordListPage extends ConsumerState<InLabelWordListPage> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => WordDetailView(label: widget.label, wordId: -1, startWithEditView: true, nodef: false,)),
+            MaterialPageRoute(builder: (context) => InLabelAddWordPage(label: widget.label)),
           );
         },
         label: const Text('Add Word'),
