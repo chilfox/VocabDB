@@ -7,7 +7,7 @@ import 'package:englishvocabdatabase/database/label.dart';
 import 'package:englishvocabdatabase/database/wordFilterOption.dart';
 import 'package:englishvocabdatabase/logic/output/outputDetailItem.dart';
 import 'template.dart';
-
+import 'package:flutter/foundation.dart';
 
 class WordListService{
   static Future<List<OutputListItem>> initWordList() async{
@@ -63,7 +63,7 @@ class WordListService{
       //no such label
       return [];
     }
-
+    debugPrint('search word to label $inlabel');
     WordFilterOption limit = WordFilterOption(limitLabel: labelname, include: inlabel);
 
     List<Word>? result = await DB.getWordDetails(option: limit, start: 0);

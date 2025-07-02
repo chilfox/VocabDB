@@ -103,8 +103,12 @@ class OutputListNotifier extends _$OutputListNotifier {
     return (result == [] ? false : true);
   }
   
-  Future<bool> searchNotInLabel(String prefix, int labelId) async{
-    List<OutputListItem> result = await WordListService.searchWordToLabel(prefix, labelId, false);
+  Future<bool> searchNotInLabel(String prefix) async{
+    if(labelId == null){
+      return false;
+    }
+    debugPrint('not inlabel insearch $labelId $prefix');
+    List<OutputListItem> result = await WordListService.searchWordToLabel(prefix, labelId!, false);
 
     _refreshAll(result);
     return (result == [] ? false : true);

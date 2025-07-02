@@ -35,7 +35,7 @@ class _InLabelAddWordPageState extends ConsumerState<InLabelAddWordPage> {
       return;
     }
 
-    final service = ref.read(outputListNotifierProvider(NotifierType.Word, inlabel: true, labelId: widget.label.id).notifier);
+    final service = ref.read(outputListNotifierProvider(NotifierType.Word, inlabel: false, labelId: widget.label.id).notifier);
     
     bool allSuccess = true;
     int successCount = 0;
@@ -64,7 +64,7 @@ class _InLabelAddWordPageState extends ConsumerState<InLabelAddWordPage> {
   }
   @override
   Widget build(BuildContext context) {
-    final asyncList = ref.watch(outputListNotifierProvider(NotifierType.Word, inlabel: true, labelId: widget.label.id));
+    final asyncList = ref.watch(outputListNotifierProvider(NotifierType.Word, inlabel: false, labelId: widget.label.id));
 
     return Scaffold(
       appBar: AppBar(
