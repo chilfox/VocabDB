@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/floating_layout"
+    android:layout_width="300dp"
+    android:layout_height="200dp"
+    android:background="#CC000000"
+    android:orientation="vertical"
+    android:padding="12dp">
+
+    <TextView
+        android:id="@+id/text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="這是浮動視窗內容"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:padding="8dp"/>
+
+    <Button
+        android:id="@+id/copy_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="複製文字"/>
+
+    <Button
+        android:id="@+id/close_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="關閉"/>
+</LinearLayout>
