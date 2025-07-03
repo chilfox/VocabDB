@@ -107,7 +107,6 @@ class OutputListNotifier extends _$OutputListNotifier {
     if(labelId == null){
       return false;
     }
-    debugPrint('not inlabel insearch $labelId $prefix');
     List<OutputListItem> result = await WordListService.searchWordToLabel(prefix, labelId!, false);
 
     _refreshAll(result);

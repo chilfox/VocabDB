@@ -24,8 +24,8 @@ class WordListService{
     return convertToOutputList(input: result, getId: (l) => l.id, getName: (l) => l.name, getChinese: (l) => l.chinese); 
   }
 
-  static Future<(List<OutputListItem>?, int)> addWord(String name) async{
-    int newId = await DB.addWord(name).catchError((e){
+  static Future<(List<OutputListItem>?, int)> addWord(String name, {String? definition, String? chinese}) async{
+    int newId = await DB.addWord(name, definition: definition, chinese: chinese).catchError((e){
       print('insertWord error: $e');  //for test
     });
 
@@ -63,11 +63,13 @@ class WordListService{
       //no such label
       return [];
     }
-    debugPrint('search word to label $inlabel');
-    WordFilterOption limit = WordFilterOption(limitLabel: labelname, include: inlabel);
 
-    List<Word>? result = await DB.getWordDetails(option: limit, start: 0);
-    result ??= [];
+    WordFilterOption option = WordFilterOption(limitLabel: labelname, include: inlabel);
+    //find the word in this label
+    List<Word>? wordInLabel = await DB.getWordDetails(start: 0, option: option);
+    wordInLabel ??= [];
+
+    List<Word> result = wordInLabel.where((w) => w.name.startsWith(prefix)).toList();
 
     List<Word> filteredList = result.where((word) => word.name.startsWith(prefix)).toList();
 

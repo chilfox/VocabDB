@@ -8,7 +8,8 @@ plugins {
 android {
     namespace = "com.example.englishvocabdatabase"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    //change version
+    ndkVersion = "27.0.12077973"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -37,6 +38,10 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+}
+
+dependencies {
+    implementation("com.google.android.material:material:1.9.0")
 }
 
 flutter {

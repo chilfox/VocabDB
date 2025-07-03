@@ -5,6 +5,7 @@ import 'package:englishvocabdatabase/pages/word_detail_view.dart';
 import '../logic/output/outputListNotifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:englishvocabdatabase/background/container.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -49,11 +50,12 @@ class HomePageState extends ConsumerState<HomePage> {
   Widget build(BuildContext context) {
     final currentWordBankView = ref.watch(wordBankViewProvider);
 
-    return Scaffold(
+    return BackgroundScaffold(
       // title
       appBar: AppBar(
         title: Text(_pageTitles[_currentPage], style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40)),
         centerTitle: false,
+        backgroundColor: Colors.transparent,  //background
         elevation: 0,
       ),
 
@@ -74,6 +76,8 @@ class HomePageState extends ConsumerState<HomePage> {
         currentIndex: _currentPage,
         onTap: _onBottomNavigationBarTapped,
         type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.transparent,
+        elevation: 0, //background
       ),
     );
   }

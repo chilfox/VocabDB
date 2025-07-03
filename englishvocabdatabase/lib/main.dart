@@ -1,9 +1,17 @@
 import 'package:englishvocabdatabase/pages/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:englishvocabdatabase/share/share.dart';
+import 'package:englishvocabdatabase/share/processShare.dart';
+import 'package:englishvocabdatabase/share/observer.dart';
 
-void main() {
+void main() async{
   WidgetsFlutterBinding.ensureInitialized();
+  
+  //前台處理分享字串
+  final share_observer = ShareObserver();
+  share_observer.init();
+
   runApp(const ProviderScope(child: MyApp()));
 }
 
