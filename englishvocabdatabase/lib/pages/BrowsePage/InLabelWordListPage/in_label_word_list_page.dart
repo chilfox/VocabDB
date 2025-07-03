@@ -34,6 +34,8 @@ class _InLabelWordListPage extends ConsumerState<InLabelWordListPage> {
             children: [
               // Search bar
               InLabelSearchBar(label: widget.label,),
+
+              SizedBox(height: 0.5),
               
               asyncList.when(
                 data: (list) {

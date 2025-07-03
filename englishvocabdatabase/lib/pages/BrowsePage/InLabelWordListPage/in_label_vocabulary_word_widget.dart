@@ -47,8 +47,10 @@ class InLabelVocabularyWordWidget extends StatelessWidget {
               children: [
                 SlidableAction(
                   onPressed: (context) {
-                    
+                    service.removeWordFromLabel(word.id, label.id);
                   },
+                  backgroundColor: const Color.fromARGB(255, 225, 101, 30),
+                  icon: Icons.close
                 )
               ],
             ),

@@ -38,7 +38,7 @@ class _InLabelAddWordSearchBarState extends ConsumerState<InLabelAddWordSearchBa
         border: const OutlineInputBorder(),
       ),
       keyboardType: TextInputType.text,
-      onChanged: (text) async {       
+      onChanged: (text) async {
         final service = ref.read(outputListNotifierProvider(NotifierType.Word, inlabel: false, labelId: widget.label.id).notifier);
         bool? success = await service.searchNotInLabel(text);
         if (!context.mounted) return;
