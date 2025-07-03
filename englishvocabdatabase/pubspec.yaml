@@ -33,6 +33,13 @@ dependencies:
     path: ./plugins/receive_sharing_intent_plus
   shared_preferences: ^2.2.2
 
+  # background
+  image_picker: ^1.0.4
+  path_provider: ^2.0.15
+
+  # 權限
+  permission_handler: ^10.4.0
+
 dev_dependencies:
   # Flutter 測試與 lint
   flutter_test:
