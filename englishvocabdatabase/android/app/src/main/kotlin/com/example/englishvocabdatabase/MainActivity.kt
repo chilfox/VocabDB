@@ -13,6 +13,7 @@ class MainActivity : FlutterActivity() {
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
+        Log.d("MainActivity", "configureFlutterEngine called, engine = $flutterEngine")
 
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
         .setMethodCallHandler { call, result ->
@@ -34,11 +35,13 @@ class MainActivity : FlutterActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d("MainActivity", "onCreate called, flutterEngine = $flutterEngine")
         handleIntent(intent)
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        Log.d("MainActivity", "onNewIntent called, flutterEngine = $flutterEngine")
         handleIntent(intent)
     }
 
