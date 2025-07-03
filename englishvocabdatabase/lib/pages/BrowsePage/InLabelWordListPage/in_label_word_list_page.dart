@@ -1,7 +1,7 @@
 import 'package:englishvocabdatabase/logic/output/outputItem.dart';
 import 'package:englishvocabdatabase/pages/BrowsePage/InLabelWordListPage/in_label_add_word_page.dart';
 import 'package:englishvocabdatabase/pages/BrowsePage/InLabelWordListPage/in_label_search_bar.dart';
-import 'package:englishvocabdatabase/pages/BrowsePage/vocabulary_word_widget.dart';
+import 'package:englishvocabdatabase/pages/BrowsePage/InLabelWordListPage/in_label_vocabulary_word_widget.dart';
 import '../../../logic/output/outputListNotifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -45,7 +45,7 @@ class _InLabelWordListPage extends ConsumerState<InLabelWordListPage> {
                       itemCount: list.length,
                       itemBuilder: (context, index) {
                         final item = list[index];
-                        return VocabularyWordWidget(item: item, service: service);
+                        return InLabelVocabularyWordWidget(word: item, label: widget.label, service: service);
                       },
                     ),
                   );
