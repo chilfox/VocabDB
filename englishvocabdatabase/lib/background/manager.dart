@@ -3,64 +3,69 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:android_intent_plus/android_intent.dart';
+import 'package:android_intent_plus/flag.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:flutter/foundation.dart';
 
+
+/// Manages the app's background image: pick, save, load, and clear.
 class BackgroundManager {
   static const String _key = 'background_image';
 
-  // 取得目前背景圖片 File
+  //background 圖變動版本
+  static final ValueNotifier<int> backgroundVersion = ValueNotifier(0);
+
+  /// Returns the currently saved background image file, or null if none.
   static Future<File?> getBackgroundImage() async {
     final prefs = await SharedPreferences.getInstance();
     final fileName = prefs.getString(_key);
     if (fileName == null) return null;
 
     final appDir = await getApplicationDocumentsDirectory();
-    final filePath = '${appDir.path}/$fileName';
+    final filePath = path.join(appDir.path, fileName);
     final file = File(filePath);
-    if (file.existsSync()) {
-      return file;
-    }
-    return null;
+    return file.existsSync() ? file : null;
   }
 
-  // 選擇圖片並儲存到 app 目錄，含 Android 權限檢查
+  /// Lets user pick an image, saves it, and returns the saved file.
+  /// If access denied, opens app settings and returns null.
   static Future<File?> pickAndSaveBackgroundImage() async {
-    if (Platform.isAndroid) {
-      bool granted = await _checkAndRequestAndroidPermission();
-      if (!granted) {
-        openAppSettings(); // 跳到系統權限設定頁
-        return null;
-      }
-    }
-
     final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile == null) return null;
+    try {
+      final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+      if (pickedFile == null) return null; // user cancelled
 
-    final appDir = await getApplicationDocumentsDirectory();
-    final fileName = path.basename(pickedFile.path);
-    final savedImage = await File(pickedFile.path).copy('${appDir.path}/$fileName');
+      final appDir = await getApplicationDocumentsDirectory();
+      final fileName = path.basename(pickedFile.path);
+      final savedImage = await File(pickedFile.path)
+          .copy(path.join(appDir.path, fileName));
 
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_key, fileName);
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_key, fileName);
 
-    return savedImage;
-  }
+      // 背景變更，通知 listener
+      backgroundVersion.value++;
 
-  // Android 權限請求
-  static Future<bool> _checkAndRequestAndroidPermission() async {
-    // 針對 Android 13+ 要求 READ_MEDIA_IMAGES，舊版本用 READ_EXTERNAL_STORAGE
-    if (await Permission.photos.isGranted) {
-      return true;
-    } else {
-      final status = await Permission.photos.request();
-      return status.isGranted;
+      return savedImage;
+    } on Exception catch (e) {
+      final info = await PackageInfo.fromPlatform();
+      final intent = AndroidIntent(
+        action: 'android.settings.APPLICATION_DETAILS_SETTINGS',
+        data: 'package:${info.packageName}',
+        flags: [Flag.FLAG_ACTIVITY_NEW_TASK],
+      );
+      await intent.launch();
+      return null;
     }
   }
 
-  // 清除背景圖片設定
+  /// Clears the saved background setting (does not delete the file).
   static Future<void> clearBackgroundImage() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_key);
+
+    // 清除時也通知 listener
+    backgroundVersion.value++;
   }
 }

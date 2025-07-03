@@ -2,21 +2,43 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'manager.dart';
 
-class BackgroundContainer extends StatefulWidget {
-  final Widget child;
+class BackgroundScaffold extends StatefulWidget {
+  final PreferredSizeWidget? appBar;
+  final Widget? body;
+  final Widget? floatingActionButton;
+  final Widget? bottomNavigationBar;
+  final Color? backgroundColor;
 
-  const BackgroundContainer({super.key, required this.child});
+  const BackgroundScaffold({
+    Key? key,
+    this.appBar,
+    this.body,
+    this.floatingActionButton,
+    this.bottomNavigationBar,
+    this.backgroundColor,
+  }) : super(key: key);
 
   @override
-  State<BackgroundContainer> createState() => _BackgroundContainerState();
+  State<BackgroundScaffold> createState() => _BackgroundScaffoldState();
 }
 
-class _BackgroundContainerState extends State<BackgroundContainer> {
+class _BackgroundScaffoldState extends State<BackgroundScaffold> {
   File? _backgroundImageFile;
 
   @override
   void initState() {
     super.initState();
+    _loadBackgroundImage();
+    BackgroundManager.backgroundVersion.addListener(_onBackgroundChanged);
+  }
+
+  @override
+  void dispose() {
+    BackgroundManager.backgroundVersion.removeListener(_onBackgroundChanged);
+    super.dispose();
+  }
+
+  void _onBackgroundChanged() {
     _loadBackgroundImage();
   }
 
@@ -29,16 +51,35 @@ class _BackgroundContainerState extends State<BackgroundContainer> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        image: _backgroundImageFile != null
-            ? DecorationImage(
-                image: FileImage(_backgroundImageFile!),
-                fit: BoxFit.cover,
-              )
-            : null,
-      ),
-      child: widget.child,
+    return Stack(
+      children: [
+        // 背景圖片層
+        if (_backgroundImageFile != null)
+          Positioned.fill(
+            child: Image.file(
+              _backgroundImageFile!,
+              fit: BoxFit.cover,
+            ),
+          ),
+
+        // 深色遮罩層
+        Positioned.fill(
+          child: Container(
+            color: Colors.black.withAlpha((0.7 * 255).round()),
+          ),
+        ),
+
+        // Scaffold 上層
+        Scaffold(
+          extendBody: true,
+          extendBodyBehindAppBar: true,
+          backgroundColor: Colors.transparent,
+          appBar: widget.appBar,
+          body: widget.body,
+          floatingActionButton: widget.floatingActionButton,
+          bottomNavigationBar: widget.bottomNavigationBar,
+        ),
+      ],
     );
   }
 }

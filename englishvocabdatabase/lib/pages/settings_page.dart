@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:englishvocabdatabase/background/manager.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -7,15 +8,15 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Padding(
-        padding: EdgeInsetsGeometry.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
               height: 50.0,
               width: double.infinity,
-              margin: EdgeInsets.only(bottom: 10.0),
-              child: Text(
+              margin: const EdgeInsets.only(bottom: 10.0),
+              child: const Text(
                 'Setting 1',
                 style: TextStyle(
                   fontSize: 24.0,
@@ -25,16 +26,32 @@ class SettingsPage extends StatelessWidget {
             Container(
               height: 50.0,
               width: double.infinity,
-              margin: EdgeInsets.only(bottom: 10.0),
-              child: Text(
+              margin: const EdgeInsets.only(bottom: 10.0),
+              child: const Text(
                 'Setting 2',
                 style: TextStyle(
                   fontSize: 24.0,
                 ),
               ),
             ),
+            const Spacer(),
+            ElevatedButton(
+              onPressed: () async {
+                final file = await BackgroundManager.pickAndSaveBackgroundImage();
+                if (file != null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('背景圖片已更新！')),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('沒有選擇圖片或權限不足')),
+                  );
+                }
+              },
+              child: const Text('選擇背景圖片'),
+            ),
           ],
-        )
+        ),
       ),
     );
   }
