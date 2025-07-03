@@ -50,6 +50,18 @@ class SettingsPage extends StatelessWidget {
               },
               child: const Text('選擇背景圖片'),
             ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.redAccent,
+              ),
+              onPressed: () async {
+                await BackgroundManager.clearBackgroundImage();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('背景圖片已清除，將恢復預設背景。')),
+                );
+              },
+              child: const Text('清除背景圖片'),
+            ),
           ],
         ),
       ),
