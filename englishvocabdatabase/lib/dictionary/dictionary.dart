@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'dictionary_model.dart';
 import 'package:flutter/widgets.dart';
 
-class dictionary{
+class Dictionary{
   String baseurl = "https://api.dictionaryapi.dev/api/v2/entries/en/";
   Future <List<Word>?> fetchdata(String word) async{
     Uri url = Uri.parse("$baseurl$word");
@@ -21,7 +21,7 @@ class dictionary{
                 for(var def in definitions){
                   String definition = def.definition;
                   String? sentence = def.example;
-                  result.add(Word(id: -1, name: word, definition: definition, sentence: sentence));
+                  result.add(Word(id: -1, name: word, definition: definition, sentence: sentence, parts: parts));
                 }
             }
             return result;
@@ -35,7 +35,7 @@ class dictionary{
 /*
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  var diction = dictionary();
+  var diction = Dictionary();
   var hello_result = await diction.fetchdata("flow");
   if(hello_result == null){
     return;
