@@ -13,16 +13,22 @@ class OutputDictNotifier extends _$OutputDictNotifier{
   //先回傳definition
   @override
   Future<List<String>> build(String wordname) async{
-    DictService.searchWord(wordname);
+    await DictService.searchWord(wordname);
     return DictService.getDefinition();
   }
 
-  List<String> getDefinition() {
-    return DictService.getDefinition();
+  void getDefinition() {
+    state.whenData((current){
+      state = AsyncValue.data(DictService.getDefinition());
+    });
+    return;
   }
 
-  List<String> getSentence(){
-    return DictService.getSentence();
+  void getSentence(){
+    state.whenData((current){
+      state = AsyncValue.data(DictService.getSentence());
+    });
+    return;
   }
 
   Future<Word> getWordByDefinition(String definition) async{
