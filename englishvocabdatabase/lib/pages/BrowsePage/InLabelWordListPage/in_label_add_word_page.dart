@@ -1,3 +1,4 @@
+import 'package:englishvocabdatabase/language/generated/app_localizations.dart';
 import 'package:englishvocabdatabase/logic/output/outputListNotifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,7 +31,7 @@ class _InLabelAddWordPageState extends ConsumerState<InLabelAddWordPage> {
   Future<void> _addSelectedWordsToLabel() async {
     if (selectedWordIds.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No words selected')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.eventNoSelectWord)),
       );
       return;
     }
@@ -49,16 +50,16 @@ class _InLabelAddWordPageState extends ConsumerState<InLabelAddWordPage> {
       }
     }
 
-    if (!context.mounted) return;
+    if (!mounted) return;
 
     if (allSuccess) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Successfully added $successCount words to label')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.doneWordToLabel(successCount))),
       );
       Navigator.pop(context);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Added $successCount/${selectedWordIds.length} words. Some failed.')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.wordToLabelFail(successCount, selectedWordIds.length))),
       );
     }
   }
@@ -69,7 +70,7 @@ class _InLabelAddWordPageState extends ConsumerState<InLabelAddWordPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Add Word", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40)),
+        title: Text(AppLocalizations.of(context)!.addWordBar, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40)),
         centerTitle: false,
         elevation: 0,
       ),
@@ -85,7 +86,7 @@ class _InLabelAddWordPageState extends ConsumerState<InLabelAddWordPage> {
               asyncList.when(
                 data: (list) {
                   if (list.isEmpty){
-                    return Expanded(child: const Center(child: Text("Word List is Empty")));
+                    return Expanded(child: Center(child: Text(AppLocalizations.of(context)!.wordListEmpty)));
                   }
                   return Expanded(
                     child: ListView.builder(
@@ -101,7 +102,8 @@ class _InLabelAddWordPageState extends ConsumerState<InLabelAddWordPage> {
                   );
                 },
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (err, stack) => Center(child: Text('Error: $err')),
+                error: (err, stack) => Center(child: Text(AppLocalizations.of (context)!.eventError(err))
+                )
               ),
             ],
           ),
@@ -111,7 +113,7 @@ class _InLabelAddWordPageState extends ConsumerState<InLabelAddWordPage> {
       floatingActionButton: selectedWordIds.isNotEmpty
           ? FloatingActionButton.extended(
               onPressed: _addSelectedWordsToLabel,
-              label: const Text('Done'),
+              label: Text(AppLocalizations.of(context)!.done),
               icon: const Icon(Icons.check),
             )
           : null,

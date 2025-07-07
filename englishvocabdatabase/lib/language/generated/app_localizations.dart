@@ -98,6 +98,162 @@ abstract class AppLocalizations {
     Locale('zh'),
   ];
 
+  /// No description provided for @eventError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error {message}'**
+  String eventError(Object message);
+
+  /// No description provided for @eventDeleteFail.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Failed'**
+  String get eventDeleteFail;
+
+  /// No description provided for @eventSearchFail.
+  ///
+  /// In en, this message translates to:
+  /// **'Search failed'**
+  String get eventSearchFail;
+
+  /// No description provided for @eventAddFail.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Failed'**
+  String get eventAddFail;
+
+  /// No description provided for @eventCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get eventCancel;
+
+  /// No description provided for @eventOk.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get eventOk;
+
+  /// No description provided for @eventSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get eventSave;
+
+  /// No description provided for @eventEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get eventEdit;
+
+  /// No description provided for @label.
+  ///
+  /// In en, this message translates to:
+  /// **'Label'**
+  String get label;
+
+  /// No description provided for @word.
+  ///
+  /// In en, this message translates to:
+  /// **'Word'**
+  String get word;
+
+  /// No description provided for @done.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get done;
+
+  /// No description provided for @searchbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Search word or label'**
+  String get searchbar;
+
+  /// No description provided for @labelListEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Label List is Empty'**
+  String get labelListEmpty;
+
+  /// No description provided for @wordListEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Word List is Empty'**
+  String get wordListEmpty;
+
+  /// No description provided for @eventNoSelectWord.
+  ///
+  /// In en, this message translates to:
+  /// **'No words selected'**
+  String get eventNoSelectWord;
+
+  /// No description provided for @enterWord.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a word'**
+  String get enterWord;
+
+  /// No description provided for @doneWordToLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully added {successCount} words to label'**
+  String doneWordToLabel(Object successCount);
+
+  /// No description provided for @wordToLabelFail.
+  ///
+  /// In en, this message translates to:
+  /// **'Added {successCount}/{totalCount} words. Some failed.'**
+  String wordToLabelFail(Object successCount, Object totalCount);
+
+  /// No description provided for @eventSaveFail.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to save changes: {message}'**
+  String eventSaveFail(Object message);
+
+  /// No description provided for @doneWordUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Word updated successfully!'**
+  String get doneWordUpdate;
+
+  /// No description provided for @addWordBar.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Word'**
+  String get addWordBar;
+
+  /// No description provided for @addLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Label'**
+  String get addLabel;
+
+  /// No description provided for @addNewWord.
+  ///
+  /// In en, this message translates to:
+  /// **'Add new word'**
+  String get addNewWord;
+
+  /// No description provided for @createLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Create New Label'**
+  String get createLabel;
+
+  /// No description provided for @typeLabelName.
+  ///
+  /// In en, this message translates to:
+  /// **'Type in new label name'**
+  String get typeLabelName;
+
+  /// No description provided for @typeWordName.
+  ///
+  /// In en, this message translates to:
+  /// **'Type in new word'**
+  String get typeWordName;
+
   /// No description provided for @doneUpdateBackground.
   ///
   /// In en, this message translates to:
@@ -133,6 +289,174 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Change language'**
   String get buttonChangeLanguage;
+
+  /// No description provided for @searchWordNotInLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Word not in the Label'**
+  String get searchWordNotInLabel;
+
+  /// No description provided for @searchWordInLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Word in the Label'**
+  String get searchWordInLabel;
+
+  /// No description provided for @ocrProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'OCR still in production'**
+  String get ocrProduct;
+
+  /// No description provided for @tempListEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Temporary List is Empty'**
+  String get tempListEmpty;
+
+  /// No description provided for @pageTitleWordBank.
+  ///
+  /// In en, this message translates to:
+  /// **'Word Bank'**
+  String get pageTitleWordBank;
+
+  /// No description provided for @pageTitleTemporaryList.
+  ///
+  /// In en, this message translates to:
+  /// **'Temporary List'**
+  String get pageTitleTemporaryList;
+
+  /// No description provided for @pageTitleImportExport.
+  ///
+  /// In en, this message translates to:
+  /// **'Import & Export'**
+  String get pageTitleImportExport;
+
+  /// No description provided for @pageTitleSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get pageTitleSettings;
+
+  /// No description provided for @browseIcon.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse'**
+  String get browseIcon;
+
+  /// No description provided for @temporaryIcon.
+  ///
+  /// In en, this message translates to:
+  /// **'Temporary'**
+  String get temporaryIcon;
+
+  /// No description provided for @toolsIcon.
+  ///
+  /// In en, this message translates to:
+  /// **'Tools'**
+  String get toolsIcon;
+
+  /// No description provided for @settingsIcon.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsIcon;
+
+  /// No description provided for @wordHasnodef.
+  ///
+  /// In en, this message translates to:
+  /// **'This word has no definition yet'**
+  String get wordHasnodef;
+
+  /// No description provided for @buttontoEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the edit button to add definition, translation, and more details'**
+  String get buttontoEdit;
+
+  /// No description provided for @addDefinition.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Definition'**
+  String get addDefinition;
+
+  /// No description provided for @enterDefinition.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter word definition'**
+  String get enterDefinition;
+
+  /// No description provided for @chinese.
+  ///
+  /// In en, this message translates to:
+  /// **'chinese'**
+  String get chinese;
+
+  /// No description provided for @addTranslate.
+  ///
+  /// In en, this message translates to:
+  /// **'Add translation'**
+  String get addTranslate;
+
+  /// No description provided for @definition.
+  ///
+  /// In en, this message translates to:
+  /// **'Definition'**
+  String get definition;
+
+  /// No description provided for @partsOfSpeech.
+  ///
+  /// In en, this message translates to:
+  /// **'Part of Speech'**
+  String get partsOfSpeech;
+
+  /// No description provided for @example.
+  ///
+  /// In en, this message translates to:
+  /// **'Example'**
+  String get example;
+
+  /// No description provided for @exampleSentence.
+  ///
+  /// In en, this message translates to:
+  /// **'Example Sentence'**
+  String get exampleSentence;
+
+  /// No description provided for @enterSentence.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter an example sentence'**
+  String get enterSentence;
+
+  /// No description provided for @nodefWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Please add some word information (definition, translation, etc.) before adding labels.'**
+  String get nodefWarning;
+
+  /// No description provided for @addLabelHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add word information first to enable labels.'**
+  String get addLabelHint;
+
+  /// No description provided for @noLabelHint.
+  ///
+  /// In en, this message translates to:
+  /// **'No labels yet. Add some to organize your words!'**
+  String get noLabelHint;
+
+  /// No description provided for @manageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Labels'**
+  String get manageLabel;
+
+  /// No description provided for @loadLabelFail.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load labels {message}'**
+  String loadLabelFail(Object message);
 }
 
 class _AppLocalizationsDelegate

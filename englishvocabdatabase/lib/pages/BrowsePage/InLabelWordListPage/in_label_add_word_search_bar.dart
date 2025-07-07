@@ -1,3 +1,4 @@
+import 'package:englishvocabdatabase/language/generated/app_localizations.dart';
 import 'package:englishvocabdatabase/logic/output/outputItem.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,7 +28,7 @@ class _InLabelAddWordSearchBarState extends ConsumerState<InLabelAddWordSearchBa
     return TextField(
       controller: textController,
       decoration: InputDecoration(
-        hintText: 'Search Word not in the Label',
+        hintText: AppLocalizations.of(context)!.searchWordNotInLabel,
         prefixIcon: const Icon(Icons.search),
         suffixIcon: IconButton(
           icon: const Icon(Icons.clear),
@@ -44,7 +45,7 @@ class _InLabelAddWordSearchBarState extends ConsumerState<InLabelAddWordSearchBa
         if (!context.mounted) return;
         if (!success) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Search failed')),
+            SnackBar(content: Text(AppLocalizations.of(context)!.eventSearchFail)),
           );
         }
       }

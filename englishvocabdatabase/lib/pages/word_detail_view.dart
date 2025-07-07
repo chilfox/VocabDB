@@ -1,3 +1,4 @@
+import 'package:englishvocabdatabase/language/generated/app_localizations.dart';
 import 'package:englishvocabdatabase/logic/output/outputDetailItem.dart';
 import 'package:englishvocabdatabase/logic/output/outputDetailNotifier.dart';
 import 'package:englishvocabdatabase/logic/output/outputItem.dart';
@@ -68,6 +69,7 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
 
   void _saveChanges(Detail word, OutputDetailNotifier service) async {
     final updatedWord = _createUpdatedWord(word);
+    final log = AppLocalizations.of(context)!;
     
     // Check if content was added - this will determine if NoDef should become Word
     bool hasContent = _hasWordContent(updatedWord);
@@ -87,7 +89,7 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
       _showSuccessMessage();
     } catch (error) {
       // Handle error if storeDetail fails
-      _showErrorMessage('Failed to save changes: $error');
+      _showErrorMessage(log.eventSaveFail(error));
     }
   }
 
@@ -120,8 +122,8 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
 
   void _showSuccessMessage() {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Word updated successfully!'),
+      SnackBar(
+        content: Text(AppLocalizations.of(context)!.doneWordUpdate),
         backgroundColor: Colors.green,
       ),
     );
@@ -170,7 +172,7 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
         return _buildWordDetailScaffold(context, wordData, service);
       },
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (err, stack) => Center(child: Text('Error: $err')),
+      error: (err, stack) => Center(child: Text(AppLocalizations.of(context)!.eventError(err))),
     );
   }
 
@@ -206,17 +208,18 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
   }
 
   List<Widget> _buildAppBarActions() {
+    final log = AppLocalizations.of(context)!;
     if (_isEditing) {
       return [
         IconButton(
           icon: const Icon(Icons.close, color: Colors.white),
           onPressed: _cancelEdit,
-          tooltip: 'Cancel',
+          tooltip: log.eventCancel,
         ),
         IconButton(
           icon: const Icon(Icons.check, color: Colors.white),
           onPressed: () => _saveChanges(_getWordData().value!, _getService()),
-          tooltip: 'Save',
+          tooltip: log.eventSave,
         ),
       ];
     } else {
@@ -224,7 +227,7 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
         IconButton(
           icon: const Icon(Icons.edit, color: Colors.white),
           onPressed: _toggleEditMode,
-          tooltip: 'Edit',
+          tooltip: log.eventEdit,
         ),
       ];
     }
@@ -253,6 +256,8 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
 }
 
   Widget _buildNoDefinitionPrompt() {
+    final log = AppLocalizations.of(context)!;
+
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -266,8 +271,8 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
               color: Colors.grey,
             ),
             const SizedBox(height: 16),
-            const Text(
-              'This word has no definition yet',
+            Text(
+              log.wordHasnodef,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
@@ -275,8 +280,8 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
               ),
             ),
             const SizedBox(height: 8),
-            const Text(
-              'Tap the edit button to add definition, translation, and more details',
+            Text(
+              log.buttontoEdit,
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.white54,
@@ -287,7 +292,7 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
             ElevatedButton.icon(
               onPressed: _toggleEditMode,
               icon: const Icon(Icons.add),
-              label: const Text('Add Definition'),
+              label: Text(log.addDefinition),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,
@@ -366,6 +371,7 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
   }
 
   Widget _buildChineseTextField() {
+    final log = AppLocalizations.of(context)!;
     return TextField(
       controller: _chineseController,
       textAlign: TextAlign.center,
@@ -374,11 +380,11 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
         fontWeight: FontWeight.bold,
         color: Colors.white,
       ),
-      decoration: const InputDecoration(
+      decoration: InputDecoration(
         border: UnderlineInputBorder(),
-        labelText: 'Chinese',
+        labelText: log.chinese,
         labelStyle: TextStyle(color: Colors.white70),
-        hintText: 'Add translation',
+        hintText: log.addTranslate,
         hintStyle: TextStyle(color: Colors.white54),
       ),
     );
@@ -407,7 +413,7 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
   Widget _buildPartOfSpeechRow(Detail word) {
     return Row(
       children: [
-        _buildSectionLabel('Definition'),
+        _buildSectionLabel(AppLocalizations.of(context)!.definition),
         const SizedBox(width: 8),
         Expanded(child: _buildPartOfSpeechField(word)),
       ],
@@ -439,9 +445,9 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
           fontSize: 14,
           fontWeight: FontWeight.w500,
         ),
-        decoration: const InputDecoration(
+        decoration: InputDecoration(
           border: UnderlineInputBorder(),
-          labelText: 'Part of Speech',
+          labelText: AppLocalizations.of(context)!.partsOfSpeech,
           labelStyle: TextStyle(color: Colors.white70),
           hintText: 'e.g., noun, verb, adjective',
           hintStyle: TextStyle(color: Colors.white54),
@@ -462,6 +468,7 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
   }
 
   Widget _buildDefinitionSection(Detail word) {
+    final log = AppLocalizations.of(context)!;
     if (_isEditing) {
       return TextField(
         controller: _definitionController,
@@ -471,11 +478,11 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
           fontWeight: FontWeight.w600,
           color: Colors.white,
         ),
-        decoration: const InputDecoration(
+        decoration: InputDecoration(
           border: OutlineInputBorder(),
-          labelText: 'Definition',
+          labelText: log.definition,
           labelStyle: TextStyle(color: Colors.white70),
-          hintText: 'Enter word definition',
+          hintText: log.enterDefinition,
           hintStyle: TextStyle(color: Colors.white54),
         ),
       );
@@ -500,7 +507,7 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSectionLabel('Example'),
+            _buildSectionLabel(AppLocalizations.of(context)!.example),
             const SizedBox(height: 16),
             _buildExampleSentenceRow(word),
           ],
@@ -534,6 +541,7 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
   }
 
   Widget _buildExampleSentenceField(Detail word) {
+    final log = AppLocalizations.of(context)!;
     if (_isEditing) {
       return TextField(
         controller: _sentenceController,
@@ -543,10 +551,10 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
           color: Colors.white,
           height: 1.4,
         ),
-        decoration: const InputDecoration(
+        decoration: InputDecoration(
           border: OutlineInputBorder(),
-          labelText: 'Example Sentence',
-          hintText: 'Enter an example sentence',
+          labelText: log.exampleSentence,
+          hintText: log.enterSentence,
           hintStyle: TextStyle(color: Colors.white54),
         ),
       );
@@ -589,8 +597,8 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
             color: Colors.grey[700],
             borderRadius: BorderRadius.circular(16),
           ),
-          child: const Text(
-            'Labels',
+          child: Text(
+            AppLocalizations.of(context)!.label,
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
@@ -616,8 +624,8 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
   // New method to show warning when trying to add labels to NoDefinition word
   void _showNoDefWarning() {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Please add some word information (definition, translation, etc.) before adding labels.'),
+      SnackBar(
+        content: Text(AppLocalizations.of(context)!.nodefWarning),
         backgroundColor: Colors.orange,
         duration: Duration(seconds: 3),
       ),
@@ -625,12 +633,13 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
   }
 
   Widget _buildLabelsWrap(Detail word, OutputDetailNotifier service) {
+    final log = AppLocalizations.of(context)!;
     if(word.labels == null || word.labels!.isEmpty) {
       return _isEditing 
         ? Text(
             _isNoDef 
-              ? 'Add word information first to enable labels.'
-              : 'No labels yet. Add some to organize your words!',
+              ? log.addLabelHint
+              : log.noLabelHint,
             style: TextStyle(
               color: _isNoDef ? Colors.orange.shade300 : Colors.white54,
               fontSize: 14,
@@ -695,6 +704,7 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
     List<LabelItem>? inWordLabelList,
     int wordId
   ) async {
+    final log = AppLocalizations.of(context)!;
   try {
     final List<LabelItem> labelList = await service.getAddLabel();
     
@@ -712,7 +722,7 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          title: const Text('Manage Labels'),
+          title: Text(log.manageLabel),
           content: SizedBox(
             width: double.maxFinite,
             height: 300,
@@ -733,11 +743,11 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
+              child: Text(log.eventCancel),
             ),
             TextButton(
               onPressed: () => _processLabelChanges(service, wordId, inWordLabelList, selectedLabels),
-              child: const Text('OK'),
+              child: Text(log.eventOk),
             ),
           ],
         ),
@@ -750,12 +760,12 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Error'),
-        content: Text('Failed to load labels: $error'),
+        title: Text(log.eventError('')),
+        content: Text(log.loadLabelFail(error)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
+            child: Text(log.eventOk),
           ),
         ],
       ),

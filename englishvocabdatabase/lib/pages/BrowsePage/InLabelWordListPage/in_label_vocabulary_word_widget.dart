@@ -1,3 +1,4 @@
+import 'package:englishvocabdatabase/language/generated/app_localizations.dart';
 import 'package:englishvocabdatabase/logic/output/outputListNotifier.dart';
 import 'package:englishvocabdatabase/logic/output/outputItem.dart';
 import 'package:englishvocabdatabase/pages/word_detail_view.dart';
@@ -32,7 +33,7 @@ class InLabelVocabularyWordWidget extends StatelessWidget {
                     if (!context.mounted) return;
                     if (!success) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Delete Failed')),
+                        SnackBar(content: Text(AppLocalizations.of(context)!.eventSearchFail)),
                       );
                     }
                   },

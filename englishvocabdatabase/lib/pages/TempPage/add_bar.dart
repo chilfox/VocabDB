@@ -1,3 +1,4 @@
+import 'package:englishvocabdatabase/language/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../logic/output/outputListNotifier.dart';
@@ -20,7 +21,7 @@ class AddBar extends ConsumerWidget {
             child: TextField(
               controller: addBarTextController, 
               decoration: InputDecoration(
-                hintText: 'Add new word',
+                hintText: AppLocalizations.of(context)!.addNewWord,
                 prefixIcon: const Icon(Icons.add),
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.clear),
@@ -36,7 +37,7 @@ class AddBar extends ConsumerWidget {
                 if(!context.mounted) return;
                 if (success == -1) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Add Failed')),
+                    SnackBar(content: Text(AppLocalizations.of(context)!.eventAddFail)),
                   );
                 }
               },
@@ -50,7 +51,7 @@ class AddBar extends ConsumerWidget {
                 icon: Icon(Icons.camera_alt_rounded),
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('OCR still in production')),
+                    SnackBar(content: Text(AppLocalizations.of(context)!.ocrProduct)),
                   );
                 },
               ),

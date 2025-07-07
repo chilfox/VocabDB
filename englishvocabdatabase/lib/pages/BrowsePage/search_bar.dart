@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'word_bank_page.dart';
 import '../../logic/output/outputListNotifier.dart';
+import 'package:englishvocabdatabase/language/generated/app_localizations.dart';
+
 
 class MySearchBar extends ConsumerStatefulWidget {
   const MySearchBar({super.key});
@@ -20,7 +22,7 @@ class _MySearchBarState extends ConsumerState<MySearchBar> {
     return TextField(
       controller: textController,
       decoration: InputDecoration(
-        hintText: 'Search word or label',
+        hintText: AppLocalizations.of(context)!.searchbar,
         prefixIcon: const Icon(Icons.search),
         suffixIcon: IconButton(
           icon: const Icon(Icons.clear),
@@ -49,7 +51,7 @@ class _MySearchBarState extends ConsumerState<MySearchBar> {
         if (!context.mounted) return;
         if (!success) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Search failed')),
+            SnackBar(content: Text(AppLocalizations.of(context)!.eventSearchFail)),
           );
         }
       }

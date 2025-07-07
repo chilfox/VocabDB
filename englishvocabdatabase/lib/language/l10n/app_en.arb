@@ -1,8 +1,108 @@
-{
+{ 
+  "eventError": "Error {message}",
+  "@error": {
+    "placeholders": {
+      "message": {}
+    }
+  },
+
+  "eventDeleteFail": "Delete Failed",
+  "eventSearchFail": "Search Failed",
+  "eventAddFail": "Add Failed",
+  "eventCancel": "Cancel",
+  "eventOk": "OK",
+  "eventSave": "Save",
+  "eventEdit": "Edit",
+
+  "label": "Label",
+  "word": "Word",
+  "done": "Done",
+
+  "searchbar": "Search word or label",
+  "eventSearchFail": "Search failed",
+
+  "labelListEmpty": "Label List is Empty",
+  "wordListEmpty": "Word List is Empty",
+
+  "eventNoSelectWord": "No words selected",
+  "enterWord": "Please enter a word",
+
+  "doneWordToLabel": "Successfully added {successCount} words to label",
+  "@successAddWords": {
+    "placeholders": {
+      "successCount": {}
+    }
+  },
+
+  "wordToLabelFail": "Added {successCount}/{totalCount} words. Some failed.",
+  "@addedWordsSummary": {
+    "placeholders": {
+      "successCount": {},
+      "totalCount": {}
+    }
+  },
+
+  "eventSaveFail": "Failed to save changes: {message}",
+  "@saveerror": {
+    "placeholders": {
+      "message": {}
+    }
+  },
+
+  "doneWordUpdate": "Word updated successfully!",
+
+  "addWordBar": "Add Word",
+  "addLabel": "Add Label",
+  "addNewWord": "Add new word",
+  "createLabel": "Create New Label",
+  "typeLabelName": "Type in new label name",
+  "typeWordName": "Type in new word",
+
   "doneUpdateBackground": "Background image updated",
   "eventBackgroundFail": "No image selected or permission denied",
   "buttonChooseBackground": "Choose background image",
   "doneClearBackground": "Background image cleared, reverting to default",
   "buttonClearBackground": "Clear background image",
-  "buttonChangeLanguage": "Change language"
+  "buttonChangeLanguage": "Change language",
+
+  "searchWordNotInLabel": "Search Word not in the Label",
+  "searchWordInLabel": "Search Word in the Label",
+
+  "ocrProduct": "OCR still in production",
+
+  "tempListEmpty": "Temporary List is Empty",
+
+  "pageTitleWordBank": "Word Bank",
+  "pageTitleTemporaryList": "Temporary List",
+  "pageTitleImportExport": "Import & Export",
+  "pageTitleSettings": "Settings",
+
+  "browseIcon": "Browse",
+  "temporaryIcon": "Temporary",
+  "toolsIcon": "Tools",
+  "settingsIcon": "Settings",
+
+  "wordHasnodef": "This word has no definition yet",
+  "buttontoEdit": "Tap the edit button to add definition, translation, and more details",
+  "addDefinition": "Add Definition",
+  "enterDefinition": "Enter word definition",
+  "chinese": "chinese",
+  "addTranslate": "Add translation",
+  "definition": "Definition",
+  "partsOfSpeech": "Part of Speech",
+  "example": "Example",
+  "exampleSentence": "Example Sentence",
+  "enterSentence": "Enter an example sentence",
+
+  "nodefWarning": "Please add some word information (definition, translation, etc.) before adding labels.",
+  "addLabelHint": "Add word information first to enable labels.",
+  "noLabelHint": "No labels yet. Add some to organize your words!",
+
+  "manageLabel": "Manage Labels",
+  "loadLabelFail": "Failed to load labels {message}",
+  "@loadlabelerror": {
+    "placeholders": {
+      "message": {}
+    }
+  }
 }

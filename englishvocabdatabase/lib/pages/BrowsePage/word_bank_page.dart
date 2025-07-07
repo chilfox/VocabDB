@@ -3,6 +3,7 @@ import 'package:englishvocabdatabase/pages/BrowsePage/search_bar.dart';
 import 'package:englishvocabdatabase/pages/BrowsePage/word_list_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:englishvocabdatabase/language/generated/app_localizations.dart';
 
 enum ChooseListView { word, label, nodef }
 
@@ -37,19 +38,19 @@ class WordBankPageState extends ConsumerState<WordBankPage> {
               alignment: Alignment.centerLeft,
               margin: const EdgeInsets.only(left: 5),
               child: SegmentedButton<ChooseListView>(
-                segments: const [
+                segments: [
                   ButtonSegment(
                     value: ChooseListView.label,
                     label: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 15.0),
-                      child: Text('Label'),
+                      child: Text(AppLocalizations.of(context)!.label),
                     )
                   ),
                   ButtonSegment(
                     value: ChooseListView.word,
                     label: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 15.0),
-                      child: Text('Word'),
+                      child: Text(AppLocalizations.of(context)!.word),
                     )
                   ),
                 ],

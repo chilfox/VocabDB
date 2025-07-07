@@ -6,6 +6,7 @@ import '../logic/output/outputListNotifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:englishvocabdatabase/background/container.dart';
+import 'package:englishvocabdatabase/language/generated/app_localizations.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -19,13 +20,17 @@ class HomePageState extends ConsumerState<HomePage> {
   int _currentPage = 0;
 
   // Title for the Page
-  static const List<String> _pageTitles = [
-    'Word Bank',
-    'Temporary List',
-    'Import & Export',
-    'Settings'
-  ];
-  
+  String _getPageTitle(BuildContext context, int index) {
+    final loc = AppLocalizations.of(context)!;
+    switch (index) {
+      case 0: return loc.pageTitleWordBank;
+      case 1: return loc.pageTitleTemporaryList;
+      case 2: return loc.pageTitleImportExport;
+      case 3: return loc.pageTitleSettings;
+      default: return '';
+    }
+  }
+
   // Page List
   static const List<Widget> _pages = [
     WordBankPage(),
@@ -49,11 +54,12 @@ class HomePageState extends ConsumerState<HomePage> {
   @override
   Widget build(BuildContext context) {
     final currentWordBankView = ref.watch(wordBankViewProvider);
+    final log = AppLocalizations.of(context)!;
 
     return BackgroundScaffold(
       // title
       appBar: AppBar(
-        title: Text(_pageTitles[_currentPage], style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40)),
+        title: Text(_getPageTitle(context, _currentPage), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40)),
         centerTitle: false,
         backgroundColor: Colors.transparent,  //background
         elevation: 0,
@@ -68,10 +74,10 @@ class HomePageState extends ConsumerState<HomePage> {
       // bottom navigation bar
       bottomNavigationBar: BottomNavigationBar(
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.library_books), label: 'Browse'),
-          BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Temporary'), 
-          BottomNavigationBarItem(icon: Icon(Icons.build), label: 'Tools'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
+          BottomNavigationBarItem(icon: Icon(Icons.library_books), label: log.browseIcon),
+          BottomNavigationBarItem(icon: Icon(Icons.add), label: log.temporaryIcon), 
+          BottomNavigationBarItem(icon: Icon(Icons.build), label: log.toolsIcon),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: log.settingsIcon),
         ],
         currentIndex: _currentPage,
         onTap: _onBottomNavigationBarTapped,
@@ -88,6 +94,7 @@ Widget? _buildFloatingActionButton(ChooseListView view, final int currentPage, W
     return null;
   }
 
+  final log = AppLocalizations.of(context)!;
   switch(view) {
     case ChooseListView.label:
       return FloatingActionButton.extended(
@@ -99,7 +106,7 @@ Widget? _buildFloatingActionButton(ChooseListView view, final int currentPage, W
             }
           ); 
         },
-        label: const Text('Add Label'),
+        label: Text(log.addLabel),
         icon: const Icon(Icons.add),
       );
     case ChooseListView.word:
@@ -112,7 +119,7 @@ Widget? _buildFloatingActionButton(ChooseListView view, final int currentPage, W
             }
           );
         },
-        label: const Text('Add Word'),
+        label: Text(log.addWordBar),
         icon: const Icon(Icons.add),
       );
     default:
@@ -123,13 +130,14 @@ Widget? _buildFloatingActionButton(ChooseListView view, final int currentPage, W
 AlertDialog addLabelDialog(BuildContext context, WidgetRef ref) {
   TextEditingController textController = TextEditingController();
   final service = ref.read(OutputListNotifierProvider(NotifierType.Label).notifier);
+  final log = AppLocalizations.of(context)!;
 
   return AlertDialog(
-    title: Text('Create New Label'),
+    title: Text(log.createLabel),
     content: TextField(
       controller: textController,
       decoration: InputDecoration(
-        hintText: 'Type in new label name',
+        hintText: log.typeLabelName,
         border: OutlineInputBorder(),
       ),
     ),
@@ -137,7 +145,7 @@ AlertDialog addLabelDialog(BuildContext context, WidgetRef ref) {
       // cancel button
       TextButton(
         onPressed: () => Navigator.of(context).pop(),
-        child: Text('Cancel'),
+        child: Text(log.eventCancel),
       ),
       // okay button
       TextButton(
@@ -147,11 +155,11 @@ AlertDialog addLabelDialog(BuildContext context, WidgetRef ref) {
           if (!context.mounted) return;
           if (newLabelId == -1) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Add Failed')),
+              SnackBar(content: Text(log.eventAddFail)),
             );
           }
         },
-        child: Text('OK'),
+        child: Text(log.eventOk),
       ),
     ],
   );
@@ -160,13 +168,14 @@ AlertDialog addLabelDialog(BuildContext context, WidgetRef ref) {
 AlertDialog addWordDialog(BuildContext context, WidgetRef ref) {
   TextEditingController textController = TextEditingController();
   final service = ref.read(OutputListNotifierProvider(NotifierType.NoDefinition).notifier);
+  final log = AppLocalizations.of(context)!;
 
   return AlertDialog(
-    title: Text('Add New Word'),
+    title: Text(log.addNewWord),
     content: TextField(
       controller: textController,
       decoration: InputDecoration(
-        hintText: 'Type in new word',
+        hintText: log.typeWordName,
         border: OutlineInputBorder(),
       ),
     ),
@@ -174,7 +183,7 @@ AlertDialog addWordDialog(BuildContext context, WidgetRef ref) {
       // cancel button
       TextButton(
         onPressed: () => Navigator.of(context).pop(),
-        child: Text('Cancel'),
+        child: Text(log.eventCancel),
       ),
       // okay button
       TextButton(
@@ -184,7 +193,7 @@ AlertDialog addWordDialog(BuildContext context, WidgetRef ref) {
           // Validate input
           if (newWord.isEmpty) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Please enter a word')),
+              SnackBar(content: Text(log.enterWord)),
             );
             return;
           }
@@ -201,7 +210,7 @@ AlertDialog addWordDialog(BuildContext context, WidgetRef ref) {
             
             if (newWordId == -1) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Add Failed')),
+                SnackBar(content: Text(log.eventAddFail)),
               );
             } else {
               // Navigate to WordDetailView
@@ -221,11 +230,11 @@ AlertDialog addWordDialog(BuildContext context, WidgetRef ref) {
             // Handle any errors that might occur
             if (!context.mounted) return;
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Error: ${error.toString()}')),
+              SnackBar(content: Text(log.eventError(error.toString()))),
             );
           }
         },
-        child: Text('OK'),
+        child: Text(log.eventOk),
       ),
     ],
   );

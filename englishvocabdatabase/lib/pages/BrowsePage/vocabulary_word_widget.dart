@@ -3,6 +3,7 @@ import 'package:englishvocabdatabase/logic/output/outputItem.dart';
 import 'package:englishvocabdatabase/pages/word_detail_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:englishvocabdatabase/language/generated/app_localizations.dart';
 
 class VocabularyWordWidget extends StatelessWidget {
   final OutputListItem item;
@@ -31,7 +32,7 @@ class VocabularyWordWidget extends StatelessWidget {
                     if (!context.mounted) return;
                     if (!success) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Delete Failed')),
+                        SnackBar(content: Text(AppLocalizations.of(context)!.eventDeleteFail)),
                       );
                     }
                   },

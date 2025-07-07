@@ -1,3 +1,4 @@
+import 'package:englishvocabdatabase/language/generated/app_localizations.dart';
 import 'package:englishvocabdatabase/logic/output/outputItem.dart';
 import 'package:englishvocabdatabase/pages/BrowsePage/InLabelWordListPage/in_label_add_word_page.dart';
 import 'package:englishvocabdatabase/pages/BrowsePage/InLabelWordListPage/in_label_search_bar.dart';
@@ -40,7 +41,7 @@ class _InLabelWordListPage extends ConsumerState<InLabelWordListPage> {
               asyncList.when(
                 data: (list) {
                   if (list.isEmpty){
-                    return Expanded(child: const Center(child: Text("Word List is Empty")));
+                    return Expanded(child: Center(child: Text(AppLocalizations.of(context)!.wordListEmpty)));
                   }
                   return Expanded(
                     child: ListView.builder(
@@ -53,7 +54,8 @@ class _InLabelWordListPage extends ConsumerState<InLabelWordListPage> {
                   );
                 },
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (err, stack) => Center(child: Text('Error: $err')),
+                error: (err, stack) => Center(child: Text(AppLocalizations.of(context)!.eventError(err))
+                )
               ),
             ],
           ),
@@ -67,7 +69,7 @@ class _InLabelWordListPage extends ConsumerState<InLabelWordListPage> {
             MaterialPageRoute(builder: (context) => InLabelAddWordPage(label: widget.label)),
           );
         },
-        label: const Text('Add Word'),
+        label: Text(AppLocalizations.of(context)!.addWordBar),
         icon: const Icon(Icons.add),
       ),
     );

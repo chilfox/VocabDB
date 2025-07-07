@@ -1,8 +1,107 @@
 {   
+    "eventError": "錯誤 {message}",
+    "@error": {
+        "placeholders": {
+        "message": {}
+        }
+    },
+    "eventDeleteFail": "刪除失敗",
+    "eventSearchFail": "搜尋失敗",
+    "eventAddFail": "新增失敗",
+    "eventCancel": "取消",
+    "eventOk": "確定",
+    "eventSave": "儲存",
+    "eventEdit": "編輯",
+
+    "label": "標籤",
+    "word": "單字",
+    "done": "完成",
+
+    "searchbar": "搜尋標籤或單字",
+    "eventSearchFail": "搜尋失敗",
+
+    "labelListEmpty": "標籤列為空",
+    "wordListEmpty": "單字列為空",
+
+    "eventNoSelectWord": "尚未選擇任何單字",
+    "enterWord": "請輸入單字",
+
+    "doneWordToLabel": "成功新增所有單字(共 {successCount} 個) 到標籤中",
+    "@successAddWords": {
+        "placeholders": {
+        "successCount": {}
+        }
+    },
+
+    "wordToLabelFail": "成功新增 {successCount}/{totalCount} 個單字，部分單字新增失敗",
+    "@addedWordsSummary": {
+        "placeholders": {
+        "successCount": {},
+        "totalCount": {}
+        }
+    },
+
+    "eventSaveFail": "儲存失敗: {message}",
+    "@saveerror": {
+        "placeholders": {
+        "message": {}
+        }
+    },
+
+    "doneWordUpdate": "單字更新成功!",
+
+    "addWordBar": "新增單字",
+    "addLabel": "新增標籤",
+    "addNewWord": "新增單字",
+    "createLabel": "建立新標籤",
+    "typeLabelName": "輸入新標籤名稱",
+    "typeWordName": "輸入單字名稱",
+
     "doneUpdateBackground": "背景圖片已更新",
     "eventBackgroundFail": "沒有選擇圖片或權限不足",
     "buttonChooseBackground": "選擇背景圖片",
     "doneClearBackground": "背景圖片已清除，將恢復預設背景",
     "buttonClearBackground": "清除背景圖片",
-    "buttonChangeLanguage": "切換語言"
+    "buttonChangeLanguage": "切換語言",
+
+    "searchWordNotInLabel": "搜尋不在此標籤中的單字",
+    "searchWordInLabel": "搜尋此標籤中的單字",
+
+    "ocrProduct": "OCR功能開發中",
+
+    "tempListEmpty": "暫存列為空",
+
+    "pageTitleWordBank": "單字庫",
+    "pageTitleTemporaryList": "暫存清單",
+    "pageTitleImportExport": "匯入與匯出",
+    "pageTitleSettings": "設定",
+
+    "browseIcon": "瀏覽",
+    "temporaryIcon": "暫存",
+    "toolsIcon": "工具",
+    "settingsIcon": "設定",
+
+    "wordHasnodef": "此單字未定義",
+    "buttontoEdit": "點擊編輯按鈕，新增英文定義、中文翻譯以及更多細節",
+    "addDefinition": "新增英文定義",
+    "enterDefinition": "輸入英文定義",
+    "chinese": "中文",
+    "addTranslate": "新增翻譯",
+    "definition": "英文定義",
+    "partsOfSpeech": "詞性",
+    "example": "範例",
+    "exampleSentence": "例句",
+    "enterSentence": "輸入例句",
+
+    "nodefWarning": "請在加入標籤前，新增定義、翻譯等",
+    "addLabelHint": "加入標籤前，請先新增單字資訊",
+    "noLabelHint": "尚未加入標籤．增加標籤來整理單字!",
+
+    "manageLabel": "管理標籤",
+    "loadLabelFail": "標籤載入失敗 {message}",
+    "@loadlabelerror": {
+        "placeholders": {
+        "message": {}
+        }
+    }
 }

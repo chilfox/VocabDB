@@ -1,3 +1,4 @@
+import 'package:englishvocabdatabase/language/generated/app_localizations.dart';
 import 'package:englishvocabdatabase/pages/word_detail_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,7 +23,7 @@ class _NoDefinitionListViewState extends ConsumerState<NoDefinitionListView> {
     return asyncList.when(
       data: (list) {
         if (list.isEmpty){
-          return const Center(child: Text("Temporary List is Empty"));
+          return Center(child: Text(AppLocalizations.of(context)!.tempListEmpty));
         }
         return ListView.builder(
           itemCount: list.length,
@@ -33,7 +34,8 @@ class _NoDefinitionListViewState extends ConsumerState<NoDefinitionListView> {
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (err, stack) => Center(child: Text('Error: $err')),
+      error: (err, stack) => Center(child: Text(AppLocalizations.of(context)!.eventError(err))
+      )
     );
   }
 }
@@ -58,7 +60,7 @@ Widget noDefinitionWidget(BuildContext context, OutputListItem item, OutputListN
                   if(!context.mounted) return;
                   if(!success){
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Delete Failed')),
+                      SnackBar(content: Text(AppLocalizations.of(context)!.eventDeleteFail)),
                     );
                   }
                 },

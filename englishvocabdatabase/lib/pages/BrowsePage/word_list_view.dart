@@ -1,3 +1,4 @@
+import 'package:englishvocabdatabase/language/generated/app_localizations.dart';
 import 'package:englishvocabdatabase/logic/output/outputListNotifier.dart';
 import 'package:englishvocabdatabase/pages/BrowsePage/vocabulary_word_widget.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,7 @@ class _WordListViewState extends ConsumerState<WordListView> {
     return asyncList.when(
       data: (list) {
         if (list.isEmpty){
-          return const Center(child: Text("Word List is Empty"));
+          return Center(child: Text(AppLocalizations.of(context)!.wordListEmpty));
         }
         return ListView.builder(
           itemCount: list.length,
@@ -30,7 +31,7 @@ class _WordListViewState extends ConsumerState<WordListView> {
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (err, stack) => Center(child: Text('Error: $err')),
+      error: (err, stack) => Center(child: Text(AppLocalizations.of(context)!.eventError(err))),
     );
   }
 }

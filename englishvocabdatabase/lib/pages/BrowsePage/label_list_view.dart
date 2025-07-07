@@ -1,9 +1,11 @@
+import 'package:englishvocabdatabase/language/generated/app_localizations_en.dart';
 import 'package:englishvocabdatabase/pages/BrowsePage/InLabelWordListPage/in_label_word_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:englishvocabdatabase/logic/output/outputListNotifier.dart';
 import 'package:englishvocabdatabase/logic/output/outputItem.dart';
+import 'package:englishvocabdatabase/language/generated/app_localizations.dart';
 
 class LabelListView extends ConsumerStatefulWidget {
   const LabelListView({super.key});
@@ -21,7 +23,7 @@ class _LabelListViewState extends ConsumerState<LabelListView> {
     return asyncList.when(
       data: (list) {
         if (list.isEmpty){
-          return const Center(child: Text("Label List is Empty"));
+          return Center(child: Text(AppLocalizations.of(context)!.labelListEmpty));
         }
         return ListView.builder(
           itemCount: list.length,
@@ -32,7 +34,7 @@ class _LabelListViewState extends ConsumerState<LabelListView> {
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (err, stack) => Center(child: Text('Error: $err')),
+      error: (err, stack) => Center(child: Text(AppLocalizations.of(context)!.eventError(err)))
     );
   }
 }
@@ -67,7 +69,7 @@ Widget labelWidget(BuildContext context, OutputListItem item, OutputListNotifier
                   if (!context.mounted) return;
                   if (!success) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Delete Failed')),
+                      SnackBar(content: Text(AppLocalizations.of(context)!.eventDeleteFail)),
                     );
                   }
                 },
