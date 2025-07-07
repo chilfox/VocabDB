@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:englishvocabdatabase/background/manager.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:englishvocabdatabase/language/generated/app_localizations.dart';
+import 'package:englishvocabdatabase/language/provider/locale_provider.dart';
+
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -61,6 +65,17 @@ class SettingsPage extends StatelessWidget {
                 );
               },
               child: const Text('清除背景圖片'),
+            ),
+
+            const SizedBox(height: 16),
+            Consumer(
+              builder: (context, ref, child) {
+                final loc = AppLocalizations.of(context)!;
+                return ElevatedButton(
+                  onPressed: () => toggleLocale(ref),
+                  child: Text(loc.buttonChangeLanguage),
+                );
+              },
             ),
           ],
         ),
