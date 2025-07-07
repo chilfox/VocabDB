@@ -98,22 +98,40 @@ abstract class AppLocalizations {
     Locale('zh'),
   ];
 
-  /// No description provided for @appTitle.
+  /// No description provided for @doneUpdateBackground.
   ///
   /// In en, this message translates to:
-  /// **'My Dictionary'**
-  String get appTitle;
+  /// **'Background image updated'**
+  String get doneUpdateBackground;
 
-  /// No description provided for @buttonSearch.
+  /// No description provided for @eventBackgroundFail.
   ///
   /// In en, this message translates to:
-  /// **'Search'**
-  String get buttonSearch;
+  /// **'No image selected or permission denied'**
+  String get eventBackgroundFail;
+
+  /// No description provided for @buttonChooseBackground.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose background image'**
+  String get buttonChooseBackground;
+
+  /// No description provided for @doneClearBackground.
+  ///
+  /// In en, this message translates to:
+  /// **'Background image cleared, reverting to default'**
+  String get doneClearBackground;
+
+  /// No description provided for @buttonClearBackground.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear background image'**
+  String get buttonClearBackground;
 
   /// No description provided for @buttonChangeLanguage.
   ///
   /// In en, this message translates to:
-  /// **'Change Language'**
+  /// **'Change language'**
   String get buttonChangeLanguage;
 }
 

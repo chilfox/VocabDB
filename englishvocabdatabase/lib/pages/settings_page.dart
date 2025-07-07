@@ -41,30 +41,34 @@ class SettingsPage extends StatelessWidget {
             const Spacer(),
             ElevatedButton(
               onPressed: () async {
+                final messenger = ScaffoldMessenger.of(context);
+                final loc = AppLocalizations.of(context)!;
                 final file = await BackgroundManager.pickAndSaveBackgroundImage();
                 if (file != null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('背景圖片已更新！')),
+                  messenger.showSnackBar(
+                    SnackBar(content: Text(loc.doneUpdateBackground)),
                   );
                 } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('沒有選擇圖片或權限不足')),
+                  messenger.showSnackBar(
+                    SnackBar(content: Text(loc.eventBackgroundFail)),
                   );
                 }
               },
-              child: const Text('選擇背景圖片'),
+              child: Text(AppLocalizations.of(context)!.buttonChooseBackground),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.redAccent,
               ),
               onPressed: () async {
+                final messenger = ScaffoldMessenger.of(context);
+                final loc = AppLocalizations.of(context)!;
                 await BackgroundManager.clearBackgroundImage();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('背景圖片已清除，將恢復預設背景。')),
+                messenger.showSnackBar(
+                  SnackBar(content: Text(loc.doneClearBackground)),
                 );
               },
-              child: const Text('清除背景圖片'),
+              child: Text(AppLocalizations.of(context)!.buttonClearBackground),
             ),
 
             const SizedBox(height: 16),

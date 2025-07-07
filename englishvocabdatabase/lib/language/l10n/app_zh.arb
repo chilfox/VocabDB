@@ -1,3 +1,8 @@
-{
+{   
+    "doneUpdateBackground": "背景圖片已更新",
+    "eventBackgroundFail": "沒有選擇圖片或權限不足",
+    "buttonChooseBackground": "選擇背景圖片",
+    "doneClearBackground": "背景圖片已清除，將恢復預設背景",
+    "buttonClearBackground": "清除背景圖片",
     "buttonChangeLanguage": "切換語言"
 }

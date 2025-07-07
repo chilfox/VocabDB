@@ -9,11 +9,21 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appTitle => 'My Dictionary';
+  String get doneUpdateBackground => 'Background image updated';
 
   @override
-  String get buttonSearch => 'Search';
+  String get eventBackgroundFail => 'No image selected or permission denied';
 
   @override
-  String get buttonChangeLanguage => 'Change Language';
+  String get buttonChooseBackground => 'Choose background image';
+
+  @override
+  String get doneClearBackground =>
+      'Background image cleared, reverting to default';
+
+  @override
+  String get buttonClearBackground => 'Clear background image';
+
+  @override
+  String get buttonChangeLanguage => 'Change language';
 }

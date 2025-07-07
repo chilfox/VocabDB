@@ -1,3 +1,8 @@
 {
-  "buttonChangeLanguage": "Change Language"
+  "doneUpdateBackground": "Background image updated",
+  "eventBackgroundFail": "No image selected or permission denied",
+  "buttonChooseBackground": "Choose background image",
+  "doneClearBackground": "Background image cleared, reverting to default",
+  "buttonClearBackground": "Clear background image",
+  "buttonChangeLanguage": "Change language"
 }
