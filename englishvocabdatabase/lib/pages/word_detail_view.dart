@@ -168,15 +168,23 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
   }
 
   //--suggestion method--//
-  void _onTapDefinitionField() => setState(() {
-    _showDefinitionSuggestions = true;
-    _showSentenceSuggestions   = false;
-  });
+  void _onTapDefinitionField(){ 
+    final dictNotifier = ref.read(outputDictNotifierProvider(widget.wordName).notifier);
+    dictNotifier.getDefinition();
+    setState(() {
+      _showDefinitionSuggestions = true;
+      _showSentenceSuggestions   = false;
+    });
+  }
 
-  void _onTapSentenceField() => setState(() {
-    _showDefinitionSuggestions = false;
-    _showSentenceSuggestions   = true;
-  });
+  void _onTapSentenceField(){ 
+    final dictNotifier = ref.read(outputDictNotifierProvider(widget.wordName).notifier);
+    dictNotifier.getSentence();
+    setState(() {
+      _showDefinitionSuggestions = false;
+      _showSentenceSuggestions   = true;
+    });
+  }
 
   void _onDefinitionSelected(String suggestion) async {
     _definitionController.text = suggestion;

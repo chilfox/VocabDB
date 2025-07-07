@@ -58,7 +58,7 @@ class _SuggestionTextFieldState extends State<SuggestionTextField> {
               border: Border.all(color: Colors.blueAccent),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: ListView.builder(
+            child: ListView.separated(
               shrinkWrap: true,
               itemCount: widget.suggestions.length,
               itemBuilder: (_, i) {
@@ -71,6 +71,12 @@ class _SuggestionTextFieldState extends State<SuggestionTextField> {
                   },
                 );
               },
+              separatorBuilder: (_, __) => const Divider(
+                height: 1,
+                color: Colors.white24,
+                indent: 16,
+                endIndent: 16,
+              ),
             ),
           ),
       ],

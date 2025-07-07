@@ -19,17 +19,20 @@ class DictService{
 
   static List<String> getDefinition() {
     debugPrint('dictservice getDefinition');
-    return pending.map((word) => word.definition).whereType<String>().toList();
+    return pending.map((word) => word.definition).whereType<String>()
+                  .where((def) => def.isNotEmpty).toList();
   }
 
   static List<String> getSentence(){
     debugPrint('dictservice getSentence');
-    return pending.map((word) => word.sentence).whereType<String>().toList();
+    return pending.map((word) => word.sentence).whereType<String>()
+                  .where((def) => def.isNotEmpty).toList();
   }
 
   static List<String> getParts(){
     debugPrint('dictservice getParts');
-    return pending.map((word) => word.parts).whereType<String>().toList();
+    return pending.map((word) => word.parts).whereType<String>()
+                  .where((def) => def.isNotEmpty).toList();
   }
 
   //according to definition
