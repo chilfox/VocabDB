@@ -220,6 +220,7 @@ AlertDialog addWordDialog(BuildContext context, WidgetRef ref) {
                   builder: (context) => WordDetailView(
                     label: null, 
                     wordId: newWordId, 
+                    wordName: newWord,
                     startWithEditView: true,
                     nodef: true,
                   )

@@ -10,7 +10,7 @@ import 'package:englishvocabdatabase/logic/service/wordService.dart';
 
 part 'outputListNotifier.g.dart';
 
-enum NotifierType { NoDefinition, Label, Word}
+enum NotifierType { NoDefinition, Label, Word, NoLabel}
 
 @riverpod
 class OutputListNotifier extends _$OutputListNotifier {
@@ -31,6 +31,8 @@ class OutputListNotifier extends _$OutputListNotifier {
         else{
           return WordListService.searchWordToLabel('', labelId!, false);
         }
+      case NotifierType.NoLabel:
+        return WordListService.searchWordToLabel('', labelId!, true, labelname: 'nolabel');
     }
   }
 
@@ -44,6 +46,9 @@ class OutputListNotifier extends _$OutputListNotifier {
         result = await LabelListService.searchLabel(prefix);
       case NotifierType.Word:
         result = await WordListService.searchWord(prefix);
+      case NotifierType.NoLabel:
+        result = await WordListService.searchWordToLabel(prefix, labelId!, true, labelname: 'nolabel');
+
     }
 
     _refreshAll(result);
@@ -61,6 +66,8 @@ class OutputListNotifier extends _$OutputListNotifier {
         (result, newid) = await LabelListService.addLabel(name);
       case NotifierType.Word:
         (result, newid) = await NodefListService.addNoDef(name);
+      case NotifierType.NoLabel:
+        (result, newid) = await NodefListService.addNoDef(name);
     }
 
     if (result == null) return -1;
@@ -77,6 +84,8 @@ class OutputListNotifier extends _$OutputListNotifier {
       case NotifierType.Label:
         result = await LabelListService.deleteLabel(id);
       case NotifierType.Word:
+        result = await WordListService.deleteWord(id);
+      case NotifierType.NoLabel:
         result = await WordListService.deleteWord(id);
     }
 

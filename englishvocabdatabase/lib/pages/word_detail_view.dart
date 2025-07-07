@@ -4,10 +4,13 @@ import 'package:englishvocabdatabase/logic/output/outputDetailNotifier.dart';
 import 'package:englishvocabdatabase/logic/output/outputItem.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:englishvocabdatabase/logic/output/outputDictNotifier.dart';
+import 'package:englishvocabdatabase/pages/suggestion_text_field.dart';
 
 class WordDetailView extends ConsumerStatefulWidget {
   final OutputListItem? label;
   final int wordId;
+  final String wordName;
   final bool startWithEditView;
   final bool nodef; // 新增參數
 
@@ -15,6 +18,7 @@ class WordDetailView extends ConsumerStatefulWidget {
     super.key,
     required this.label,
     required this.wordId,
+    required this.wordName,
     required this.startWithEditView,
     required this.nodef, // 新增必要參數
   });
@@ -32,6 +36,10 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
   late final TextEditingController _definitionController;
   late final TextEditingController _partsController;
   late final TextEditingController _sentenceController;
+
+  //Text suggestion show or not
+  bool _showDefinitionSuggestions = false;
+  bool _showSentenceSuggestions   = false;
 
   @override
   void initState() {
@@ -159,6 +167,44 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
   // Helper method to check if this is a NoDefinition word (only has id and name)
   bool _isNoDefinitionWord(Detail word) {
     return _isNoDef; // Use dynamic _isNoDef
+  }
+
+  //--suggestion method--//
+  void _onTapDefinitionField(){ 
+    final dictNotifier = ref.read(outputDictNotifierProvider(widget.wordName).notifier);
+    dictNotifier.getDefinition();
+    setState(() {
+      _showDefinitionSuggestions = true;
+      _showSentenceSuggestions   = false;
+    });
+  }
+
+  void _onTapSentenceField(){ 
+    final dictNotifier = ref.read(outputDictNotifierProvider(widget.wordName).notifier);
+    dictNotifier.getSentence();
+    setState(() {
+      _showDefinitionSuggestions = false;
+      _showSentenceSuggestions   = true;
+    });
+  }
+
+  void _onDefinitionSelected(String suggestion) async {
+    _definitionController.text = suggestion;
+
+    final wordData = await ref
+      .read(outputDictNotifierProvider(widget.wordName).notifier)
+      .getWordByDefinition(suggestion);
+    //檢查parts, sentence是否為空 自動填入
+    if (_sentenceController.text.isEmpty) {
+      _sentenceController.text = wordData.sentence ?? '';
+    }
+    if (_partsController.text.isEmpty) {
+      _partsController.text = wordData.parts ?? '';
+    }
+  }
+
+  void _onSentenceSelected(String suggestion) {
+    _sentenceController.text = suggestion;
   }
 
   @override
@@ -469,23 +515,65 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
 
   Widget _buildDefinitionSection(Detail word) {
     final log = AppLocalizations.of(context)!;
+    final nodictTextField = TextField(
+          controller: _definitionController,
+          maxLines: 3,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+          decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            labelText: log.definition,
+            labelStyle: TextStyle(color: Colors.white70),
+            hintText: log.enterDefinition,
+            hintStyle: TextStyle(color: Colors.white54),
+          ),
+          onTap: _onTapDefinitionField,
+        );
+
     if (_isEditing) {
-      return TextField(
-        controller: _definitionController,
-        maxLines: 3,
-        style: const TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-          color: Colors.white,
-        ),
-        decoration: InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: log.definition,
-          labelStyle: TextStyle(color: Colors.white70),
-          hintText: log.enterDefinition,
-          hintStyle: TextStyle(color: Colors.white54),
-        ),
-      );
+      if (!_showDefinitionSuggestions) {
+        // 尚未點擊輸入框，不要載入建議資料，直接顯示一般 TextField
+        return nodictTextField;
+      } else {
+        // 使用者點擊後才 watch provider 載入建議
+        final suggestionsAsync = ref.watch(outputDictNotifierProvider(widget.wordName));
+
+        return suggestionsAsync.when(
+          data: (suggestions) => SuggestionTextField(
+            controller: _definitionController,
+            maxLines: 3,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
+            decoration: InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: log.definition,
+              labelStyle: TextStyle(color: Colors.white70),
+              hintText: log.enterDefinition,
+              hintStyle: TextStyle(color: Colors.white54),
+            ),
+            label: log.definition,
+            suggestions: suggestions,
+            onTap: _onTapDefinitionField,
+            onSelected: _onDefinitionSelected,
+          ),
+          loading: () => const CircularProgressIndicator(),
+          error: (e, _) {
+            // 先在下一幀顯示 SnackBar，再回退到普通輸入框
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(log.apiLoadFail)),
+              );
+            });
+            return nodictTextField;
+          },
+        );
+      }
     } else {
       return Text(
         '  ${word.definition ?? ''}',
@@ -542,22 +630,61 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
 
   Widget _buildExampleSentenceField(Detail word) {
     final log = AppLocalizations.of(context)!;
+    final nodictTextField = TextField(
+          controller: _sentenceController,
+          maxLines: 3,
+          style: const TextStyle(
+            fontSize: 16,
+            color: Colors.white,
+            height: 1.4,
+          ),
+          decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            labelText: log.exampleSentence,
+            hintText: log.enterSentence,
+            hintStyle: TextStyle(color: Colors.white54),
+          ),
+          onTap: _onTapSentenceField,
+        );
+
     if (_isEditing) {
-      return TextField(
-        controller: _sentenceController,
-        maxLines: 3,
-        style: const TextStyle(
-          fontSize: 16,
-          color: Colors.white,
-          height: 1.4,
-        ),
-        decoration: InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: log.exampleSentence,
-          hintText: log.enterSentence,
-          hintStyle: TextStyle(color: Colors.white54),
-        ),
-      );
+      if (!_showSentenceSuggestions) {
+        return nodictTextField;
+      } else {
+        final suggestionsAsync = ref.watch(outputDictNotifierProvider(widget.wordName));
+
+        return suggestionsAsync.when(
+          data: (suggestions) => SuggestionTextField(
+            controller: _sentenceController,
+            maxLines: 3,
+            style: const TextStyle(
+              fontSize: 16,
+              color: Colors.white,
+              height: 1.4,
+            ),
+            decoration: InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: log.exampleSentence,
+              hintText: log.enterSentence,
+              hintStyle: TextStyle(color: Colors.white54),
+            ),
+            label: log.exampleSentence,
+            suggestions: suggestions,
+            onTap: _onTapSentenceField,
+            onSelected: _onSentenceSelected,
+          ),
+          loading: () => const CircularProgressIndicator(),
+          error: (e, _) {
+            // 先在下一幀顯示 SnackBar，再回退到普通輸入框
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(log.apiLoadFail)),
+              );
+            });
+            return nodictTextField;
+          },
+        );
+      }
     } else {
       return Text(
         word.sentence ?? '',

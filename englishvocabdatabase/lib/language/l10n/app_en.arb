@@ -104,5 +104,7 @@
     "placeholders": {
       "message": {}
     }
-  }
+  },
+
+  "apiLoadFail": "Failed to load suggestions. Please check your network connection or try again later."
 }

@@ -2,6 +2,7 @@ import 'package:englishvocabdatabase/database/nodef.dart';
 import 'package:englishvocabdatabase/database/db.dart';
 import 'package:englishvocabdatabase/logic/output/outputDetailItem.dart';
 import 'package:englishvocabdatabase/database/wordModifyInformation.dart';
+import 'package:englishvocabdatabase/logic/service/wordService.dart';
 import 'package:flutter/foundation.dart';
 
 class NodefDetailService{
@@ -23,7 +24,7 @@ class NodefDetailService{
       //move to word
       debugPrint('move nodef to word');
       DB.deleteNoDef(id);
-      int wordId = await DB.addWord(detail.name, chinese: detail.chinese, definition: detail.definition, parts: detail.parts, sentence: detail.sentence);
+      int wordId = await WordListService.addWord(detail.name, chinese: detail.chinese, definition: detail.definition, parts: detail.parts, sentence: detail.sentence);
 
       return;
     }

@@ -7,7 +7,7 @@ part of 'outputDetailNotifier.dart';
 // **************************************************************************
 
 String _$outputDetailNotifierHash() =>
-    r'659968a586c4a4bf8a10bef6d005d29e882d10a8';
+    r'1d2553eac2150f74214266b71b04e8e7a4698633';
 
 /// Copied from Dart SDK
 class _SystemHash {

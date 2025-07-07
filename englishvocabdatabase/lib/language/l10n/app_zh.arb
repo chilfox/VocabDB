@@ -103,5 +103,8 @@
         "placeholders": {
         "message": {}
         }
-    }
+    },
+
+
+    "apiLoadFail": "載入建議失敗，請檢查網路或稍後再試"
 }

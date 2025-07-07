@@ -457,6 +457,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to load labels {message}'**
   String loadLabelFail(Object message);
+
+  /// No description provided for @apiLoadFail.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load suggestions. Please check your network connection or try again later.'**
+  String get apiLoadFail;
 }
 
 class _AppLocalizationsDelegate

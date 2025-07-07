@@ -197,4 +197,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String loadLabelFail(Object message) {
     return '標籤載入失敗 $message';
   }
+
+  @override
+  String get apiLoadFail => '載入建議失敗，請檢查網路或稍後再試';
 }

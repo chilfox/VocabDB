@@ -44,6 +44,7 @@ class _CheckBoxWordWidgetState extends State<CheckBoxWordWidget> {
                   builder: (context) => WordDetailView(
                     label: null, 
                     wordId: widget.word.id, 
+                    wordName: widget.word.name,
                     startWithEditView: false, 
                     nodef: false,
                   ),

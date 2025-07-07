@@ -24,19 +24,14 @@ class WordListService{
     return convertToOutputList(input: result, getId: (l) => l.id, getName: (l) => l.name, getChinese: (l) => l.chinese); 
   }
 
-  static Future<(List<OutputListItem>?, int)> addWord(String name, {String? definition, String? chinese}) async{
-    int newId = await DB.addWord(name, definition: definition, chinese: chinese).catchError((e){
+  static Future<int> addWord(String name, {String? definition, String? chinese, String? parts, String? sentence}) async{
+    int newId = await DB.addWord(name, definition: definition, chinese: chinese, parts: parts, sentence: sentence).catchError((e){
       print('insertWord error: $e');  //for test
     });
 
-    if(newId == -1){
-      return (null, -1);
-    }
-
-    List<Word>? result = await DB.getAllWords();//for test
-    result ??= [];
+    await DB.addWordToLabel(newId, label: 'nolabel');
     
-    return (convertToOutputList(input: result, getId: (l) => l.id, getName: (l) => l.name, getChinese: (l) => l.chinese), newId);
+    return newId;
   }
 
   static Future<List<OutputListItem>?> deleteWord(int id) async{
@@ -57,8 +52,8 @@ class WordListService{
     }
   }
 
-  static Future<List<OutputListItem>> searchWordToLabel(String prefix, int labelId, bool inlabel) async{
-    String? labelname = await DB.getLabelname(labelId);
+  static Future<List<OutputListItem>> searchWordToLabel(String prefix, int labelId, bool inlabel, {String? labelname}) async{
+    labelname ??= await DB.getLabelname(labelId);
     if(labelname == null){
       //no such label
       return [];
@@ -79,6 +74,7 @@ class WordListService{
 
   //return the new label of this word
   static Future<bool> addWordToLabel(int wordId, int labelId) async{
+    await DB.removeWordFromLabel(wordId, label: 'nolabel');
     await DB.addWordToLabel(wordId, labelId: labelId);
 
     return true;
@@ -88,11 +84,26 @@ class WordListService{
   static Future<bool> removeWord({int? wordId, required int labelId}) async{
     if(wordId == null){
       //remove all word from labelId
+      List<Word>? wordList = await DB.getWordsByLabel(labelId: labelId);
       await DB.removeAllWordsFromLabel(labelId: labelId);
+
+      if(wordList != null){
+        for(var i in wordList){
+          if(i.labels == [] || i.labels == null){
+            DB.addWordToLabel(i.id, label: 'nolabel');
+          }
+        }
+      }
+
       return true;
     }
     else{
       await DB.removeWordFromLabel(wordId, labelId: labelId);
+      Word? detail = await DB.searchWordDetails(wordId);
+      if(detail!.labels == [] || detail.labels == null){
+        await DB.addWordToLabel(wordId, label: 'nolabel');
+      }
+
       return true;
     }
   }

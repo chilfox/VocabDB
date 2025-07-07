@@ -75,7 +75,7 @@ Widget noDefinitionWidget(BuildContext context, OutputListItem item, OutputListN
               // open word edit page
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => WordDetailView(label: null, wordId: item.id, startWithEditView: true, nodef: true,)),
+                MaterialPageRoute(builder: (context) => WordDetailView(label: null, wordId: item.id, wordName: item.name, startWithEditView: true, nodef: true,)),
               );
             },
           ),

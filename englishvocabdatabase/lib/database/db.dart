@@ -20,6 +20,16 @@ class DB {
         await db.execute(
           'CREATE TABLE labels(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, wordnum INTEGER)',
         );
+
+        //add nolabel
+        await db.insert(
+            'labels',
+            {
+              'name': 'nolabel',
+              'wordnum': 0,
+            },
+          );
+
         await db.execute(
           'CREATE TABLE nodefs(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, definition TEXT, parts TEXT, chinese TEXT, sentence TEXT)',
         );

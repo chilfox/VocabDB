@@ -200,4 +200,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String loadLabelFail(Object message) {
     return 'Failed to load labels $message';
   }
+
+  @override
+  String get apiLoadFail =>
+      'Failed to load suggestions. Please check your network connection or try again later.';
 }
