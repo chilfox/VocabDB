@@ -1,7 +1,7 @@
 // testpage.dart
 
 import 'package:flutter/material.dart';
-import 'file_upload_helper.dart'; // 假設 pickAndUploadFile 在這個檔案
+import 'import.dart'; // 假設 pickAndUploadFile 在這個檔案
 import 'dart:io'; // 用於 File 類型
 import 'package:file_picker/file_picker.dart'; // 因為 pickAndUploadFile 在這裡面被調用
 
@@ -57,25 +57,32 @@ class _UploadScreenState extends State<UploadScreen> {
           children: <Widget>[
             ElevatedButton(
               onPressed: () async {
-                File? file = await pickAndUploadFile(); // 呼叫你的上傳函數
-                if (file != null) {
-                  setState(() {
-                    _uploadedFileName = file.path.split('/').last; // 顯示檔案名稱
-                  });
+                String? content = await pickAndUploadFile(); // 呼叫你的上傳函數
+                if (content != null) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('已選擇檔案: $_uploadedFileName')),
+                    SnackBar(content: Text('已選擇檔案')),
                   );
-                  // 在這裡可以呼叫解析 CSV 的函數：
-                  // await parseCsvFile(file);
+                  var csvlist = await parseCsvString(content);
+                  int boolean = await convertCsvToWords(csvlist);
+                  if(boolean == 0){
+                    ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('檔案內容是空的，請重新選擇')),
+                    );
+                  }
+                  else if(boolean == -1){
+                    ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('檔案內容沒有name的欄位，請重新選擇')),
+                    );
+                  }
+                  else{
+                    ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('檔案內容已經成功上傳')),
+                    );
+                  }
                 }
               },
-              child: const Text('選擇並上傳檔案'),
+              child: const Text('選擇並上傳檔案，檔案裡面的標頭只會讀取name, definition 和 chinese'),
             ),
-            if (_uploadedFileName != null)
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text('已選擇檔案: $_uploadedFileName'),
-              ),
           ],
         ),
       ),
