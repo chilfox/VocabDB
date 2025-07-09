@@ -3,7 +3,7 @@ import 'package:englishvocabdatabase/background/manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:englishvocabdatabase/language/generated/app_localizations.dart';
 import 'package:englishvocabdatabase/language/provider/locale_provider.dart';
-
+import '../import_export/import.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -80,6 +80,34 @@ class SettingsPage extends StatelessWidget {
                   child: Text(loc.buttonChangeLanguage),
                 );
               },
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                String? content = await pickAndUploadFile(); // 呼叫你的上傳函數
+                if (content != null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('已選擇檔案')),
+                  );
+                  var csvlist = await parseCsvString(content);
+                  int boolean = await convertCsvToWords(csvlist);
+                  if(boolean == 0){
+                    ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('檔案內容是空的，請重新選擇')),
+                    );
+                  }
+                  else if(boolean == -1){
+                    ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('檔案內容沒有name的欄位，請重新選擇')),
+                    );
+                  }
+                  else{
+                    ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('檔案內容已經成功上傳')),
+                    );
+                  }
+                }
+              },
+              child: const Text('選擇並上傳檔案，檔案裡面的標頭只會讀取name, definition 和 chinese'),
             ),
           ],
         ),

@@ -39,6 +39,7 @@ class DB {
         await db.execute(
           'CREATE TABLE label_lists(id INTEGER, label TEXT, PRIMARY KEY (id, label), FOREIGN KEY (id) REFERENCES words(id) ON DELETE CASCADE)',
         );
+        await addLabel("nolabel");
       },
       version: 1,
     );
@@ -715,4 +716,26 @@ class DB {
     }
   }
 
+  static Future<List<Word>?> getExportWords(List<int> labelList) async{
+    final db = await getDBConnect();
+    List<Word>? all_words = await getAllWords();
+    if(all_words == null){
+      return null;
+    }
+    List<Word>? result = [];
+    for(final words in all_words){
+      bool haslabel = false;
+      for(final ids in labelList){
+        String? name = await getLabelname(ids);
+        if(name == null){
+          continue;
+        }
+        haslabel = words.labels!.contains(name) || haslabel;
+      }
+      if(haslabel){
+        result.add(words);
+      }
+    }
+    return result;
+  }
 }
