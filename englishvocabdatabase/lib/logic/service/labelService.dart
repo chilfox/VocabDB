@@ -58,6 +58,8 @@ class LabelListService{
       return null;
     }
     else{
+      await DB.removeAllWordsFromLabel(labelId: id);
+
       await DB.deleteLabel(id: id).catchError((e) {
         debugPrint('deleteLabel error: $e');
       });
