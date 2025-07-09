@@ -95,6 +95,10 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
       
       _exitEditMode();
       _showSuccessMessage();
+      if(hasContent && wasNoDef){
+        if (!context.mounted) return;
+        Navigator.pop(context);
+      }
     } catch (error) {
       // Handle error if storeDetail fails
       _showErrorMessage(log.eventSaveFail(error));
@@ -103,9 +107,9 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
 
   bool _hasWordContent(Detail word) {
     return (word.definition?.isNotEmpty ?? false) ||
-           (word.chinese?.isNotEmpty ?? false);// ||
-           //(word.parts?.isNotEmpty ?? false) ||
-           //(word.sentence?.isNotEmpty ?? false);
+           (word.chinese?.isNotEmpty ?? false) ||
+           (word.parts?.isNotEmpty ?? false) ||
+           (word.sentence?.isNotEmpty ?? false);
   }
 
   Detail _createUpdatedWord(Detail word) {
@@ -955,9 +959,9 @@ Widget labelWidget(
 Future<void> updateWord(Detail updateWord, OutputDetailNotifier service, bool isNodef) async {
   // Check if any fields have content to determine if we should convert NoDefinition to Word
   bool hasContent = (updateWord.definition?.isNotEmpty ?? false) ||
-                   (updateWord.chinese?.isNotEmpty ?? false); // ||
-                   //(updateWord.parts?.isNotEmpty ?? false) ||
-                   //(updateWord.sentence?.isNotEmpty ?? false);
+                   (updateWord.chinese?.isNotEmpty ?? false) ||
+                   (updateWord.parts?.isNotEmpty ?? false) ||
+                   (updateWord.sentence?.isNotEmpty ?? false);
   
   // Only update fields if they have content or if it's already a Word type (not NoDefinition)
   if (hasContent || !isNodef) {
