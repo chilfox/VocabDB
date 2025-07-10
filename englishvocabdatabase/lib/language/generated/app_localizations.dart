@@ -314,6 +314,24 @@ abstract class AppLocalizations {
   /// **'Import Data'**
   String get sectionImport;
 
+  /// No description provided for @descriptionBackground.
+  ///
+  /// In en, this message translates to:
+  /// **'Personalize your app with custom background images'**
+  String get descriptionBackground;
+
+  /// No description provided for @descriptionLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your preferred language for the app interface'**
+  String get descriptionLanguage;
+
+  /// No description provided for @descriptionImportExport.
+  ///
+  /// In en, this message translates to:
+  /// **'Import or export vocabulary data'**
+  String get descriptionImportExport;
+
   /// No description provided for @languageEnglish.
   ///
   /// In en, this message translates to:
@@ -331,6 +349,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Import from CSV'**
   String get importFileButton;
+
+  /// No description provided for @exportFileButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Export as CSV file'**
+  String get exportFileButton;
 
   /// No description provided for @importFileDescription.
   ///

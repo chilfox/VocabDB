@@ -166,13 +166,6 @@ class SettingsPage extends StatelessWidget {
                 ),
               ),
             ),
-            
-            Text(
-              'Customize your app experience',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: colorScheme.onSurfaceVariant,
-              ),
-            ),
 
             // Background Settings Section
             _buildSectionHeader(context, loc.sectionBackground),
@@ -183,7 +176,7 @@ class SettingsPage extends StatelessWidget {
                 children: [
                   // Section description
                   Text(
-                    'Personalize your app with custom background images',
+                    loc.descriptionBackground,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: colorScheme.onSurfaceVariant,
                     ),
@@ -349,7 +342,7 @@ class SettingsPage extends StatelessWidget {
                     children: [
                       // Section description
                       Text(
-                        'Choose your preferred language for the app interface',
+                        loc.descriptionLanguage,
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: colorScheme.onSurfaceVariant,
                         ),
@@ -412,7 +405,7 @@ class SettingsPage extends StatelessWidget {
                 children: [
                   // Enhanced section description
                   Text(
-                    'Import vocabulary data from external sources',
+                    loc.descriptionImportExport,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: colorScheme.onSurfaceVariant,
                       fontWeight: FontWeight.w500,
@@ -532,12 +525,26 @@ class SettingsPage extends StatelessWidget {
                       ),
                     ),
                   ),
+                  
+                  SizedBox(height: 12.0,),
+
+                  // Export button with enhanced styling
+                  FilledButton.icon(
+                    onPressed: () {},
+                    icon: const Icon(Icons.file_download_outlined),
+                    label: Text(loc.exportFileButton),
+                    style: FilledButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 52),
+                      backgroundColor: colorScheme.secondaryContainer,
+                      foregroundColor: colorScheme.onSecondaryContainer,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                    ),
+                  ),
                 ],
               ),
-            ),
-            
-            // Add some bottom padding for better scrolling experience
-            const SizedBox(height: 32.0),
+            ), 
           ],
         ),
       ),

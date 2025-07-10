@@ -249,8 +249,11 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
   AppBar _buildAppBar() {
     return AppBar(
       elevation: 0,
+      scrolledUnderElevation: 0,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      surfaceTintColor: Colors.transparent,
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back, color: Colors.white),
+        icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onSurface),
         onPressed: () => Navigator.pop(context),
       ),
       actions: _buildAppBarActions(),
@@ -262,23 +265,25 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
     if (_isEditing) {
       return [
         IconButton(
-          icon: const Icon(Icons.close, color: Colors.white),
+          icon: Icon(Icons.close, color: Theme.of(context).colorScheme.onSurface),
           onPressed: _cancelEdit,
           tooltip: log.eventCancel,
         ),
         IconButton(
-          icon: const Icon(Icons.check, color: Colors.white),
+          icon: Icon(Icons.check, color: Theme.of(context).colorScheme.primary),
           onPressed: () => _saveChanges(_getWordData().value!, _getService()),
           tooltip: log.eventSave,
         ),
+        const SizedBox(width: 8),
       ];
     } else {
       return [
         IconButton(
-          icon: const Icon(Icons.edit, color: Colors.white),
+          icon: Icon(Icons.edit, color: Theme.of(context).colorScheme.onSurface),
           onPressed: _toggleEditMode,
           tooltip: log.eventEdit,
         ),
+        const SizedBox(width: 8),
       ];
     }
   }
@@ -286,22 +291,34 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
  Widget _buildBody(BuildContext context, Detail word, OutputDetailNotifier service) {
   final bool isNoDefWord = _isNoDefinitionWord(word);
   
-  return ListView(
-    padding: const EdgeInsets.all(16.0),
-    children: [
-      _buildMainWordCard(word, isNoDefWord),
-      const SizedBox(height: 16),
-      if (!isNoDefWord || _isEditing) ...[
-        _buildExamplesCard(word),
-        const SizedBox(height: 16),
+  return Container(
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          Theme.of(context).colorScheme.surface,
+          Theme.of(context).colorScheme.surfaceContainerLowest,
+        ],
+      ),
+    ),
+    child: ListView(
+      padding: const EdgeInsets.all(20.0),
+      children: [
+        _buildMainWordCard(word, isNoDefWord),
+        const SizedBox(height: 20),
+        if (!isNoDefWord || _isEditing) ...[
+          _buildExamplesCard(word),
+          const SizedBox(height: 20),
+        ],
+        if (!isNoDefWord || _isEditing) ...[
+          _buildLabelsCard(word, service, isNoDefWord),
+          const SizedBox(height: 20),
+        ],
+        if (isNoDefWord && !_isEditing) _buildNoDefinitionPrompt(),
+        const SizedBox(height: 32),
       ],
-      if (!isNoDefWord || _isEditing) ...[
-        _buildLabelsCard(word, service, isNoDefWord),
-        const SizedBox(height: 16),
-      ],
-      if (isNoDefWord && !_isEditing) _buildNoDefinitionPrompt(),
-      const SizedBox(height: 20),
-    ],
+    ),
   );
 }
 
@@ -309,43 +326,52 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
     final log = AppLocalizations.of(context)!;
 
     return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 0,
+      color: Theme.of(context).colorScheme.surfaceContainerHigh,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(24.0),
         child: Column(
           children: [
-            const Icon(
-              Icons.edit_note,
-              size: 48,
-              color: Colors.grey,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              log.wordHasnodef,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-                color: Colors.white70,
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primaryContainer,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.edit_note,
+                size: 32,
+                color: Theme.of(context).colorScheme.onPrimaryContainer,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 20),
             Text(
-              log.buttontoEdit,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.white54,
+              log.wordHasnodef,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 16),
-            ElevatedButton.icon(
+            const SizedBox(height: 12),
+            Text(
+              log.buttontoEdit,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            FilledButton.icon(
               onPressed: _toggleEditMode,
-              icon: const Icon(Icons.add),
+              icon: const Icon(Icons.add, size: 20),
               label: Text(log.addDefinition),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                foregroundColor: Colors.white,
+              style: FilledButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
           ],
@@ -356,18 +382,19 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
 
   Widget _buildMainWordCard(Detail word, bool isNoDefWord) {
     return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 0,
+      color: Theme.of(context).colorScheme.primaryContainer,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(24.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildWordHeader(word, isNoDefWord),
             if (!isNoDefWord || _isEditing) ...[
-              const SizedBox(height: 8),
-              _buildPartOfSpeechRow(word),
               const SizedBox(height: 16),
+              _buildPartOfSpeechRow(word),
+              const SizedBox(height: 20),
               _buildDefinitionSection(word),
             ],
           ],
@@ -396,10 +423,9 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
           alignment: Alignment.bottomLeft,
           child: Text(
             word.name,
-            style: const TextStyle(
-              fontSize: 32,
+            style: Theme.of(context).textTheme.displaySmall?.copyWith(
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.onPrimaryContainer,
             ),
             maxLines: 1,
             overflow: TextOverflow.fade,
@@ -425,17 +451,22 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
     return TextField(
       controller: _chineseController,
       textAlign: TextAlign.center,
-      style: const TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.bold,
-        color: Colors.white,
+      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+        fontWeight: FontWeight.w600,
+        color: Theme.of(context).colorScheme.onPrimaryContainer,
       ),
       decoration: InputDecoration(
-        border: UnderlineInputBorder(),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+        filled: true,
+        fillColor: Theme.of(context).colorScheme.surface.withOpacity(0.3),
         labelText: log.chinese,
-        labelStyle: TextStyle(color: Colors.white70),
+        labelStyle: TextStyle(color: Theme.of(context).colorScheme.onPrimaryContainer.withOpacity(0.7)),
         hintText: log.addTranslate,
-        hintStyle: TextStyle(color: Colors.white54),
+        hintStyle: TextStyle(color: Theme.of(context).colorScheme.onPrimaryContainer.withOpacity(0.5)),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
     );
   }
@@ -448,10 +479,9 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
         margin: const EdgeInsets.only(bottom: 4),
         child: Text(
           word.chinese ?? '',
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w600,
+            color: Theme.of(context).colorScheme.onPrimaryContainer,
           ),
           maxLines: 1,
           overflow: TextOverflow.fade,
@@ -472,16 +502,16 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
 
   Widget _buildSectionLabel(String label) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.grey[800],
-        borderRadius: BorderRadius.circular(16),
+        color: Theme.of(context).colorScheme.secondaryContainer,
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
         label,
-        style: const TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w500,
+        style: Theme.of(context).textTheme.labelMedium?.copyWith(
+          fontWeight: FontWeight.w600,
+          color: Theme.of(context).colorScheme.onSecondaryContainer,
         ),
       ),
     );
@@ -491,16 +521,22 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
     if (_isEditing) {
       return TextField(
         controller: _partsController,
-        style: const TextStyle(
-          fontSize: 14,
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
           fontWeight: FontWeight.w500,
+          color: Theme.of(context).colorScheme.onPrimaryContainer,
         ),
         decoration: InputDecoration(
-          border: UnderlineInputBorder(),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          filled: true,
+          fillColor: Theme.of(context).colorScheme.surface.withOpacity(0.3),
           labelText: AppLocalizations.of(context)!.partsOfSpeech,
-          labelStyle: TextStyle(color: Colors.white70),
+          labelStyle: TextStyle(color: Theme.of(context).colorScheme.onPrimaryContainer.withOpacity(0.7)),
           hintText: 'e.g., noun, verb, adjective',
-          hintStyle: TextStyle(color: Colors.white54),
+          hintStyle: TextStyle(color: Theme.of(context).colorScheme.onPrimaryContainer.withOpacity(0.5)),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         ),
       );
     } else {
@@ -508,9 +544,9 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
         alignment: Alignment.centerLeft,
         child: Text(
           word.parts ?? '',
-          style: const TextStyle(
-            fontSize: 14,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
             fontWeight: FontWeight.w500,
+            color: Theme.of(context).colorScheme.onPrimaryContainer,
           ),
         ),
       );
@@ -522,17 +558,23 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
     final nodictTextField = TextField(
           controller: _definitionController,
           maxLines: 3,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
+          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.w500,
+            color: Theme.of(context).colorScheme.onPrimaryContainer,
+            height: 1.4,
           ),
           decoration: InputDecoration(
-            border: OutlineInputBorder(),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+            filled: true,
+            fillColor: Theme.of(context).colorScheme.surface.withOpacity(0.3),
             labelText: log.definition,
-            labelStyle: TextStyle(color: Colors.white70),
+            labelStyle: TextStyle(color: Theme.of(context).colorScheme.onPrimaryContainer.withOpacity(0.7)),
             hintText: log.enterDefinition,
-            hintStyle: TextStyle(color: Colors.white54),
+            hintStyle: TextStyle(color: Theme.of(context).colorScheme.onPrimaryContainer.withOpacity(0.5)),
+            contentPadding: const EdgeInsets.all(16),
           ),
           onTap: _onTapDefinitionField,
         );
@@ -549,17 +591,23 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
           data: (suggestions) => SuggestionTextField(
             controller: _definitionController,
             maxLines: 3,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              fontWeight: FontWeight.w500,
+              color: Theme.of(context).colorScheme.onPrimaryContainer,
+              height: 1.4,
             ),
             decoration: InputDecoration(
-              border: OutlineInputBorder(),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+              filled: true,
+              fillColor: Theme.of(context).colorScheme.surface.withOpacity(0.3),
               labelText: log.definition,
-              labelStyle: TextStyle(color: Colors.white70),
+              labelStyle: TextStyle(color: Theme.of(context).colorScheme.onPrimaryContainer.withOpacity(0.7)),
               hintText: log.enterDefinition,
-              hintStyle: TextStyle(color: Colors.white54),
+              hintStyle: TextStyle(color: Theme.of(context).colorScheme.onPrimaryContainer.withOpacity(0.5)),
+              contentPadding: const EdgeInsets.all(16),
             ),
             label: log.definition,
             suggestions: suggestions,
@@ -579,12 +627,20 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
         );
       }
     } else {
-      return Text(
-        '  ${word.definition ?? ''}',
-        style: const TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-          color: Colors.white,
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface.withOpacity(0.3),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Text(
+          word.definition ?? '',
+          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.w500,
+            color: Theme.of(context).colorScheme.onPrimaryContainer,
+            height: 1.4,
+          ),
         ),
       );
     }
@@ -592,15 +648,16 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
 
   Widget _buildExamplesCard(Detail word) {
     return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 0,
+      color: Theme.of(context).colorScheme.surfaceContainerHigh,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(24.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildSectionLabel(AppLocalizations.of(context)!.example),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             _buildExampleSentenceRow(word),
           ],
         ),
@@ -622,12 +679,12 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
 
   Widget _buildBulletPoint() {
     return Container(
-      width: 6,
-      height: 6,
+      width: 8,
+      height: 8,
       margin: const EdgeInsets.only(top: 8),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: Colors.grey,
+        color: Theme.of(context).colorScheme.primary,
       ),
     );
   }
@@ -637,16 +694,22 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
     final nodictTextField = TextField(
           controller: _sentenceController,
           maxLines: 3,
-          style: const TextStyle(
-            fontSize: 16,
-            color: Colors.white,
-            height: 1.4,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: Theme.of(context).colorScheme.onSurface,
+            height: 1.5,
           ),
           decoration: InputDecoration(
-            border: OutlineInputBorder(),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+            filled: true,
+            fillColor: Theme.of(context).colorScheme.surface.withOpacity(0.5),
             labelText: log.exampleSentence,
+            labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7)),
             hintText: log.enterSentence,
-            hintStyle: TextStyle(color: Colors.white54),
+            hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
+            contentPadding: const EdgeInsets.all(16),
           ),
           onTap: _onTapSentenceField,
         );
@@ -661,16 +724,22 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
           data: (suggestions) => SuggestionTextField(
             controller: _sentenceController,
             maxLines: 3,
-            style: const TextStyle(
-              fontSize: 16,
-              color: Colors.white,
-              height: 1.4,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+              height: 1.5,
             ),
             decoration: InputDecoration(
-              border: OutlineInputBorder(),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+              filled: true,
+              fillColor: Theme.of(context).colorScheme.surface.withOpacity(0.5),
               labelText: log.exampleSentence,
+              labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7)),
               hintText: log.enterSentence,
-              hintStyle: TextStyle(color: Colors.white54),
+              hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5)),
+              contentPadding: const EdgeInsets.all(16),
             ),
             label: log.exampleSentence,
             suggestions: suggestions,
@@ -690,12 +759,19 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
         );
       }
     } else {
-      return Text(
-        word.sentence ?? '',
-        style: const TextStyle(
-          fontSize: 16,
-          color: Colors.white,
-          height: 1.4,
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface.withOpacity(0.5),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Text(
+          word.sentence ?? '',
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: Theme.of(context).colorScheme.onSurface,
+            height: 1.5,
+          ),
         ),
       );
     }
@@ -703,15 +779,16 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
 
   Widget _buildLabelsCard(Detail word, OutputDetailNotifier service, bool isNoDefWord) {
     return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 0,
+      color: Theme.of(context).colorScheme.surfaceContainerHigh,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(24.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildLabelsHeader(service, word, isNoDefWord),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             _buildLabelsWrap(word, service),
           ],
         ),
@@ -723,16 +800,16 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
     return Row(
       children: [
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.grey[700],
-            borderRadius: BorderRadius.circular(16),
+            color: Theme.of(context).colorScheme.tertiaryContainer,
+            borderRadius: BorderRadius.circular(20),
           ),
           child: Text(
             AppLocalizations.of(context)!.label,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: Theme.of(context).colorScheme.onTertiaryContainer,
             ),
           ),
         ),
@@ -740,8 +817,9 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
           const Spacer(),
           IconButton(
             icon: Icon(
-              Icons.add, 
-              color: isNoDefWord ? Colors.grey : Colors.blue, // Visual indication
+              Icons.add_circle_outline,
+              color: isNoDefWord ? Theme.of(context).colorScheme.outline : Theme.of(context).colorScheme.primary,
+              size: 28,
             ),
             onPressed: isNoDefWord 
               ? () => _showNoDefWarning() // Show warning if isNoDef is true
@@ -767,20 +845,30 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
     final log = AppLocalizations.of(context)!;
     if(word.labels == null || word.labels!.isEmpty) {
       return _isEditing 
-        ? Text(
-            _isNoDef 
-              ? log.addLabelHint
-              : log.noLabelHint,
-            style: TextStyle(
-              color: _isNoDef ? Colors.orange.shade300 : Colors.white54,
-              fontSize: 14,
+        ? Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: _isNoDef 
+                ? Theme.of(context).colorScheme.errorContainer.withOpacity(0.3)
+                : Theme.of(context).colorScheme.surfaceContainer,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              _isNoDef 
+                ? log.addLabelHint
+                : log.noLabelHint,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: _isNoDef 
+                  ? Theme.of(context).colorScheme.onErrorContainer
+                  : Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           )
         : const SizedBox.shrink();
     }
     return Wrap(
-      spacing: 8.0,
-      runSpacing: 8.0,
+      spacing: 12.0,
+      runSpacing: 12.0,
       children: word.labels!
           .map((tag) => _buildTagChip(tag, _isEditing, service, widget.wordId))
           .toList(),
@@ -793,30 +881,42 @@ class _WordDetailViewState extends ConsumerState<WordDetailView> {
     OutputDetailNotifier service, 
     int wordId,
   ) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
       decoration: BoxDecoration(
-        color: Colors.grey[500],
-        borderRadius: BorderRadius.circular(20.0),
+        color: Theme.of(context).colorScheme.primaryContainer,
+        borderRadius: BorderRadius.circular(24.0),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+          width: 1,
+        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             label.name,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 14.0,
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+              color: Theme.of(context).colorScheme.onPrimaryContainer,
+              fontWeight: FontWeight.w500,
             ),
           ),
           if (isEditing) ...[
             const SizedBox(width: 8),
             GestureDetector(
               onTap: () => _removeLabel(service, wordId, label.id),
-              child: const Icon(
-                Icons.close,
-                size: 16,
-                color: Colors.white,
+              child: Container(
+                padding: const EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.error.withOpacity(0.8),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.close,
+                  size: 14,
+                  color: Theme.of(context).colorScheme.onError,
+                ),
               ),
             ),
           ],
@@ -915,7 +1015,9 @@ Widget labelWidget(
   return CheckboxListTile(
     title: Text(
       item.name,
-      style: const TextStyle(color: Colors.white),
+      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+        color: Theme.of(context).colorScheme.onSurface,
+      ),
     ),
     value: selectedLabels[item.id] ?? false,
     onChanged: (bool? value) {
@@ -923,9 +1025,12 @@ Widget labelWidget(
         selectedLabels[item.id] = value ?? false;
       });
     },
-    checkColor: Colors.white,
-    activeColor: Colors.blue,
+    checkColor: Theme.of(context).colorScheme.onPrimary,
+    activeColor: Theme.of(context).colorScheme.primary,
     controlAffinity: ListTileControlAffinity.leading,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(8),
+    ),
   );
 }
 

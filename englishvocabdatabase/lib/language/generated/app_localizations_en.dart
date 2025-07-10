@@ -126,6 +126,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sectionImport => 'Import Data';
 
   @override
+  String get descriptionBackground =>
+      'Personalize your app with custom background images';
+
+  @override
+  String get descriptionLanguage =>
+      'Choose your preferred language for the app interface';
+
+  @override
+  String get descriptionImportExport => 'Import or export vocabulary data';
+
+  @override
   String get languageEnglish => 'English';
 
   @override
@@ -133,6 +144,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get importFileButton => 'Import from CSV';
+
+  @override
+  String get exportFileButton => 'Export as CSV file';
 
   @override
   String get importFileDescription =>

@@ -125,6 +125,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get sectionImport => '匯入資料';
 
   @override
+  String get descriptionBackground => '使用自訂背景圖片個人化您的應用程式';
+
+  @override
+  String get descriptionLanguage => '選擇您偏好的應用程式介面語言';
+
+  @override
+  String get descriptionImportExport => '匯入或匯出詞彙資料';
+
+  @override
   String get languageEnglish => 'English';
 
   @override
@@ -132,6 +141,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get importFileButton => '從 CSV 匯入';
+
+  @override
+  String get exportFileButton => '以 CSV 匯出';
 
   @override
   String get importFileDescription =>
