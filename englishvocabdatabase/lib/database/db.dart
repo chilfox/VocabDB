@@ -39,7 +39,6 @@ class DB {
         await db.execute(
           'CREATE TABLE label_lists(id INTEGER, label TEXT, PRIMARY KEY (id, label), FOREIGN KEY (id) REFERENCES words(id) ON DELETE CASCADE)',
         );
-        await addLabel("nolabel");
       },
       version: 1,
     );
