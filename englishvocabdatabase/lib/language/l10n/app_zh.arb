@@ -18,6 +18,7 @@
     "done": "完成",
 
     "searchbar": "搜尋標籤或單字",
+    "noDefSearchbar": "搜尋尚未加上屬性的單字",
     "eventSearchFail": "搜尋失敗",
 
     "labelListEmpty": "標籤列為空",

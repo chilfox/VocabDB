@@ -19,6 +19,7 @@
   "done": "Done",
 
   "searchbar": "Search word or label",
+  "noDefSearchbar": "Search word without properties",
   "eventSearchFail": "Search failed",
 
   "labelListEmpty": "Label List is Empty",

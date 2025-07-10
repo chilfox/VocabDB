@@ -47,6 +47,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get searchbar => '搜尋標籤或單字';
 
   @override
+  String get noDefSearchbar => '搜尋尚未加上屬性的單字';
+
+  @override
   String get labelListEmpty => '標籤列為空';
 
   @override
@@ -132,7 +135,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get importFileDescription =>
-      '選擇包含 \'name\'、\'definition\' 和 \'chinese\' 欄位的 CSV 檔案';
+      '選擇包含 \'name\' 欄位（必填）的 CSV 檔案。\'definition\' 和 \'chinese\' 欄位為選填';
 
   @override
   String get fileSelected => '已選擇檔案';

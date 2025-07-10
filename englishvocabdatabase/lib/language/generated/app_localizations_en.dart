@@ -47,6 +47,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchbar => 'Search word or label';
 
   @override
+  String get noDefSearchbar => 'Search word without properties';
+
+  @override
   String get labelListEmpty => 'Label List is Empty';
 
   @override
@@ -133,7 +136,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get importFileDescription =>
-      'Select CSV file with \'name\', \'definition\', and \'chinese\' columns';
+      'Select CSV file with \'name\' column (required). \'definition\' and \'chinese\' columns are optional';
 
   @override
   String get fileSelected => 'File selected';

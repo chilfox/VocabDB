@@ -170,6 +170,12 @@ abstract class AppLocalizations {
   /// **'Search word or label'**
   String get searchbar;
 
+  /// No description provided for @noDefSearchbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Search word without properties'**
+  String get noDefSearchbar;
+
   /// No description provided for @labelListEmpty.
   ///
   /// In en, this message translates to:
@@ -329,7 +335,7 @@ abstract class AppLocalizations {
   /// No description provided for @importFileDescription.
   ///
   /// In en, this message translates to:
-  /// **'Select CSV file with \'name\', \'definition\', and \'chinese\' columns'**
+  /// **'Select CSV file with \'name\' column (required). \'definition\' and \'chinese\' columns are optional'**
   String get importFileDescription;
 
   /// No description provided for @fileSelected.

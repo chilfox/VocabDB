@@ -41,56 +41,94 @@ class _LabelListViewState extends ConsumerState<LabelListView> {
 
 Widget labelWidget(BuildContext context, OutputListItem item, OutputListNotifier service) {
   final ThemeData theme = Theme.of(context);
-  final double height = 54;
-  final double roundRectangularBorder = height/2;
   
-  return Column(
-    children: [
-      Container(
-        height: height,
-        padding: EdgeInsets.only(left: 10.0),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(roundRectangularBorder),
-          color: theme.colorScheme.secondary,
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+    child: Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.0),
+      ),
+      child: Slidable(
+        key: ValueKey(item.id),
+        endActionPane: ActionPane(
+          motion: const BehindMotion(),
+          extentRatio: 0.25,
+          children: [
+            SlidableAction(
+              flex: 1,
+              onPressed: (context) async {
+                bool success = await service.delete(item.id);
+                if (!context.mounted) return;
+                if (!success) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(AppLocalizations.of(context)!.eventDeleteFail),
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                }
+              },
+              backgroundColor: theme.colorScheme.error,
+              foregroundColor: theme.colorScheme.onError,
+              icon: Icons.delete_outline,
+            ),
+          ],
         ),
-        child: Slidable(
-          // key
-          key: ValueKey(item.id),
-        
-          // slide animation
-          endActionPane: ActionPane(
-            motion: const ScrollMotion(),
-            extentRatio: 0.25,
-            children: [
-              SlidableAction(
-                borderRadius: BorderRadius.circular(roundRectangularBorder),
-                onPressed: (context) async {
-                  bool success = await service.delete(item.id);
-                  if (!context.mounted) return;
-                  if (!success) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(AppLocalizations.of(context)!.eventDeleteFail)),
-                    );
-                  }
-                },
-                backgroundColor: theme.colorScheme.error,
-                icon: Icons.delete,
-              ),
-            ],
+        child: Container(
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface,
+            borderRadius: BorderRadius.circular(12.0),
           ),
-          child: ListTile(
-            title: Text(item.name, style: TextStyle(color: theme.primaryColor),),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => InLabelWordListPage(label: item)),
-              );
-            },
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(12.0),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => InLabelWordListPage(label: item),
+                  ),
+                );
+              },
+              child: Container(
+                constraints: const BoxConstraints(minHeight: 64.0),
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 8.0,
+                      height: 40.0,
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primary,
+                        borderRadius: BorderRadius.circular(4.0),
+                      ),
+                    ),
+                    const SizedBox(width: 16.0),
+                    Expanded(
+                      child: Text(
+                        item.name,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          color: theme.colorScheme.onSurface,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Icon(
+                      Icons.chevron_right,
+                      color: theme.colorScheme.onSurfaceVariant,
+                      size: 20.0,
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
         ),
       ),
-      
-      SizedBox(height: 20.0,),
-    ],
+    ),
   );
 }
