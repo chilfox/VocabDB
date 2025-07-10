@@ -70,7 +70,7 @@
   "languageEnglish": "English",
   "languageChinese": "中文",
   "importFileButton": "Import from CSV",
-  "importFileDescription": "Select CSV file with 'name', 'definition', and 'chinese' columns",
+  "importFileDescription": "Select CSV file with 'name' column (required). 'definition' and 'chinese' columns are optional",
   "fileSelected": "File selected",
   "fileEmpty": "File is empty, please select another file",
   "fileNoNameColumn": "File missing 'name' column, please select another file",

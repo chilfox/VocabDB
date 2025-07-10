@@ -69,7 +69,7 @@
     "languageEnglish": "English",
     "languageChinese": "中文",
     "importFileButton": "從 CSV 匯入",
-    "importFileDescription": "選擇包含 'name'、'definition' 和 'chinese' 欄位的 CSV 檔案",
+    "importFileDescription": "選擇包含 'name' 欄位（必填）的 CSV 檔案。'definition' 和 'chinese' 欄位為選填",
     "fileSelected": "已選擇檔案",
     "fileEmpty": "檔案內容是空的，請重新選擇",
     "fileNoNameColumn": "檔案內容沒有 name 的欄位，請重新選擇",
