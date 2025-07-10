@@ -20,45 +20,110 @@ class _InLabelWordListPage extends ConsumerState<InLabelWordListPage> {
   Widget build(BuildContext context) {
     final asyncList = ref.watch(outputListNotifierProvider(NotifierType.Word, inlabel: true, labelId: widget.label.id));
     final service = ref.read(outputListNotifierProvider(NotifierType.Word, inlabel: true, labelId: widget.label.id).notifier);
+    final theme = Theme.of(context);
 
     return Scaffold(
+      backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
-        title: Text(widget.label.name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40)),
+        title: Text(
+          widget.label.name, 
+          style: theme.textTheme.headlineMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         centerTitle: false,
         elevation: 0,
+        backgroundColor: theme.colorScheme.surface,
+        surfaceTintColor: theme.colorScheme.surfaceTint,
       ),
 
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              // Search bar
-              InLabelSearchBar(label: widget.label,),
-
-              SizedBox(height: 0.5),
-              
-              asyncList.when(
+        child: Column(
+          children: [
+            // Search bar
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0.0),
+              child: InLabelSearchBar(label: widget.label),
+            ),
+            
+            // Word list
+            Expanded(
+              child: asyncList.when(
                 data: (list) {
-                  if (list.isEmpty){
-                    return Expanded(child: Center(child: Text(AppLocalizations.of(context)!.wordListEmpty)));
+                  if (list.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.text_fields_rounded,
+                            size: 64.0,
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                          const SizedBox(height: 16.0),
+                          Text(
+                            AppLocalizations.of(context)!.wordListEmpty,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
                   }
-                  return Expanded(
-                    child: ListView.builder(
-                      itemCount: list.length,
-                      itemBuilder: (context, index) {
-                        final item = list[index];
-                        return InLabelVocabularyWordWidget(word: item, label: widget.label, service: service);
-                      },
-                    ),
+                  return ListView.builder(
+                    padding: const EdgeInsets.only(top: 8.0, bottom: 88.0), // Bottom padding for FAB
+                    itemCount: list.length,
+                    itemBuilder: (context, index) {
+                      final item = list[index];
+                      return InLabelVocabularyWordWidget(
+                        word: item, 
+                        label: widget.label, 
+                        service: service,
+                      );
+                    },
                   );
                 },
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (err, stack) => Center(child: Text(AppLocalizations.of(context)!.eventError(err))
-                )
+                loading: () => Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(
+                        color: theme.colorScheme.primary,
+                      ),
+                      const SizedBox(height: 16.0),
+                      Text(
+                        'Loading words...',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                error: (err, stack) => Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.error_outline,
+                        size: 64.0,
+                        color: theme.colorScheme.error,
+                      ),
+                      const SizedBox(height: 16.0),
+                      Text(
+                        AppLocalizations.of(context)!.eventError(err),
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          color: theme.colorScheme.error,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
 
@@ -71,6 +136,9 @@ class _InLabelWordListPage extends ConsumerState<InLabelWordListPage> {
         },
         label: Text(AppLocalizations.of(context)!.addWordBar),
         icon: const Icon(Icons.add),
+        backgroundColor: theme.colorScheme.primaryContainer,
+        foregroundColor: theme.colorScheme.onPrimaryContainer,
+        elevation: 3.0,
       ),
     );
   }

@@ -62,6 +62,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get enterWord => '請輸入單字';
 
   @override
+  String get eventNoSelectLabel => '尚未選擇任何標籤';
+
+  @override
   String doneWordToLabel(Object successCount) {
     return '成功新增所有單字(共 $successCount 個) 到標籤中';
   }
@@ -235,6 +238,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get noLabelHint => '尚未加入標籤．增加標籤來整理單字!';
+
+  @override
+  String get exportBar => '選擇要輸出的標籤';
 
   @override
   String get manageLabel => '管理標籤';

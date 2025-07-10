@@ -200,6 +200,12 @@ abstract class AppLocalizations {
   /// **'Please enter a word'**
   String get enterWord;
 
+  /// No description provided for @eventNoSelectLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'No labels selected'**
+  String get eventNoSelectLabel;
+
   /// No description provided for @doneWordToLabel.
   ///
   /// In en, this message translates to:
@@ -535,6 +541,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No labels yet. Add some to organize your words!'**
   String get noLabelHint;
+
+  /// No description provided for @exportBar.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the labels to export'**
+  String get exportBar;
 
   /// No description provided for @manageLabel.
   ///

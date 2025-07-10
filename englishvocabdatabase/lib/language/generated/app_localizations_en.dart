@@ -62,6 +62,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get enterWord => 'Please enter a word';
 
   @override
+  String get eventNoSelectLabel => 'No labels selected';
+
+  @override
   String doneWordToLabel(Object successCount) {
     return 'Successfully added $successCount words to label';
   }
@@ -241,6 +244,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noLabelHint => 'No labels yet. Add some to organize your words!';
+
+  @override
+  String get exportBar => 'Choose the labels to export';
 
   @override
   String get manageLabel => 'Manage Labels';

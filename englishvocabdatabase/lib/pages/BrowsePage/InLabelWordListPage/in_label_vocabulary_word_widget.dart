@@ -14,69 +14,131 @@ class InLabelVocabularyWordWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Slidable(
-            // key
-            key: ValueKey(word.id),
-          
-            // slide animation
-            endActionPane: ActionPane(
-              motion: const ScrollMotion(),
-              extentRatio: 0.25,
-              children: [
-                SlidableAction(
-                  onPressed: (context) async {
-                    bool success = await service.delete(word.id);
-                    if (!context.mounted) return;
-                    if (!success) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(AppLocalizations.of(context)!.eventSearchFail)),
-                      );
-                    }
-                  },
-                  backgroundColor: Theme.of(context).colorScheme.error,
-                  icon: Icons.delete,
+    final theme = Theme.of(context);
+    
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+      child: Material(
+        elevation: 1.0,
+        borderRadius: BorderRadius.circular(12.0),
+        color: theme.colorScheme.surface,
+        child: Slidable(
+          key: ValueKey(word.id),
+          endActionPane: ActionPane(
+            motion: const BehindMotion(),
+            extentRatio: 0.25,
+            children: [
+              SlidableAction(
+                onPressed: (context) async {
+                  bool success = await service.delete(word.id);
+                  if (!context.mounted) return;
+                  if (!success) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(AppLocalizations.of(context)!.eventSearchFail),
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
+                  }
+                },
+                backgroundColor: theme.colorScheme.error,
+                foregroundColor: theme.colorScheme.onError,
+                icon: Icons.delete_outline,
+                borderRadius: const BorderRadius.only(
+                  topRight: Radius.circular(12.0),
+                  bottomRight: Radius.circular(12.0),
                 ),
-              ],
-            ),
-            startActionPane: ActionPane(
-              motion: const ScrollMotion(),
-              extentRatio: 0.25,
-              children: [
-                SlidableAction(
-                  onPressed: (context) {
-                    service.removeWordFromLabel(word.id, label.id);
-                  },
-                  backgroundColor: const Color.fromARGB(255, 225, 101, 30),
-                  icon: Icons.close
-                )
-              ],
-            ),
-            child: ListTile(
-              title: Text(word.name),
-              subtitle: Text(word.chinese ?? ''),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => WordDetailView(label: null, wordId: word.id, wordName: word.name, startWithEditView: false, nodef: false,)),
-                );
-              },
+              ),
+            ],
+          ),
+          startActionPane: ActionPane(
+            motion: const BehindMotion(),
+            extentRatio: 0.25,
+            children: [
+              SlidableAction(
+                onPressed: (context) {
+                  service.removeWordFromLabel(word.id, label.id);
+                },
+                backgroundColor: theme.colorScheme.tertiary,
+                foregroundColor: theme.colorScheme.onTertiary,
+                icon: Icons.remove_circle_outline,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(12.0),
+                  bottomLeft: Radius.circular(12.0),
+                ),
+              ),
+            ],
+          ),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(12.0),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => WordDetailView(
+                    label: null, 
+                    wordId: word.id, 
+                    wordName: word.name, 
+                    startWithEditView: false, 
+                    nodef: false,
+                  ),
+                ),
+              );
+            },
+            child: Container(
+              constraints: const BoxConstraints(minHeight: 72.0),
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  // Word icon indicator
+                  Container(
+                    width: 40.0,
+                    height: 40.0,
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.secondaryContainer,
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    child: Icon(
+                      Icons.text_fields_rounded,
+                      color: theme.colorScheme.onSecondaryContainer,
+                      size: 20.0,
+                    ),
+                  ),
+                  const SizedBox(width: 16.0),
+                  
+                  // Word content
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // Word name
+                        Text(
+                          word.name,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w500,
+                            color: theme.colorScheme.onSurface,
+                          ),
+                        ),
+                        if (word.chinese != null && word.chinese!.isNotEmpty) ...[
+                          const SizedBox(height: 4.0),
+                          // Chinese translation
+                          Text(
+                            word.chinese!,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
-
-        // Divider
-        const Divider(
-          height: 1.0, 
-          thickness: 1.0,
-          indent: 16.0, 
-          endIndent: 16.0, 
-          color: Color.fromARGB(255, 107, 104, 104), 
-        ),
-      ],
+      ),
     );
   }
 }

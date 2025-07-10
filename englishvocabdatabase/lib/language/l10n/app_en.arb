@@ -28,6 +28,8 @@
   "eventNoSelectWord": "No words selected",
   "enterWord": "Please enter a word",
 
+  "eventNoSelectLabel": "No labels selected",
+
   "doneWordToLabel": "Successfully added {successCount} words to label",
   "@successAddWords": {
     "placeholders": {
@@ -112,6 +114,8 @@
   "nodefWarning": "Please add some word information (definition, translation, etc.) before adding labels.",
   "addLabelHint": "Add word information first to enable labels.",
   "noLabelHint": "No labels yet. Add some to organize your words!",
+
+  "exportBar": "Choose the labels to export",
 
   "manageLabel": "Manage Labels",
   "loadLabelFail": "Failed to load labels {message}",

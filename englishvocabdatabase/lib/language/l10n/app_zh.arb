@@ -26,6 +26,8 @@
 
     "eventNoSelectWord": "尚未選擇任何單字",
     "enterWord": "請輸入單字",
+    
+    "eventNoSelectLabel": "尚未選擇任何標籤",
 
     "doneWordToLabel": "成功新增所有單字(共 {successCount} 個) 到標籤中",
     "@successAddWords": {
@@ -110,6 +112,8 @@
     "nodefWarning": "請在加入標籤前，新增定義、翻譯等",
     "addLabelHint": "加入標籤前，請先新增單字資訊",
     "noLabelHint": "尚未加入標籤．增加標籤來整理單字!",
+
+    "exportBar": "選擇要輸出的標籤",
 
     "manageLabel": "管理標籤",
     "loadLabelFail": "標籤載入失敗 {message}",
