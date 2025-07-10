@@ -147,46 +147,282 @@ class SettingsPage extends StatelessWidget {
     final loc = AppLocalizations.of(context)!;
     
     return SafeArea(
-      child: Container(
-        // Subtle background color for better visual hierarchy
-        decoration: BoxDecoration(
-          color: colorScheme.surface,
-        ),
-        child: ListView(
-          padding: const EdgeInsets.all(16.0),
-          children: [
-            // Page title with Material 3 styling
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: Text(
-                'Settings',
-                style: theme.textTheme.headlineMedium?.copyWith(
-                  color: colorScheme.onSurface,
-                  fontWeight: FontWeight.w700,
+      child: ListView(
+        padding: const EdgeInsets.all(16.0),
+        children: [
+          // Background Settings Section
+          _buildSectionHeader(context, loc.sectionBackground),
+          _buildSectionCard(
+            context,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Section description
+                Text(
+                  loc.descriptionBackground,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                  ),
                 ),
-              ),
-            ),
-
-            // Background Settings Section
-            _buildSectionHeader(context, loc.sectionBackground),
-            _buildSectionCard(
-              context,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Section description
-                  Text(
-                    loc.descriptionBackground,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
+                const SizedBox(height: 20.0),
+                
+                // Choose background button with Material 3 styling
+                FilledButton.icon(
+                  onPressed: () async {
+                    // Show loading indicator
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (context) => Center(
+                        child: Container(
+                          padding: const EdgeInsets.all(20.0),
+                          decoration: BoxDecoration(
+                            color: colorScheme.surface,
+                            borderRadius: BorderRadius.circular(12.0),
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              CircularProgressIndicator(color: colorScheme.primary),
+                              const SizedBox(height: 16.0),
+                              Text(
+                                'Selecting image...',
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: colorScheme.onSurface,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                    
+                    try {
+                      final file = await BackgroundManager.pickAndSaveBackgroundImage();
+                      
+                      // Close loading dialog
+                      if (context.mounted) Navigator.of(context).pop();
+                      
+                      if (file != null) {
+                        _showSnackBar(
+                          context,
+                          loc.doneUpdateBackground,
+                          isSuccess: true,
+                        );
+                      } else {
+                        _showSnackBar(
+                          context,
+                          loc.eventBackgroundFail,
+                          isError: true,
+                        );
+                      }
+                    } catch (e) {
+                      // Close loading dialog and show error
+                      if (context.mounted) {
+                        Navigator.of(context).pop();
+                        _showSnackBar(
+                          context,
+                          'Failed to update background: ${e.toString()}',
+                          isError: true,
+                        );
+                      }
+                    }
+                  },
+                  icon: const Icon(Icons.image_outlined),
+                  label: Text(loc.buttonChooseBackground),
+                  style: FilledButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 52),
+                    backgroundColor: colorScheme.primaryContainer,
+                    foregroundColor: colorScheme.onPrimaryContainer,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0),
                     ),
                   ),
-                  const SizedBox(height: 20.0),
-                  
-                  // Choose background button with Material 3 styling
-                  FilledButton.icon(
-                    onPressed: () async {
-                      // Show loading indicator
+                ),
+                
+                const SizedBox(height: 12.0),
+                
+                // Clear background button with Material 3 styling
+                OutlinedButton.icon(
+                  onPressed: () async {
+                    // Show confirmation dialog
+                    final confirmed = await showDialog<bool>(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        backgroundColor: colorScheme.surface,
+                        surfaceTintColor: colorScheme.surfaceTint,
+                        icon: Icon(
+                          Icons.delete_outline,
+                          color: colorScheme.error,
+                          size: 24.0,
+                        ),
+                        title: Text(
+                          'Clear Background',
+                          style: theme.textTheme.headlineSmall?.copyWith(
+                            color: colorScheme.onSurface,
+                          ),
+                        ),
+                        content: Text(
+                          'Are you sure you want to remove the current background image?',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(false),
+                            child: Text(
+                              'Cancel',
+                              style: TextStyle(color: colorScheme.primary),
+                            ),
+                          ),
+                          FilledButton(
+                            onPressed: () => Navigator.of(context).pop(true),
+                            style: FilledButton.styleFrom(
+                              backgroundColor: colorScheme.error,
+                              foregroundColor: colorScheme.onError,
+                            ),
+                            child: const Text('Clear'),
+                          ),
+                        ],
+                      ),
+                    ) ?? false;
+                    
+                    if (confirmed) {
+                      await BackgroundManager.clearBackgroundImage();
+                      _showSnackBar(
+                        context,
+                        loc.doneClearBackground,
+                        isSuccess: true,
+                      );
+                    }
+                  },
+                  icon: const Icon(Icons.clear_outlined),
+                  label: Text(loc.buttonClearBackground),
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 52),
+                    foregroundColor: colorScheme.error,
+                    side: BorderSide(color: colorScheme.error),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+      
+          // Language Settings Section
+          _buildSectionHeader(context, loc.sectionLanguage),
+          _buildSectionCard(
+            context,
+            child: Consumer(
+              builder: (context, ref, child) {
+                final currentLocale = ref.watch(localeProvider);
+                
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Section description
+                    Text(
+                      loc.descriptionLanguage,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                    const SizedBox(height: 20.0),
+                    
+                    // Language selection with enhanced Material 3 styling
+                    SegmentedButton<String>(
+                      segments: [
+                        ButtonSegment<String>(
+                          value: 'en',
+                          label: Text(
+                            loc.languageEnglish,
+                            style: theme.textTheme.labelLarge,
+                          ),
+                          icon: const Icon(Icons.language_outlined),
+                        ),
+                        ButtonSegment<String>(
+                          value: 'zh',
+                          label: Text(
+                            loc.languageChinese,
+                            style: theme.textTheme.labelLarge,
+                          ),
+                          icon: const Icon(Icons.translate_outlined),
+                        ),
+                      ],
+                      selected: {currentLocale.languageCode},
+                      onSelectionChanged: (Set<String> newSelection) {
+                        setLocale(ref, newSelection.first);
+                        _showSnackBar(
+                          context,
+                          'Language updated successfully',
+                          isSuccess: true,
+                        );
+                      },
+                      style: SegmentedButton.styleFrom(
+                        minimumSize: const Size(double.infinity, 52),
+                        backgroundColor: colorScheme.surface,
+                        foregroundColor: colorScheme.onSurface,
+                        selectedBackgroundColor: colorScheme.primaryContainer,
+                        selectedForegroundColor: colorScheme.onPrimaryContainer,
+                        side: BorderSide(color: colorScheme.outline),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+      
+          // Import Data Section
+          _buildSectionHeader(context, loc.sectionImport),
+          _buildSectionCard(
+            context,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Enhanced section description
+                Text(
+                  loc.descriptionImportExport,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 8.0),
+                
+                // Detailed description with formatting
+                Container(
+                  padding: const EdgeInsets.all(12.0),
+                  decoration: BoxDecoration(
+                    color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                    borderRadius: BorderRadius.circular(8.0),
+                    border: Border.all(
+                      color: colorScheme.outlineVariant,
+                      width: 1.0,
+                    ),
+                  ),
+                  child: Text(
+                    loc.importFileDescription,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                      height: 1.4,
+                    ),
+                  ),
+                ),
+                
+                const SizedBox(height: 20.0),
+                
+                // Import button with enhanced styling
+                FilledButton.icon(
+                  onPressed: () async {
+                    try {
+                      // Show loading state
                       showDialog(
                         context: context,
                         barrierDismissible: false,
@@ -203,7 +439,7 @@ class SettingsPage extends StatelessWidget {
                                 CircularProgressIndicator(color: colorScheme.primary),
                                 const SizedBox(height: 16.0),
                                 Text(
-                                  'Selecting image...',
+                                  'Processing import...',
                                   style: theme.textTheme.bodyMedium?.copyWith(
                                     color: colorScheme.onSurface,
                                   ),
@@ -214,339 +450,85 @@ class SettingsPage extends StatelessWidget {
                         ),
                       );
                       
-                      try {
-                        final file = await BackgroundManager.pickAndSaveBackgroundImage();
+                      String? content = await pickAndUploadFile();
+                      
+                      if (content != null) {
+                        _showSnackBar(context, loc.fileSelected);
+                        
+                        var csvlist = await parseCsvString(content);
+                        int result = await convertCsvToWords(csvlist);
                         
                         // Close loading dialog
                         if (context.mounted) Navigator.of(context).pop();
                         
-                        if (file != null) {
+                        // Show result feedback
+                        if (result == 0) {
                           _showSnackBar(
                             context,
-                            loc.doneUpdateBackground,
-                            isSuccess: true,
+                            loc.fileEmpty,
+                            isError: true,
+                          );
+                        } else if (result == -1) {
+                          _showSnackBar(
+                            context,
+                            loc.fileNoNameColumn,
+                            isError: true,
                           );
                         } else {
                           _showSnackBar(
                             context,
-                            loc.eventBackgroundFail,
-                            isError: true,
+                            '${loc.fileImportSuccess} ($result words imported)',
+                            isSuccess: true,
                           );
                         }
-                      } catch (e) {
-                        // Close loading dialog and show error
-                        if (context.mounted) {
-                          Navigator.of(context).pop();
-                          _showSnackBar(
-                            context,
-                            'Failed to update background: ${e.toString()}',
-                            isError: true,
-                          );
-                        }
+                      } else {
+                        // Close loading dialog
+                        if (context.mounted) Navigator.of(context).pop();
                       }
-                    },
-                    icon: const Icon(Icons.image_outlined),
-                    label: Text(loc.buttonChooseBackground),
-                    style: FilledButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 52),
-                      backgroundColor: colorScheme.primaryContainer,
-                      foregroundColor: colorScheme.onPrimaryContainer,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                    ),
-                  ),
-                  
-                  const SizedBox(height: 12.0),
-                  
-                  // Clear background button with Material 3 styling
-                  OutlinedButton.icon(
-                    onPressed: () async {
-                      // Show confirmation dialog
-                      final confirmed = await showDialog<bool>(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          backgroundColor: colorScheme.surface,
-                          surfaceTintColor: colorScheme.surfaceTint,
-                          icon: Icon(
-                            Icons.delete_outline,
-                            color: colorScheme.error,
-                            size: 24.0,
-                          ),
-                          title: Text(
-                            'Clear Background',
-                            style: theme.textTheme.headlineSmall?.copyWith(
-                              color: colorScheme.onSurface,
-                            ),
-                          ),
-                          content: Text(
-                            'Are you sure you want to remove the current background image?',
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: colorScheme.onSurfaceVariant,
-                            ),
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.of(context).pop(false),
-                              child: Text(
-                                'Cancel',
-                                style: TextStyle(color: colorScheme.primary),
-                              ),
-                            ),
-                            FilledButton(
-                              onPressed: () => Navigator.of(context).pop(true),
-                              style: FilledButton.styleFrom(
-                                backgroundColor: colorScheme.error,
-                                foregroundColor: colorScheme.onError,
-                              ),
-                              child: const Text('Clear'),
-                            ),
-                          ],
-                        ),
-                      ) ?? false;
-                      
-                      if (confirmed) {
-                        await BackgroundManager.clearBackgroundImage();
+                    } catch (e) {
+                      // Close loading dialog and show error
+                      if (context.mounted) {
+                        Navigator.of(context).pop();
                         _showSnackBar(
                           context,
-                          loc.doneClearBackground,
-                          isSuccess: true,
+                          'Import failed: ${e.toString()}',
+                          isError: true,
                         );
                       }
-                    },
-                    icon: const Icon(Icons.clear_outlined),
-                    label: Text(loc.buttonClearBackground),
-                    style: OutlinedButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 52),
-                      foregroundColor: colorScheme.error,
-                      side: BorderSide(color: colorScheme.error),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
+                    }
+                  },
+                  icon: const Icon(Icons.upload_file_outlined),
+                  label: Text(loc.importFileButton),
+                  style: FilledButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 52),
+                    backgroundColor: colorScheme.secondaryContainer,
+                    foregroundColor: colorScheme.onSecondaryContainer,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0),
                     ),
                   ),
-                ],
-              ),
+                ),
+                
+                SizedBox(height: 12.0,),
+      
+                // Export button with enhanced styling
+                FilledButton.icon(
+                  onPressed: () {},
+                  icon: const Icon(Icons.file_download_outlined),
+                  label: Text(loc.exportFileButton),
+                  style: FilledButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 52),
+                    backgroundColor: colorScheme.secondaryContainer,
+                    foregroundColor: colorScheme.onSecondaryContainer,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                  ),
+                ),
+              ],
             ),
-
-            // Language Settings Section
-            _buildSectionHeader(context, loc.sectionLanguage),
-            _buildSectionCard(
-              context,
-              child: Consumer(
-                builder: (context, ref, child) {
-                  final currentLocale = ref.watch(localeProvider);
-                  
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Section description
-                      Text(
-                        loc.descriptionLanguage,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                      const SizedBox(height: 20.0),
-                      
-                      // Language selection with enhanced Material 3 styling
-                      SegmentedButton<String>(
-                        segments: [
-                          ButtonSegment<String>(
-                            value: 'en',
-                            label: Text(
-                              loc.languageEnglish,
-                              style: theme.textTheme.labelLarge,
-                            ),
-                            icon: const Icon(Icons.language_outlined),
-                          ),
-                          ButtonSegment<String>(
-                            value: 'zh',
-                            label: Text(
-                              loc.languageChinese,
-                              style: theme.textTheme.labelLarge,
-                            ),
-                            icon: const Icon(Icons.translate_outlined),
-                          ),
-                        ],
-                        selected: {currentLocale.languageCode},
-                        onSelectionChanged: (Set<String> newSelection) {
-                          setLocale(ref, newSelection.first);
-                          _showSnackBar(
-                            context,
-                            'Language updated successfully',
-                            isSuccess: true,
-                          );
-                        },
-                        style: SegmentedButton.styleFrom(
-                          minimumSize: const Size(double.infinity, 52),
-                          backgroundColor: colorScheme.surface,
-                          foregroundColor: colorScheme.onSurface,
-                          selectedBackgroundColor: colorScheme.primaryContainer,
-                          selectedForegroundColor: colorScheme.onPrimaryContainer,
-                          side: BorderSide(color: colorScheme.outline),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.0),
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
-
-            // Import Data Section
-            _buildSectionHeader(context, loc.sectionImport),
-            _buildSectionCard(
-              context,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Enhanced section description
-                  Text(
-                    loc.descriptionImportExport,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(height: 8.0),
-                  
-                  // Detailed description with formatting
-                  Container(
-                    padding: const EdgeInsets.all(12.0),
-                    decoration: BoxDecoration(
-                      color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
-                      borderRadius: BorderRadius.circular(8.0),
-                      border: Border.all(
-                        color: colorScheme.outlineVariant,
-                        width: 1.0,
-                      ),
-                    ),
-                    child: Text(
-                      loc.importFileDescription,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
-                        height: 1.4,
-                      ),
-                    ),
-                  ),
-                  
-                  const SizedBox(height: 20.0),
-                  
-                  // Import button with enhanced styling
-                  FilledButton.icon(
-                    onPressed: () async {
-                      try {
-                        // Show loading state
-                        showDialog(
-                          context: context,
-                          barrierDismissible: false,
-                          builder: (context) => Center(
-                            child: Container(
-                              padding: const EdgeInsets.all(20.0),
-                              decoration: BoxDecoration(
-                                color: colorScheme.surface,
-                                borderRadius: BorderRadius.circular(12.0),
-                              ),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  CircularProgressIndicator(color: colorScheme.primary),
-                                  const SizedBox(height: 16.0),
-                                  Text(
-                                    'Processing import...',
-                                    style: theme.textTheme.bodyMedium?.copyWith(
-                                      color: colorScheme.onSurface,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                        
-                        String? content = await pickAndUploadFile();
-                        
-                        if (content != null) {
-                          _showSnackBar(context, loc.fileSelected);
-                          
-                          var csvlist = await parseCsvString(content);
-                          int result = await convertCsvToWords(csvlist);
-                          
-                          // Close loading dialog
-                          if (context.mounted) Navigator.of(context).pop();
-                          
-                          // Show result feedback
-                          if (result == 0) {
-                            _showSnackBar(
-                              context,
-                              loc.fileEmpty,
-                              isError: true,
-                            );
-                          } else if (result == -1) {
-                            _showSnackBar(
-                              context,
-                              loc.fileNoNameColumn,
-                              isError: true,
-                            );
-                          } else {
-                            _showSnackBar(
-                              context,
-                              '${loc.fileImportSuccess} ($result words imported)',
-                              isSuccess: true,
-                            );
-                          }
-                        } else {
-                          // Close loading dialog
-                          if (context.mounted) Navigator.of(context).pop();
-                        }
-                      } catch (e) {
-                        // Close loading dialog and show error
-                        if (context.mounted) {
-                          Navigator.of(context).pop();
-                          _showSnackBar(
-                            context,
-                            'Import failed: ${e.toString()}',
-                            isError: true,
-                          );
-                        }
-                      }
-                    },
-                    icon: const Icon(Icons.upload_file_outlined),
-                    label: Text(loc.importFileButton),
-                    style: FilledButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 52),
-                      backgroundColor: colorScheme.secondaryContainer,
-                      foregroundColor: colorScheme.onSecondaryContainer,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                    ),
-                  ),
-                  
-                  SizedBox(height: 12.0,),
-
-                  // Export button with enhanced styling
-                  FilledButton.icon(
-                    onPressed: () {},
-                    icon: const Icon(Icons.file_download_outlined),
-                    label: Text(loc.exportFileButton),
-                    style: FilledButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 52),
-                      backgroundColor: colorScheme.secondaryContainer,
-                      foregroundColor: colorScheme.onSecondaryContainer,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ), 
-          ],
-        ),
+          ), 
+        ],
       ),
     );
   }
