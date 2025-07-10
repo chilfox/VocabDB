@@ -165,7 +165,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get pageTitleTemporaryList => '暫存清單';
 
   @override
-  String get pageTitleImportExport => '匯入與匯出';
+  String get pageTitleImportExport => 'Import & Export';
 
   @override
   String get pageTitleSettings => '設定';
@@ -175,9 +175,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get temporaryIcon => '暫存';
-
-  @override
-  String get toolsIcon => '工具';
 
   @override
   String get settingsIcon => '設定';

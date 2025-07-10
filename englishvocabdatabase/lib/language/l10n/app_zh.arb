@@ -84,12 +84,10 @@
 
     "pageTitleWordBank": "單字庫",
     "pageTitleTemporaryList": "暫存清單",
-    "pageTitleImportExport": "匯入與匯出",
     "pageTitleSettings": "設定",
 
     "browseIcon": "瀏覽",
     "temporaryIcon": "暫存",
-    "toolsIcon": "工具",
     "settingsIcon": "設定",
 
     "wordHasnodef": "此單字未定義",

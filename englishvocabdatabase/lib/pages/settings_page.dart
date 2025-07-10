@@ -64,6 +64,7 @@ class SettingsPage extends StatelessWidget {
                     label: Text(AppLocalizations.of(context)!.buttonChooseBackground),
                     style: ElevatedButton.styleFrom(
                       minimumSize: const Size(double.infinity, 48),
+                      backgroundColor: const Color.fromARGB(68, 212, 211, 211)
                     ),
                   ),
                   const SizedBox(height: 12),

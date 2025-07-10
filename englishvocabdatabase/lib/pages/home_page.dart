@@ -25,8 +25,7 @@ class HomePageState extends ConsumerState<HomePage> {
     switch (index) {
       case 0: return loc.pageTitleWordBank;
       case 1: return loc.pageTitleTemporaryList;
-      case 2: return loc.pageTitleImportExport;
-      case 3: return loc.pageTitleSettings;
+      case 2: return loc.pageTitleSettings;
       default: return '';
     }
   }
@@ -35,7 +34,6 @@ class HomePageState extends ConsumerState<HomePage> {
   static const List<Widget> _pages = [
     WordBankPage(),
     ClassifyPage(),
-    SettingsPage(),
     SettingsPage(),
   ];
 
@@ -76,7 +74,6 @@ class HomePageState extends ConsumerState<HomePage> {
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.library_books), label: log.browseIcon),
           BottomNavigationBarItem(icon: Icon(Icons.add), label: log.temporaryIcon), 
-          BottomNavigationBarItem(icon: Icon(Icons.build), label: log.toolsIcon),
           BottomNavigationBarItem(icon: Icon(Icons.settings), label: log.settingsIcon),
         ],
         currentIndex: _currentPage,

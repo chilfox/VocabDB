@@ -179,9 +179,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get temporaryIcon => 'Temporary';
 
   @override
-  String get toolsIcon => 'Tools';
-
-  @override
   String get settingsIcon => 'Settings';
 
   @override

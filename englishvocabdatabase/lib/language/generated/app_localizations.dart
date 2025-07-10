@@ -416,12 +416,6 @@ abstract class AppLocalizations {
   /// **'Temporary'**
   String get temporaryIcon;
 
-  /// No description provided for @toolsIcon.
-  ///
-  /// In en, this message translates to:
-  /// **'Tools'**
-  String get toolsIcon;
-
   /// No description provided for @settingsIcon.
   ///
   /// In en, this message translates to:
