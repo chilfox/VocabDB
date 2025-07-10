@@ -113,6 +113,40 @@ class AppLocalizationsZh extends AppLocalizations {
   String get buttonChangeLanguage => '切換語言';
 
   @override
+  String get sectionBackground => '背景設定';
+
+  @override
+  String get sectionLanguage => '語言設定';
+
+  @override
+  String get sectionImport => '匯入資料';
+
+  @override
+  String get languageEnglish => 'English';
+
+  @override
+  String get languageChinese => '中文';
+
+  @override
+  String get importFileButton => '從 CSV 匯入';
+
+  @override
+  String get importFileDescription =>
+      '選擇包含 \'name\'、\'definition\' 和 \'chinese\' 欄位的 CSV 檔案';
+
+  @override
+  String get fileSelected => '已選擇檔案';
+
+  @override
+  String get fileEmpty => '檔案內容是空的，請重新選擇';
+
+  @override
+  String get fileNoNameColumn => '檔案內容沒有 name 的欄位，請重新選擇';
+
+  @override
+  String get fileImportSuccess => '檔案內容已經成功上傳';
+
+  @override
   String get searchWordNotInLabel => '搜尋不在此標籤中的單字';
 
   @override

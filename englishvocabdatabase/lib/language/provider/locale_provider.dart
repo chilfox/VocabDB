@@ -15,3 +15,8 @@ void toggleLocale(WidgetRef ref) {
       : const Locale('en');
   ref.read(localeProvider.notifier).state = next;
 }
+
+// 設定特定語言
+void setLocale(WidgetRef ref, String languageCode) {
+  ref.read(localeProvider.notifier).state = Locale(languageCode);
+}

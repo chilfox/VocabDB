@@ -114,6 +114,41 @@ class AppLocalizationsEn extends AppLocalizations {
   String get buttonChangeLanguage => 'Change language';
 
   @override
+  String get sectionBackground => 'Background Settings';
+
+  @override
+  String get sectionLanguage => 'Language Settings';
+
+  @override
+  String get sectionImport => 'Import Data';
+
+  @override
+  String get languageEnglish => 'English';
+
+  @override
+  String get languageChinese => '中文';
+
+  @override
+  String get importFileButton => 'Import from CSV';
+
+  @override
+  String get importFileDescription =>
+      'Select CSV file with \'name\', \'definition\', and \'chinese\' columns';
+
+  @override
+  String get fileSelected => 'File selected';
+
+  @override
+  String get fileEmpty => 'File is empty, please select another file';
+
+  @override
+  String get fileNoNameColumn =>
+      'File missing \'name\' column, please select another file';
+
+  @override
+  String get fileImportSuccess => 'File imported successfully';
+
+  @override
   String get searchWordNotInLabel => 'Search Word not in the Label';
 
   @override

@@ -290,6 +290,72 @@ abstract class AppLocalizations {
   /// **'Change language'**
   String get buttonChangeLanguage;
 
+  /// No description provided for @sectionBackground.
+  ///
+  /// In en, this message translates to:
+  /// **'Background Settings'**
+  String get sectionBackground;
+
+  /// No description provided for @sectionLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Language Settings'**
+  String get sectionLanguage;
+
+  /// No description provided for @sectionImport.
+  ///
+  /// In en, this message translates to:
+  /// **'Import Data'**
+  String get sectionImport;
+
+  /// No description provided for @languageEnglish.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get languageEnglish;
+
+  /// No description provided for @languageChinese.
+  ///
+  /// In en, this message translates to:
+  /// **'中文'**
+  String get languageChinese;
+
+  /// No description provided for @importFileButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Import from CSV'**
+  String get importFileButton;
+
+  /// No description provided for @importFileDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Select CSV file with \'name\', \'definition\', and \'chinese\' columns'**
+  String get importFileDescription;
+
+  /// No description provided for @fileSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'File selected'**
+  String get fileSelected;
+
+  /// No description provided for @fileEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'File is empty, please select another file'**
+  String get fileEmpty;
+
+  /// No description provided for @fileNoNameColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'File missing \'name\' column, please select another file'**
+  String get fileNoNameColumn;
+
+  /// No description provided for @fileImportSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'File imported successfully'**
+  String get fileImportSuccess;
+
   /// No description provided for @searchWordNotInLabel.
   ///
   /// In en, this message translates to:
