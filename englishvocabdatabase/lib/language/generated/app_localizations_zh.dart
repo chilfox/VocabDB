@@ -183,9 +183,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get pageTitleTemporaryList => '暫存清單';
 
   @override
-  String get pageTitleImportExport => 'Import & Export';
-
-  @override
   String get pageTitleSettings => '設定';
 
   @override

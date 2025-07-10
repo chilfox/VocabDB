@@ -21,25 +21,21 @@ class _LabelListViewState extends ConsumerState<LabelListView> {
     final service = ref.read(outputListNotifierProvider(NotifierType.Label).notifier);
     final OutputListItem noLabel = OutputListItem(name: 'No Label Word', id: 1);
 
-    return Column(
-      children: [
-        asyncList.when(
-          data: (list) {
-            if (list.isEmpty){
-              return Center(child: Text(AppLocalizations.of(context)!.labelListEmpty));
-            }
-            return ListView.builder(
-              itemCount: list.length,
-              itemBuilder: (context, index) {
-                final item = list[index];
-                return labelWidget(context, item, service);
-              },
-            );
+    return asyncList.when(
+      data: (list) {
+        if (list.isEmpty || list[0].id != 1){
+          list.insert(0, noLabel);
+        }
+        return ListView.builder(
+          itemCount: list.length,
+          itemBuilder: (context, index) {
+            final item = list[index];
+            return labelWidget(context, item, service);
           },
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (err, stack) => Center(child: Text(AppLocalizations.of(context)!.eventError(err)))
-        ),
-      ],
+        );
+      },
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (err, stack) => Center(child: Text(AppLocalizations.of(context)!.eventError(err)))
     );
   }
 }

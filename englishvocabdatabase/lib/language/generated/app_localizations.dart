@@ -428,12 +428,6 @@ abstract class AppLocalizations {
   /// **'Temporary List'**
   String get pageTitleTemporaryList;
 
-  /// No description provided for @pageTitleImportExport.
-  ///
-  /// In en, this message translates to:
-  /// **'Import & Export'**
-  String get pageTitleImportExport;
-
   /// No description provided for @pageTitleSettings.
   ///
   /// In en, this message translates to:

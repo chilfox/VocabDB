@@ -187,9 +187,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pageTitleTemporaryList => 'Temporary List';
 
   @override
-  String get pageTitleImportExport => 'Import & Export';
-
-  @override
   String get pageTitleSettings => 'Settings';
 
   @override

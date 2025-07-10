@@ -1,3 +1,4 @@
+import 'package:englishvocabdatabase/pages/export_page.dart';
 import 'package:flutter/material.dart';
 import 'package:englishvocabdatabase/background/manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -510,11 +511,16 @@ class SettingsPage extends StatelessWidget {
                 ),
                 
                 SizedBox(height: 12.0,),
-      
-                // Export button with enhanced styling
+
+                // export button
                 FilledButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.file_download_outlined),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ExportPage()),
+                    );
+                  },
+                  icon: const Icon(Icons.sim_card_download_outlined),
                   label: Text(loc.exportFileButton),
                   style: FilledButton.styleFrom(
                     minimumSize: const Size(double.infinity, 52),

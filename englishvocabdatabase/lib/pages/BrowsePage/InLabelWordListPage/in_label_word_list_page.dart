@@ -127,19 +127,21 @@ class _InLabelWordListPage extends ConsumerState<InLabelWordListPage> {
         ),
       ),
 
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => InLabelAddWordPage(label: widget.label)),
-          );
-        },
-        label: Text(AppLocalizations.of(context)!.addWordBar),
-        icon: const Icon(Icons.add),
-        backgroundColor: theme.colorScheme.primaryContainer,
-        foregroundColor: theme.colorScheme.onPrimaryContainer,
-        elevation: 3.0,
-      ),
+      floatingActionButton: widget.label.id == 1
+        ? null
+        : FloatingActionButton.extended(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => InLabelAddWordPage(label: widget.label)),
+              );
+            },
+            label: Text(AppLocalizations.of(context)!.addWordBar),
+            icon: const Icon(Icons.add),
+            backgroundColor: theme.colorScheme.primaryContainer,
+            foregroundColor: theme.colorScheme.onPrimaryContainer,
+            elevation: 3.0,
+          ),
     );
   }
 }
