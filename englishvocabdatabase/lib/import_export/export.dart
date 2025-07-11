@@ -25,7 +25,7 @@ class Export{
   }
 
   static Future<bool> writeCsvToDownloads(String csvString) async {
-    String filename = await _getNextExportFileName();
+    String filename = 'englishvocab.csv';
     bool success = await _MediaStoreHelper.saveCsvToDownloads(filename, csvString);
     if (success) {
       debugPrint('CSV saved to Downloads!');
