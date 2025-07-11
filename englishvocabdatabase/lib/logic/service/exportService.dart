@@ -1,4 +1,4 @@
-import 'package:englishvocabdatabase/import_export/listToCsv.dart';
+import 'package:englishvocabdatabase/import_export/export.dart';
 import 'package:englishvocabdatabase/database/label.dart';
 import 'package:englishvocabdatabase/database/db.dart';
 import 'package:englishvocabdatabase/database/word.dart';
@@ -10,10 +10,7 @@ class ExportService{
     words ??= [];
     String csvString = await Export.listToCsv(words);
 
-    String filePath = await Export.writeCsvToFile(csvString);
-
-    debugPrint('CSV saved at $filePath');
-
+    await Export.writeCsvToDownloads(csvString);
     return;
   }
 }

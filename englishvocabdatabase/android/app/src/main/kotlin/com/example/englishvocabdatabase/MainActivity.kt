@@ -6,21 +6,24 @@ import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 import android.util.Log
+import android.content.ContentValues
+import android.os.Build
+import android.provider.MediaStore
 
 class MainActivity : FlutterActivity() {
 
-    private val CHANNEL = "com.example.englishvocabdatabase/floating_prefs"
+    private val FLOATING_PREFS_CHANNEL = "com.example.englishvocabdatabase/floating_prefs"
+    private val MEDIA_STORE_CHANNEL = "media_store"
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         Log.d("MainActivity", "configureFlutterEngine called, engine = $flutterEngine")
 
-        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL)
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, FLOATING_PREFS_CHANNEL)
         .setMethodCallHandler { call, result ->
             val prefs = getSharedPreferences("floating_window_prefs", MODE_PRIVATE)
             when (call.method) {
                 "getAllInputs" -> {
-                    val prefs = getSharedPreferences("floating_window_prefs", MODE_PRIVATE)
                     val dataList = prefs.getString("data_list", "[]")
                     result.success(dataList)  // 回傳 JSON 字串
                 }
@@ -31,6 +34,21 @@ class MainActivity : FlutterActivity() {
                 else -> result.notImplemented()
             }
         }
+
+        // 第二個 channel：media_store
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, MEDIA_STORE_CHANNEL)
+            .setMethodCallHandler { call, result ->
+                if (call.method == "saveCsv") {
+                    val fileName = call.argument<String>("fileName") ?: "export.csv"
+                    val csvContent = call.argument<String>("csvContent") ?: ""
+
+                    val success = saveCsvToDownloads(fileName, csvContent)
+                    result.success(success)
+                } else {
+                    result.notImplemented()
+                }
+            }
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,4 +77,32 @@ class MainActivity : FlutterActivity() {
             Log.d("MainActivity", "handleIntent: end")
         }
     }
+
+
+    private fun saveCsvToDownloads(fileName: String, csvContent: String): Boolean {
+        return try {
+            val resolver = applicationContext.contentResolver
+            val contentValues = ContentValues().apply {
+                put(MediaStore.Downloads.DISPLAY_NAME, fileName)
+                put(MediaStore.Downloads.MIME_TYPE, "text/csv")
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    put(MediaStore.Downloads.RELATIVE_PATH, "Download/")
+                }
+            }
+
+            val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues)
+                ?: return false
+
+            resolver.openOutputStream(uri).use { outputStream ->
+                outputStream?.writer().use { writer ->
+                    writer?.write(csvContent)
+                }
+            }
+            true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
+
 }
