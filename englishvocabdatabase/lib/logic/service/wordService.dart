@@ -89,8 +89,11 @@ class WordListService{
 
       if(wordList != null){
         for(var i in wordList){
-          if(i.labels == [] || i.labels == null){
-            DB.addWordToLabel(i.id, label: 'No Label Word');
+          debugPrint('removeWordFromLabel ${i.name}');
+          debugPrint('labels ${i.labels}');
+          if(i.labels!.length == 1){
+            debugPrint('add No Label Word ${i.name}');
+            await DB.addWordToLabel(i.id, label: 'No Label Word');
           }
         }
       }
@@ -100,7 +103,7 @@ class WordListService{
     else{
       await DB.removeWordFromLabel(wordId, labelId: labelId);
       Word? detail = await DB.searchWordDetails(wordId);
-      if(detail!.labels == [] || detail.labels == null){
+      if(detail!.labels == null || detail!.labels == []){
         await DB.addWordToLabel(wordId, label: 'No Label Word');
       }
 

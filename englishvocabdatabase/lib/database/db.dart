@@ -7,6 +7,7 @@ import 'wordFilterOption.dart';
 import 'nodef.dart';
 import 'word.dart';
 import 'label.dart';
+import 'package:flutter/foundation.dart';
 
 class DB {
   static Database? database;
@@ -710,9 +711,10 @@ class DB {
     if(all_filtered_words == null){
       return;
     }
-    await Future.wait(
-      all_filtered_words.map((word) => removeWordFromLabel(word.id, label: label, labelId: labelId))
-    );
+    for(final words in all_filtered_words){
+      debugPrint('remove $words');
+      await removeWordFromLabel(words.id, label: label, labelId: labelId);
+    }
   }
 
   static Future<List<Word>?> getExportWords(List<int> labelList) async{
