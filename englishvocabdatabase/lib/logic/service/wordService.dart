@@ -81,7 +81,7 @@ class WordListService{
   }
 
   //from label
-  static Future<bool> removeWord({int? wordId, required int labelId}) async{
+  static Future<bool> removeWordFromLabel({int? wordId, required int labelId}) async{
     if(wordId == null){
       //remove all word from labelId
       List<Word>? wordList = await DB.getWordsByLabel(labelId: labelId);

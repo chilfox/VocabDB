@@ -710,9 +710,9 @@ class DB {
     if(all_filtered_words == null){
       return;
     }
-    for(final words in all_filtered_words){
-      removeWordFromLabel(words.id, label: label, labelId: labelId);
-    }
+    await Future.wait(
+      all_filtered_words.map((word) => removeWordFromLabel(word.id, label: label, labelId: labelId))
+    );
   }
 
   static Future<List<Word>?> getExportWords(List<int> labelList) async{

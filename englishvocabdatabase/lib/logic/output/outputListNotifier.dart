@@ -131,7 +131,7 @@ class OutputListNotifier extends _$OutputListNotifier {
   }
   
   Future<bool> removeWordFromLabel(int wordId, int labelId) async{
-    bool success = await WordListService.removeWord(wordId: wordId, labelId: labelId);
+    bool success = await WordListService.removeWordFromLabel(wordId: wordId, labelId: labelId);
 
     if(success){
       //list should only have words in label
@@ -144,7 +144,7 @@ class OutputListNotifier extends _$OutputListNotifier {
   }
   
   Future<bool> removeAllWord(int labelId) async{
-    bool success = await WordListService.removeWord(labelId: labelId);
+    bool success = await WordListService.removeWordFromLabel(labelId: labelId);
     _refreshAll([]);
     return success;
   }

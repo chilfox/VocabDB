@@ -3,6 +3,7 @@
 import 'package:englishvocabdatabase/logic/output/outputItem.dart';
 import 'package:englishvocabdatabase/database/db.dart';
 import 'package:englishvocabdatabase/database/label.dart';
+import 'package:englishvocabdatabase/logic/service/wordService.dart';
 import 'template.dart';
 import 'package:flutter/foundation.dart';
 
@@ -58,7 +59,7 @@ class LabelListService{
       return null;
     }
     else{
-      await DB.removeAllWordsFromLabel(labelId: id);
+      await WordListService.removeWordFromLabel(labelId: id);
 
       await DB.deleteLabel(id: id).catchError((e) {
         debugPrint('deleteLabel error: $e');
