@@ -36,6 +36,11 @@ class OutputListNotifier extends _$OutputListNotifier {
     }
   }
 
+  Future<void> init() async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async => await build(type, inlabel: inlabel, labelId: labelId));
+  }
+
   //search label, nodefinition, word
   Future<bool> search(String prefix) async{
     late List<OutputListItem> result;
@@ -71,7 +76,9 @@ class OutputListNotifier extends _$OutputListNotifier {
     }
 
     if (result == null) return -1;
-    _refreshAll(result);
+    if(type != NotifierType.Word){
+      _refreshAll(result);
+    }
     return newid;
   }
 
