@@ -26,7 +26,7 @@ class WordDetailService{
   }
 
   static Future<List<LabelItem>> addLabel(int wordId, int labelId) async{
-    await DB.removeWordFromLabel(wordId, label: 'nolabel');
+    await DB.removeWordFromLabel(wordId, label: 'No Label Word');
     await DB.addWordToLabel(wordId, labelId: labelId);
     Word? target = await DB.searchWordDetails(wordId);
   
@@ -38,8 +38,8 @@ class WordDetailService{
 
     List<String>? labels = (await DB.searchWordDetails(wordId))?.labels;
     if(labels == [] || labels == null){
-      await DB.addWordToLabel(wordId, label: 'nolabel');
-      labels = ['nolabel'];
+      await DB.addWordToLabel(wordId, label: 'No Label Word');
+      labels = ['No Label Word'];
     }
 
     return _convertLabelItem(labels);
@@ -56,7 +56,7 @@ class WordDetailService{
     List<String>? labelOfThisWord = (await DB.searchWordDetails(wordId))!.labels;
     labelOfThisWord ??= [];
     //避免nolabel 顯示
-    labelOfThisWord.add('nolabel');
+    labelOfThisWord.add('No Label Word');
 
     List<String> result = allLabel
     .where((label) => !labelOfThisWord!.contains(label.name))

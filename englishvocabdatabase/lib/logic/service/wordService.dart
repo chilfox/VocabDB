@@ -29,7 +29,7 @@ class WordListService{
       print('insertWord error: $e');  //for test
     });
 
-    await DB.addWordToLabel(newId, label: 'nolabel');
+    await DB.addWordToLabel(newId, label: 'No Label Word');
     
     return newId;
   }
@@ -74,7 +74,7 @@ class WordListService{
 
   //return the new label of this word
   static Future<bool> addWordToLabel(int wordId, int labelId) async{
-    await DB.removeWordFromLabel(wordId, label: 'nolabel');
+    await DB.removeWordFromLabel(wordId, label: 'No Label Word');
     await DB.addWordToLabel(wordId, labelId: labelId);
 
     return true;
@@ -90,7 +90,7 @@ class WordListService{
       if(wordList != null){
         for(var i in wordList){
           if(i.labels == [] || i.labels == null){
-            DB.addWordToLabel(i.id, label: 'nolabel');
+            DB.addWordToLabel(i.id, label: 'No Label Word');
           }
         }
       }
@@ -101,7 +101,7 @@ class WordListService{
       await DB.removeWordFromLabel(wordId, labelId: labelId);
       Word? detail = await DB.searchWordDetails(wordId);
       if(detail!.labels == [] || detail.labels == null){
-        await DB.addWordToLabel(wordId, label: 'nolabel');
+        await DB.addWordToLabel(wordId, label: 'No Label Word');
       }
 
       return true;

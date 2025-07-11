@@ -25,7 +25,7 @@ class DB {
         await db.insert(
             'labels',
             {
-              'name': 'nolabel',
+              'name': 'No Label Word',
               'wordnum': 0,
             },
           );

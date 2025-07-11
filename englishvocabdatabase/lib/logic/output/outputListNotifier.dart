@@ -32,7 +32,7 @@ class OutputListNotifier extends _$OutputListNotifier {
           return WordListService.searchWordToLabel('', labelId!, false);
         }
       case NotifierType.NoLabel:
-        return WordListService.searchWordToLabel('', labelId!, true, labelname: 'nolabel');
+        return WordListService.searchWordToLabel('', labelId!, true, labelname: 'No Label Word');
     }
   }
 
@@ -47,7 +47,7 @@ class OutputListNotifier extends _$OutputListNotifier {
       case NotifierType.Word:
         result = await WordListService.searchWord(prefix);
       case NotifierType.NoLabel:
-        result = await WordListService.searchWordToLabel(prefix, labelId!, true, labelname: 'nolabel');
+        result = await WordListService.searchWordToLabel(prefix, labelId!, true, labelname: 'No Label Word');
 
     }
 
