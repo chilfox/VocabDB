@@ -130,11 +130,12 @@ class _InLabelWordListPage extends ConsumerState<InLabelWordListPage> {
       floatingActionButton: widget.label.id == 1
         ? null
         : FloatingActionButton.extended(
-            onPressed: () {
-              Navigator.push(
+            onPressed: () async{
+              await Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => InLabelAddWordPage(label: widget.label)),
               );
+              final _ = ref.refresh(outputListNotifierProvider(NotifierType.Word, inlabel: true, labelId: widget.label.id));
             },
             label: Text(AppLocalizations.of(context)!.addWordBar),
             icon: const Icon(Icons.add),

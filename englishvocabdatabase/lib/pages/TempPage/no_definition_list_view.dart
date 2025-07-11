@@ -282,8 +282,8 @@ class _NoDefinitionListViewState extends ConsumerState<NoDefinitionListView> {
           ),
           
           // Navigation to word detail/edit view
-          onTap: () {
-            Navigator.push(
+          onTap: () async{
+            await Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => WordDetailView(
@@ -295,6 +295,8 @@ class _NoDefinitionListViewState extends ConsumerState<NoDefinitionListView> {
                 ),
               ),
             );
+            //返回後刷新
+            final _ = ref.refresh(outputListNotifierProvider(NotifierType.NoDefinition));
           },
           
           // Material 3 interactive styling
