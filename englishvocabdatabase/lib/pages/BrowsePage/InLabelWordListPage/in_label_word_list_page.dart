@@ -6,6 +6,7 @@ import 'package:englishvocabdatabase/pages/BrowsePage/InLabelWordListPage/in_lab
 import '../../../logic/output/outputListNotifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:englishvocabdatabase/background/container.dart';
 
 class InLabelWordListPage extends ConsumerStatefulWidget {
   final OutputListItem label;
@@ -22,8 +23,7 @@ class _InLabelWordListPage extends ConsumerState<InLabelWordListPage> {
     final service = ref.read(outputListNotifierProvider(NotifierType.Word, inlabel: true, labelId: widget.label.id).notifier);
     final theme = Theme.of(context);
 
-    return Scaffold(
-      backgroundColor: theme.colorScheme.surface,
+    return BackgroundScaffold(
       appBar: AppBar(
         title: Text(
           widget.label.name, 

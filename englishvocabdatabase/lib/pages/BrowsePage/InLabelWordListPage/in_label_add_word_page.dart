@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:englishvocabdatabase/logic/output/outputItem.dart';
 import 'in_label_add_word_search_bar.dart';
 import 'checkbox_word_widget.dart';
+import 'package:englishvocabdatabase/background/container.dart';
 
 class InLabelAddWordPage extends ConsumerStatefulWidget {
   final OutputListItem label;
@@ -78,8 +79,7 @@ class _InLabelAddWordPageState extends ConsumerState<InLabelAddWordPage> {
     final asyncList = ref.watch(outputListNotifierProvider(NotifierType.Word, inlabel: false, labelId: widget.label.id));
     final theme = Theme.of(context);
 
-    return Scaffold(
-      backgroundColor: theme.colorScheme.surface,
+    return BackgroundScaffold(
       appBar: AppBar(
         title: Text(
           AppLocalizations.of(context)!.addWordBar, 
