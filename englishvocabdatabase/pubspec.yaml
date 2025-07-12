@@ -45,6 +45,7 @@ dependencies:
   # 權限
   android_intent_plus: ^5.3.0
   package_info_plus: ^8.3.0
+  permission_handler: ^11.0.0
 
   # language
   intl: ^0.20.2

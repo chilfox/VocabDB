@@ -3,6 +3,7 @@
 import 'package:englishvocabdatabase/logic/output/outputItem.dart';
 import 'package:englishvocabdatabase/database/db.dart';
 import 'package:englishvocabdatabase/database/label.dart';
+import 'package:englishvocabdatabase/logic/service/wordService.dart';
 import 'template.dart';
 import 'package:flutter/foundation.dart';
 
@@ -12,7 +13,7 @@ class LabelListService{
     List<Label>? result = await DB.getAllLabels();//for test
     result ??= [];
     //避免nolabel顯示
-    result.removeWhere((label) => label.name == 'nolabel');
+    result.removeWhere((label) => label.name == 'No Label Word');
 
     return convertToOutputList(input: result, getId: (l) => l.id, getName: (l) => l.name);
   }
@@ -22,7 +23,7 @@ class LabelListService{
     List<Label>? result = await DB.searchLabel(prefix);  
     result ??= [];
     //避免nolabel顯示
-    result.removeWhere((label) => label.name == 'nolabel');
+    result.removeWhere((label) => label.name == 'No Label Word');
 
     return convertToOutputList(input: result, getId: (l) => l.id, getName: (l) => l.name);
   }
@@ -45,7 +46,7 @@ class LabelListService{
       List<Label>? result = await DB.getAllLabels();//for test
       result ??= [];
       //避免nolabel顯示
-      result.removeWhere((label) => label.name == 'nolabel');
+      result.removeWhere((label) => label.name == 'No Label Word');
       
       return (convertToOutputList(input: result, getId: (l) => l.id, getName: (l) => l.name), success);
     }
@@ -58,7 +59,7 @@ class LabelListService{
       return null;
     }
     else{
-      await DB.removeAllWordsFromLabel(labelId: id);
+      await WordListService.removeWordFromLabel(labelId: id);
 
       await DB.deleteLabel(id: id).catchError((e) {
         debugPrint('deleteLabel error: $e');
@@ -67,7 +68,7 @@ class LabelListService{
       List<Label>? result = await DB.getAllLabels();
       result ??= [];
       //避免nolabel顯示
-      result.removeWhere((label) => label.name == 'nolabel');
+      result.removeWhere((label) => label.name == 'No Label Word');
       
       return convertToOutputList(input: result, getId: (l) => l.id, getName: (l) => l.name);
     }

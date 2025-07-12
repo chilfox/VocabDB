@@ -29,7 +29,7 @@ class WordListService{
       print('insertWord error: $e');  //for test
     });
 
-    await DB.addWordToLabel(newId, label: 'nolabel');
+    await DB.addWordToLabel(newId, label: 'No Label Word');
     
     return newId;
   }
@@ -74,14 +74,14 @@ class WordListService{
 
   //return the new label of this word
   static Future<bool> addWordToLabel(int wordId, int labelId) async{
-    await DB.removeWordFromLabel(wordId, label: 'nolabel');
+    await DB.removeWordFromLabel(wordId, label: 'No Label Word');
     await DB.addWordToLabel(wordId, labelId: labelId);
 
     return true;
   }
 
   //from label
-  static Future<bool> removeWord({int? wordId, required int labelId}) async{
+  static Future<bool> removeWordFromLabel({int? wordId, required int labelId}) async{
     if(wordId == null){
       //remove all word from labelId
       List<Word>? wordList = await DB.getWordsByLabel(labelId: labelId);
@@ -89,8 +89,11 @@ class WordListService{
 
       if(wordList != null){
         for(var i in wordList){
-          if(i.labels == [] || i.labels == null){
-            DB.addWordToLabel(i.id, label: 'nolabel');
+          debugPrint('removeWordFromLabel ${i.name}');
+          debugPrint('labels ${i.labels}');
+          if(i.labels!.length == 1){
+            debugPrint('add No Label Word ${i.name}');
+            await DB.addWordToLabel(i.id, label: 'No Label Word');
           }
         }
       }
@@ -100,8 +103,8 @@ class WordListService{
     else{
       await DB.removeWordFromLabel(wordId, labelId: labelId);
       Word? detail = await DB.searchWordDetails(wordId);
-      if(detail!.labels == [] || detail.labels == null){
-        await DB.addWordToLabel(wordId, label: 'nolabel');
+      if(detail!.labels == null || detail!.labels == []){
+        await DB.addWordToLabel(wordId, label: 'No Label Word');
       }
 
       return true;

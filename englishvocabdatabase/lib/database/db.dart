@@ -7,6 +7,7 @@ import 'wordFilterOption.dart';
 import 'nodef.dart';
 import 'word.dart';
 import 'label.dart';
+import 'package:flutter/foundation.dart';
 
 class DB {
   static Database? database;
@@ -25,7 +26,7 @@ class DB {
         await db.insert(
             'labels',
             {
-              'name': 'nolabel',
+              'name': 'No Label Word',
               'wordnum': 0,
             },
           );
@@ -711,7 +712,8 @@ class DB {
       return;
     }
     for(final words in all_filtered_words){
-      removeWordFromLabel(words.id, label: label, labelId: labelId);
+      debugPrint('remove $words');
+      await removeWordFromLabel(words.id, label: label, labelId: labelId);
     }
   }
 

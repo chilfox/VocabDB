@@ -2,6 +2,9 @@ import 'package:csv/csv.dart';
 import '../database/word.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 
 class Export{
   static Future<String> listToCsv(List<Word> wordlist) async{
@@ -21,21 +24,15 @@ class Export{
     return csvString;
   }
 
-  static Future<String> writeCsvToFile(String csvString) async {
-    // 取得文件目錄（app文件資料夾）
-    final directory = await getApplicationDocumentsDirectory();
-    
-    // 設定完整路徑
-    final fileName = await _getNextExportFileName();
-    final path = '${directory.path}/$fileName';
-
-    // 建立檔案
-    final file = File(path);
-
-    // 將字串寫入檔案（覆蓋）
-    await file.writeAsString(csvString);
-
-    return path; // 回傳檔案路徑
+  static Future<bool> writeCsvToDownloads(String csvString) async {
+    String filename = 'englishvocab.csv';
+    bool success = await _MediaStoreHelper.saveCsvToDownloads(filename, csvString);
+    if (success) {
+      debugPrint('CSV saved to Downloads!');
+    } else {
+      debugPrint('Failed to save CSV.');
+    }
+    return success;
   }
 
   static Future<String> _getNextExportFileName() async {
@@ -62,5 +59,22 @@ class Export{
 
     int nextNumber = maxNumber + 1;
     return 'export$nextNumber.csv';
+  }
+}
+
+class _MediaStoreHelper {
+  static const MethodChannel _channel = MethodChannel('media_store');
+
+  static Future<bool> saveCsvToDownloads(String fileName, String csvContent) async {
+    try {
+      final bool result = await _channel.invokeMethod('saveCsv', {
+        'fileName': fileName,
+        'csvContent': csvContent,
+      });
+      return result;
+    } catch (e) {
+      debugPrint('Error saving CSV: $e');
+      return false;
+    }
   }
 }

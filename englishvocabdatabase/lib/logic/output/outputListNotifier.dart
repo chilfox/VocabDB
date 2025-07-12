@@ -32,8 +32,13 @@ class OutputListNotifier extends _$OutputListNotifier {
           return WordListService.searchWordToLabel('', labelId!, false);
         }
       case NotifierType.NoLabel:
-        return WordListService.searchWordToLabel('', labelId!, true, labelname: 'nolabel');
+        return WordListService.searchWordToLabel('', labelId!, true, labelname: 'No Label Word');
     }
+  }
+
+  Future<void> init() async {
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async => await build(type, inlabel: inlabel, labelId: labelId));
   }
 
   //search label, nodefinition, word
@@ -47,7 +52,7 @@ class OutputListNotifier extends _$OutputListNotifier {
       case NotifierType.Word:
         result = await WordListService.searchWord(prefix);
       case NotifierType.NoLabel:
-        result = await WordListService.searchWordToLabel(prefix, labelId!, true, labelname: 'nolabel');
+        result = await WordListService.searchWordToLabel(prefix, labelId!, true, labelname: 'No Label Word');
 
     }
 
@@ -71,7 +76,9 @@ class OutputListNotifier extends _$OutputListNotifier {
     }
 
     if (result == null) return -1;
-    _refreshAll(result);
+    if(type != NotifierType.Word){
+      _refreshAll(result);
+    }
     return newid;
   }
 
@@ -131,7 +138,7 @@ class OutputListNotifier extends _$OutputListNotifier {
   }
   
   Future<bool> removeWordFromLabel(int wordId, int labelId) async{
-    bool success = await WordListService.removeWord(wordId: wordId, labelId: labelId);
+    bool success = await WordListService.removeWordFromLabel(wordId: wordId, labelId: labelId);
 
     if(success){
       //list should only have words in label
@@ -144,7 +151,7 @@ class OutputListNotifier extends _$OutputListNotifier {
   }
   
   Future<bool> removeAllWord(int labelId) async{
-    bool success = await WordListService.removeWord(labelId: labelId);
+    bool success = await WordListService.removeWordFromLabel(labelId: labelId);
     _refreshAll([]);
     return success;
   }
