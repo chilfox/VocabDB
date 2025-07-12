@@ -17,10 +17,33 @@ class _WordListViewState extends ConsumerState<WordListView> {
     final asyncList = ref.watch(outputListNotifierProvider(NotifierType.Word));
     final service = ref.read(outputListNotifierProvider(NotifierType.Word).notifier);
 
+    // Get theme data for consistent Material 3 styling
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return asyncList.when(
       data: (list) {
         if (list.isEmpty){
-          return Center(child: Text(AppLocalizations.of(context)!.wordListEmpty));
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.library_books_outlined,
+                  size: 64.0,
+                  color: colorScheme.onSurfaceVariant,
+                ),
+                const SizedBox(height: 16.0),
+                Text(
+                  AppLocalizations.of(context)!.wordListEmpty,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          );
         }
         return ListView.builder(
           itemCount: list.length,

@@ -77,7 +77,7 @@
   "languageChinese": "中文",
   "importFileButton": "Import from CSV",
   "exportFileButton": "Export as CSV file",
-  "importFileDescription": "Select CSV file with 'name' column (required). 'definition' and 'chinese' columns are optional",
+  "importFileDescription": "Select CSV file with 'name' column (required). 'definition' and 'chinese' columns are optional\nOther formats can be changed into CSV with LLM (ChatGPT, Gemini, etc)",
   "fileSelected": "File selected",
   "fileEmpty": "File is empty, please select another file",
   "fileNoNameColumn": "File missing 'name' column, please select another file",

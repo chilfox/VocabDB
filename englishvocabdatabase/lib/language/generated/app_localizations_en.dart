@@ -153,7 +153,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get importFileDescription =>
-      'Select CSV file with \'name\' column (required). \'definition\' and \'chinese\' columns are optional';
+      'Select CSV file with \'name\' column (required). \'definition\' and \'chinese\' columns are optional\nOther formats can be changed into CSV with LLM (ChatGPT, Gemini, etc)';
 
   @override
   String get fileSelected => 'File selected';

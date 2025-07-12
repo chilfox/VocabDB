@@ -365,7 +365,7 @@ abstract class AppLocalizations {
   /// No description provided for @importFileDescription.
   ///
   /// In en, this message translates to:
-  /// **'Select CSV file with \'name\' column (required). \'definition\' and \'chinese\' columns are optional'**
+  /// **'Select CSV file with \'name\' column (required). \'definition\' and \'chinese\' columns are optional\nOther formats can be changed into CSV with LLM (ChatGPT, Gemini, etc)'**
   String get importFileDescription;
 
   /// No description provided for @fileSelected.

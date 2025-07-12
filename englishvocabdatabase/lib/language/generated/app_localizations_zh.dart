@@ -150,7 +150,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get importFileDescription =>
-      '選擇包含 \'name\' 欄位（必填）的 CSV 檔案。\'definition\' 和 \'chinese\' 欄位為選填';
+      '選擇包含 \'name\' 欄位（必填）的 CSV 檔案。\'definition\' 和 \'chinese\' 欄位為選填\n其他格式的資料可以用大語言模型（ChatGPT, Gemini, ...）等轉換為 CSV 形式';
 
   @override
   String get fileSelected => '已選擇檔案';
