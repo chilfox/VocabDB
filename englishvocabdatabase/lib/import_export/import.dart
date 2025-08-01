@@ -31,9 +31,11 @@ Future<List<List<dynamic>>> parseCsvString(String csvstring) async{
   return csvTable;
 }
 
-Future<int> convertCsvToWords(List<List<dynamic>> csvlist) async{
+Future<List<int>> convertCsvToWords(List<List<dynamic>> csvlist) async{
+  List<int> wordIds = [];
+
    if (csvlist.isEmpty) {
-    return 0; //empty
+    return wordIds; //empty
   }
   final List<dynamic> headers = csvlist[0];
   Map<String, int> headerMap = {};
@@ -45,29 +47,32 @@ Future<int> convertCsvToWords(List<List<dynamic>> csvlist) async{
   final int? chineseIndex = headerMap['chinese'];
 
   if(nameIndex == null){
-    return -1; //no name
+    return [];
   }
   
   final List<List<dynamic>> dataRows = csvlist.sublist(1);
   for(var row in dataRows){
-    var definition;
-    var chinese;
-    var name =  row[nameIndex].toString();
-    if(definitionIndex != null){
-      definition = row[definitionIndex].toString();
-    }
-    if(chineseIndex != null){
-      chinese = row[chineseIndex].toString();
-    }
-    if(name == null){
+     var name = row[nameIndex].toString();
+    if (name.trim().isEmpty){
       continue;
     }
-    else if(definition != null){
-      await WordListService.addWord(name, definition: definition, chinese: chinese);
+
+    String? definition;
+    String? chinese;
+
+    if(definitionIndex != null){
+      definition = row[definitionIndex]?.toString();
     }
-    else{
+    if(chineseIndex != null){
+      chinese = row[chineseIndex]?.toString();
+    }
+    if (definition != null && definition.trim().isNotEmpty) {
+      final wordId = await WordListService.addWord(name, definition: definition, chinese: chinese);
+      wordIds.add(wordId);
+    } else {
       await NodefListService.addNoDef(name);
     }
   }
-  return 1;
+
+  return wordIds;
 }
