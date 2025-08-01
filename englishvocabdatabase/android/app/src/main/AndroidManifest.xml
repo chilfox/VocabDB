@@ -10,7 +10,7 @@
 
 
     <application
-        android:label="englishvocabdatabase"
+        android:label="VocabDB"
         android:icon="@mipmap/ic_launcher">
 
         <activity
