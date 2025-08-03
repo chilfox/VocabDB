@@ -47,7 +47,7 @@ Future<List<int>> convertCsvToWords(List<List<dynamic>> csvlist) async{
   final int? chineseIndex = headerMap['chinese'];
 
   if(nameIndex == null){
-    return [];
+    return [-1];
   }
   
   final List<List<dynamic>> dataRows = csvlist.sublist(1);

@@ -1,4 +1,5 @@
 import 'package:englishvocabdatabase/pages/export_page.dart';
+import 'package:englishvocabdatabase/pages/import_label_selection_page.dart';
 import 'package:flutter/material.dart';
 import 'package:englishvocabdatabase/background/manager.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -457,29 +458,36 @@ class SettingsPage extends StatelessWidget {
                         _showSnackBar(context, loc.fileSelected);
                         
                         var csvlist = await parseCsvString(content);
-                        int result = await convertCsvToWords(csvlist);
+                        List<int> importWordId = await convertCsvToWords(csvlist);
                         
                         // Close loading dialog
                         if (context.mounted) Navigator.of(context).pop();
                         
-                        // Show result feedback
-                        if (result == 0) {
+                        // 處理import結果並導航到相應頁面
+                        if (importWordId.isEmpty) {
+                          // CSV檔案是空的，顯示錯誤訊息
                           _showSnackBar(
                             context,
                             loc.fileEmpty,
                             isError: true,
                           );
-                        } else if (result == -1) {
+                        } else if (importWordId[0] == -1) {
+                          // CSV檔案缺少name欄位，顯示錯誤訊息
                           _showSnackBar(
                             context,
                             loc.fileNoNameColumn,
                             isError: true,
                           );
                         } else {
-                          _showSnackBar(
+                          // Import成功，導航到label選擇頁面
+                          // 讓用戶為import的單字選擇要加入的labels
+                          Navigator.push(
                             context,
-                            '${loc.fileImportSuccess} ($result words imported)',
-                            isSuccess: true,
+                            MaterialPageRoute(
+                              builder: (context) => ImportLabelSelectionPage(
+                                importedWordIds: importWordId,
+                              ),
+                            ),
                           );
                         }
                       } else {
