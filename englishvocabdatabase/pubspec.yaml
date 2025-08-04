@@ -63,6 +63,16 @@ dev_dependencies:
   freezed: ^2.5.8
   json_serializable: ^6.8.0
 
+  flutter_launcher_icons: ^0.13.1
 flutter:
   uses-material-design: true
   generate: true 
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/app_icon.png"
+  # 用同一张图作为前景层（铺满）  
+  adaptive_icon_foreground: "assets/icon/app_icon.png"
+  # 用同一张图或纯色背景，建议透明或与你图案风格一致  
+  adaptive_icon_background: "assets/icon/app_icon.png"
