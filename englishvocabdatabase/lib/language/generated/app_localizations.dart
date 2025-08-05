@@ -146,6 +146,18 @@ abstract class AppLocalizations {
   /// **'Edit'**
   String get eventEdit;
 
+  /// No description provided for @eventClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get eventClear;
+
+  /// No description provided for @eventProcess.
+  ///
+  /// In en, this message translates to:
+  /// **'Processing'**
+  String get eventProcess;
+
   /// No description provided for @label.
   ///
   /// In en, this message translates to:
@@ -559,6 +571,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to load suggestions. Please check your network connection or try again later.'**
   String get apiLoadFail;
+
+  /// No description provided for @selectBackground.
+  ///
+  /// In en, this message translates to:
+  /// **'Selecting image...'**
+  String get selectBackground;
+
+  /// No description provided for @updateBackgroundFail.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update background: {message}'**
+  String updateBackgroundFail(Object message);
+
+  /// No description provided for @clearBackground.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Background'**
+  String get clearBackground;
+
+  /// No description provided for @backgroundCheckText.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to remove the current background image?'**
+  String get backgroundCheckText;
+
+  /// No description provided for @languageSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Language updated successfully'**
+  String get languageSuccess;
+
+  /// No description provided for @importFail.
+  ///
+  /// In en, this message translates to:
+  /// **'Import failed: {message}'**
+  String importFail(Object message);
 }
 
 class _AppLocalizationsDelegate

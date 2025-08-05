@@ -35,6 +35,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get eventEdit => 'Edit';
 
   @override
+  String get eventClear => 'Clear';
+
+  @override
+  String get eventProcess => 'Processing';
+
+  @override
   String get label => 'Label';
 
   @override
@@ -256,4 +262,27 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get apiLoadFail =>
       'Failed to load suggestions. Please check your network connection or try again later.';
+
+  @override
+  String get selectBackground => 'Selecting image...';
+
+  @override
+  String updateBackgroundFail(Object message) {
+    return 'Failed to update background: $message';
+  }
+
+  @override
+  String get clearBackground => 'Clear Background';
+
+  @override
+  String get backgroundCheckText =>
+      'Are you sure you want to remove the current background image?';
+
+  @override
+  String get languageSuccess => 'Language updated successfully';
+
+  @override
+  String importFail(Object message) {
+    return 'Import failed: $message';
+  }
 }

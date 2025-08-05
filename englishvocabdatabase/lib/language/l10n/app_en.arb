@@ -13,6 +13,8 @@
   "eventOk": "OK",
   "eventSave": "Save",
   "eventEdit": "Edit",
+  "eventClear" : "Clear",
+  "eventProcess" : "Processing",
 
   "label": "Label",
   "word": "Word",
@@ -124,5 +126,25 @@
     }
   },
 
-  "apiLoadFail": "Failed to load suggestions. Please check your network connection or try again later."
+  "apiLoadFail": "Failed to load suggestions. Please check your network connection or try again later.",
+
+  "selectBackground" : "Selecting image...",
+  "updateBackgroundFail" : "Failed to update background: {message}",
+  "@loadbackgrounderror": {
+    "placeholders": {
+      "message": {}
+    }
+  },
+
+  "clearBackground" : "Clear Background",
+  "backgroundCheckText" : "Are you sure you want to remove the current background image?",
+
+  "languageSuccess" : "Language updated successfully",
+
+  "importFail" : "Import failed: {message}",
+  "@loadimport": {
+    "placeholders": {
+      "message": {}
+    }
+  }
 }

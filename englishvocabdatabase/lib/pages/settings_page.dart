@@ -188,7 +188,7 @@ class SettingsPage extends StatelessWidget {
                               CircularProgressIndicator(color: colorScheme.primary),
                               const SizedBox(height: 16.0),
                               Text(
-                                'Selecting image...',
+                                AppLocalizations.of(context)!.selectBackground,
                                 style: theme.textTheme.bodyMedium?.copyWith(
                                   color: colorScheme.onSurface,
                                 ),
@@ -224,7 +224,7 @@ class SettingsPage extends StatelessWidget {
                         Navigator.of(context).pop();
                         _showSnackBar(
                           context,
-                          'Failed to update background: ${e.toString()}',
+                          AppLocalizations.of(context)!.updateBackgroundFail(e.toString()),
                           isError: true,
                         );
                       }
@@ -259,13 +259,13 @@ class SettingsPage extends StatelessWidget {
                           size: 24.0,
                         ),
                         title: Text(
-                          'Clear Background',
+                          AppLocalizations.of(context)!.clearBackground,
                           style: theme.textTheme.headlineSmall?.copyWith(
                             color: colorScheme.onSurface,
                           ),
                         ),
                         content: Text(
-                          'Are you sure you want to remove the current background image?',
+                          AppLocalizations.of(context)!.backgroundCheckText,
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: colorScheme.onSurfaceVariant,
                           ),
@@ -274,7 +274,7 @@ class SettingsPage extends StatelessWidget {
                           TextButton(
                             onPressed: () => Navigator.of(context).pop(false),
                             child: Text(
-                              'Cancel',
+                              AppLocalizations.of(context)!.eventCancel,
                               style: TextStyle(color: colorScheme.primary),
                             ),
                           ),
@@ -284,7 +284,7 @@ class SettingsPage extends StatelessWidget {
                               backgroundColor: colorScheme.error,
                               foregroundColor: colorScheme.onError,
                             ),
-                            child: const Text('Clear'),
+                            child: Text(AppLocalizations.of(context)!.eventClear),
                           ),
                         ],
                       ),
@@ -359,7 +359,7 @@ class SettingsPage extends StatelessWidget {
                         setLocale(ref, newSelection.first);
                         _showSnackBar(
                           context,
-                          'Language updated successfully',
+                          AppLocalizations.of(context)!.languageSuccess,
                           isSuccess: true,
                         );
                       },
@@ -441,7 +441,7 @@ class SettingsPage extends StatelessWidget {
                                 CircularProgressIndicator(color: colorScheme.primary),
                                 const SizedBox(height: 16.0),
                                 Text(
-                                  'Processing import...',
+                                  AppLocalizations.of(context)!.eventProcess,
                                   style: theme.textTheme.bodyMedium?.copyWith(
                                     color: colorScheme.onSurface,
                                   ),
@@ -500,7 +500,7 @@ class SettingsPage extends StatelessWidget {
                         Navigator.of(context).pop();
                         _showSnackBar(
                           context,
-                          'Import failed: ${e.toString()}',
+                          AppLocalizations.of(context)!.importFail(e.toString()),
                           isError: true,
                         );
                       }

@@ -35,6 +35,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get eventEdit => '編輯';
 
   @override
+  String get eventClear => '清除';
+
+  @override
+  String get eventProcess => '處理中';
+
+  @override
   String get label => '標籤';
 
   @override
@@ -249,4 +255,26 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get apiLoadFail => '載入建議失敗，請檢查網路或稍後再試';
+
+  @override
+  String get selectBackground => '選擇圖片中...';
+
+  @override
+  String updateBackgroundFail(Object message) {
+    return '背景讀取失敗: $message';
+  }
+
+  @override
+  String get clearBackground => '清除背景';
+
+  @override
+  String get backgroundCheckText => '確定要移除目前背景嗎 ?';
+
+  @override
+  String get languageSuccess => '變換語言成功';
+
+  @override
+  String importFail(Object message) {
+    return '匯入失敗: $message';
+  }
 }

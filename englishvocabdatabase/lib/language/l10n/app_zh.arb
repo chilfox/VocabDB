@@ -12,6 +12,8 @@
     "eventOk": "確定",
     "eventSave": "儲存",
     "eventEdit": "編輯",
+    "eventClear" : "清除",
+    "eventProcess" : "處理中",
 
     "label": "標籤",
     "word": "單字",
@@ -123,5 +125,23 @@
         }
     },
 
-    "apiLoadFail": "載入建議失敗，請檢查網路或稍後再試"
+    "apiLoadFail": "載入建議失敗，請檢查網路或稍後再試",
+    "selectBackground" : "選擇圖片中...",
+    "updateBackgroundFail" : "背景讀取失敗: {message}",
+    "@loadbackgrounderror": {
+        "placeholders": {
+        "message": {}
+        }
+    },
+
+    "clearBackground" : "清除背景",
+    "backgroundCheckText" : "確定要移除目前背景嗎 ?",
+    "languageSuccess" : "變換語言成功",
+    
+    "importFail" : "匯入失敗: {message}",
+    "@loadimport": {
+        "placeholders": {
+        "message": {}
+        }
+    }
 }
